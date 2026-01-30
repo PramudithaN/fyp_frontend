@@ -27,7 +27,7 @@ import { PredictionResponse, Forecast } from '../types/api';
 
 const { Title, Text } = Typography;
 
-const API_URL = 'http://localhost:8002/predict';
+const API_URL = 'https://pramudithan-oil-price-prediction.hf.space/predict';
 
 function Dashboard() {
   const [data, setData] = useState<PredictionResponse | null>(null);
