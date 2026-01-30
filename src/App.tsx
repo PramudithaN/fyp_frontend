@@ -1,62 +1,90 @@
 import { Routes, Route, Link, useLocation } from 'react-router-dom'
+import { Layout, Menu, ConfigProvider, theme } from 'antd'
+import { 
+  HomeOutlined, 
+  DashboardOutlined, 
+  InfoCircleOutlined 
+} from '@ant-design/icons'
 import Home from './components/Home'
 import About from './components/About'
 import Dashboard from './components/Dashboard'
 
+const { Header, Content } = Layout;
+
 function App() {
   const location = useLocation();
 
+  const darkTheme = {
+    algorithm: theme.darkAlgorithm,
+    token: {
+      colorPrimary: '#238636',
+      colorBgContainer: '#161b22',
+      colorBgElevated: '#21262d',
+      colorBorder: '#30363d',
+      colorText: '#e6edf3',
+      colorTextSecondary: '#8b949e',
+      borderRadius: 8,
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+    },
+  };
+
+  const menuItems = [
+    {
+      key: '/',
+      icon: <HomeOutlined />,
+      label: <Link to="/">Home</Link>,
+    },
+    {
+      key: '/dashboard',
+      icon: <DashboardOutlined />,
+      label: <Link to="/dashboard">Dashboard</Link>,
+    },
+    {
+      key: '/about',
+      icon: <InfoCircleOutlined />,
+      label: <Link to="/about">About</Link>,
+    },
+  ];
+
   return (
-    <div className="min-h-screen w-full bg-[#0d1117]">
-      <nav className="bg-[#161b22] px-8 py-4 shadow-md sticky top-0 z-50 w-full">
-        <ul className="list-none p-0 m-0 flex gap-2 justify-center">
-          <li className="inline">
-            <Link 
-              to="/" 
-              className={`px-5 py-2.5 rounded-md font-medium text-[15px] inline-block no-underline transition-all ${
-                location.pathname === '/' 
-                  ? 'bg-[#238636] text-white' 
-                  : 'text-[#e6edf3] hover:bg-[rgba(100,108,255,0.15)] hover:text-[#58a6ff]'
-              }`}
-            >
-              Home
-            </Link>
-          </li>
-          <li className="inline">
-            <Link 
-              to="/dashboard" 
-              className={`px-5 py-2.5 rounded-md font-medium text-[15px] inline-block no-underline transition-all ${
-                location.pathname === '/dashboard' 
-                  ? 'bg-[#238636] text-white' 
-                  : 'text-[#e6edf3] hover:bg-[rgba(100,108,255,0.15)] hover:text-[#58a6ff]'
-              }`}
-            >
-              Dashboard
-            </Link>
-          </li>
-          <li className="inline">
-            <Link 
-              to="/about" 
-              className={`px-5 py-2.5 rounded-md font-medium text-[15px] inline-block no-underline transition-all ${
-                location.pathname === '/about' 
-                  ? 'bg-[#238636] text-white' 
-                  : 'text-[#e6edf3] hover:bg-[rgba(100,108,255,0.15)] hover:text-[#58a6ff]'
-              }`}
-            >
-              About
-            </Link>
-          </li>
-        </ul>
-      </nav>
-      
-      <main className="w-full">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/about" element={<About />} />
-        </Routes>
-      </main>
-    </div>
+    <ConfigProvider theme={darkTheme}>
+      <Layout style={{ minHeight: '100vh', background: '#0d1117' }}>
+        <Header 
+          style={{ 
+            background: '#161b22', 
+            padding: '0 24px',
+            position: 'sticky',
+            top: 0,
+            zIndex: 100,
+            boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Menu
+            mode="horizontal"
+            selectedKeys={[location.pathname]}
+            items={menuItems}
+            style={{ 
+              background: 'transparent', 
+              borderBottom: 'none',
+              flex: 1,
+              justifyContent: 'center',
+              maxWidth: 500,
+            }}
+          />
+        </Header>
+        
+        <Content style={{ background: '#0d1117' }}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/about" element={<About />} />
+          </Routes>
+        </Content>
+      </Layout>
+    </ConfigProvider>
   )
 }
 
