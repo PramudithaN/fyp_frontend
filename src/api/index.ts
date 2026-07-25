@@ -9,11 +9,6 @@ import {
   SentimentOverviewResponse,
 } from "../types/api";
 import { APP_CONFIG } from "../config/appConfig";
-import {
-  DUMMY_PREDICTION_RESPONSE,
-  generateDummyComparison,
-  DUMMY_EXPLAIN_RESPONSE,
-} from "./dummyDatabase";
 
 const BASE_API_URL = import.meta.env.VITE_API_BASE_URL as string;
 const PREDICTION_API_URL = `${BASE_API_URL}/predict`;
@@ -457,7 +452,6 @@ export const fetchPredictions = async (
       predictionCacheEntry = { data: result, timestamp: Date.now() };
       return result;
     })
-    .catch(() => DUMMY_PREDICTION_RESPONSE)
     .finally(() => {
       predictionInFlightRequest = null;
     });
@@ -547,7 +541,6 @@ export const fetchPredictionComparison = async (
       });
       return result;
     })
-    .catch(() => generateDummyComparison(startDate, endDate))
     .finally(() => {
       predictionComparisonInFlightRequests.delete(cacheKey);
     });
@@ -1186,6 +1179,4 @@ const normalizeExplainResponse = (payload: unknown): ExplainResponse => {
 };
 
 export const fetchExplain = async (): Promise<ExplainResponse> =>
-  fetchJson<unknown>(EXPLAIN_API_URL)
-    .then((payload) => normalizeExplainResponse(payload))
-    .catch(() => DUMMY_EXPLAIN_RESPONSE);
+  fetchJson<unknown>(EXPLAIN_API_URL).then((payload) => normalizeExplainResponse(payload));
