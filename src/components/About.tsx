@@ -96,7 +96,7 @@ const About = () => {
                 Table of Contents
               </h3>
               <nav className="space-y-1.5">
-                {docSections.map((section, idx) => (
+                {docSections.map((section) => (
                   <a
                     key={section.id}
                     href={`#${section.id}`}
