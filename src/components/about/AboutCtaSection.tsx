@@ -12,7 +12,7 @@ const AboutCtaSection = () => {
       transition={{ duration: 0.6 }}
       className="text-center glass p-10 rounded-3xl relative overflow-hidden"
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-oil-gold/5 to-transparent" />
+      <div className="absolute inset-0 bg-white/5" />
       <div className="relative z-10">
         <h3 className="text-2xl font-bold text-white mb-4 font-display">
           See the Models in Action

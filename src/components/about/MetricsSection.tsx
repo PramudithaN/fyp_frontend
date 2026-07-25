@@ -28,7 +28,7 @@ const MetricCard = ({
       <div className="p-3 rounded-xl bg-oil-gold/5 w-fit mx-auto mb-4 text-oil-gold group-hover:bg-oil-gold/10 transition-colors">
         {icon}
       </div>
-      <div className="text-3xl font-bold font-display text-gradient-gold mb-1">
+      <div className="text-3xl font-bold font-display text-oil-gold mb-1">
         {inView ? (
           <CountUp end={value} duration={2} suffix={suffix} />
         ) : (

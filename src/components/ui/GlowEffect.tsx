@@ -27,9 +27,9 @@ const GlowEffect = ({
 
   const colorClasses = {
     gold: `bg-oil-gold/${opacity}`,
-    blue: `bg-oil-blue/${opacity}`,
+    blue: `bg-oil-gold/${opacity}`,
     amber: `bg-oil-amber/${opacity}`,
-    green: `bg-oil-green/${opacity}`,
+    green: `bg-oil-gold/${opacity}`,
   };
 
   const positionStyles: React.CSSProperties = {

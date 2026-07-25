@@ -8,6 +8,12 @@ import {
   PredictionResponse,
   SentimentOverviewResponse,
 } from "../types/api";
+import { APP_CONFIG } from "../config/appConfig";
+import {
+  DUMMY_PREDICTION_RESPONSE,
+  generateDummyComparison,
+  DUMMY_EXPLAIN_RESPONSE,
+} from "./dummyDatabase";
 
 const BASE_API_URL = import.meta.env.VITE_API_BASE_URL as string;
 const PREDICTION_API_URL = `${BASE_API_URL}/predict`;
@@ -365,7 +371,7 @@ const fetchJson = async <T>(url: string): Promise<T> => {
   return response.json();
 };
 
-const PREDICTION_CACHE_TTL_MS = 5 * 60 * 1000;
+const PREDICTION_CACHE_TTL_MS = APP_CONFIG.predictCacheTtlSeconds * 1000;
 
 interface PredictionCacheEntry {
   data: PredictionResponse;
@@ -451,6 +457,7 @@ export const fetchPredictions = async (
       predictionCacheEntry = { data: result, timestamp: Date.now() };
       return result;
     })
+    .catch(() => DUMMY_PREDICTION_RESPONSE)
     .finally(() => {
       predictionInFlightRequest = null;
     });
@@ -540,6 +547,7 @@ export const fetchPredictionComparison = async (
       });
       return result;
     })
+    .catch(() => generateDummyComparison(startDate, endDate))
     .finally(() => {
       predictionComparisonInFlightRequests.delete(cacheKey);
     });
@@ -1178,4 +1186,6 @@ const normalizeExplainResponse = (payload: unknown): ExplainResponse => {
 };
 
 export const fetchExplain = async (): Promise<ExplainResponse> =>
-  normalizeExplainResponse(await fetchJson<unknown>(EXPLAIN_API_URL));
+  fetchJson<unknown>(EXPLAIN_API_URL)
+    .then((payload) => normalizeExplainResponse(payload))
+    .catch(() => DUMMY_EXPLAIN_RESPONSE);

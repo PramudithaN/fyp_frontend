@@ -66,7 +66,7 @@ const PipelineStep = ({
             type: "spring",
             stiffness: 200,
           }}
-          className="w-12 h-12 rounded-2xl bg-linear-to-br from-oil-gold/20 to-oil-amber/10 border border-oil-gold/20 flex items-center justify-center text-oil-gold z-10"
+          className="w-12 h-12 rounded-2xl bg-oil-gold/10 border border-oil-gold/25 flex items-center justify-center text-oil-gold z-10"
         >
           {icon}
         </motion.div>
@@ -75,7 +75,7 @@ const PipelineStep = ({
             initial={{ height: 0 }}
             animate={inView ? { height: "100%" } : { height: 0 }}
             transition={{ delay: delay * 0.1 + 0.4, duration: 0.5 }}
-            className="w-px bg-linear-to-b from-oil-gold/30 to-transparent flex-1 mt-2"
+            className="w-px bg-oil-gold/30 flex-1 mt-2"
           />
         )}
       </div>
@@ -149,7 +149,7 @@ const PipelineSection = () => {
           variants={childFade}
           className="text-2xl md:text-3xl font-bold text-white font-display flex items-center gap-3"
         >
-          <div className="w-1 h-8 rounded-full bg-linear-to-b from-oil-gold to-oil-amber" />
+          <div className="w-1 h-8 rounded-full bg-oil-gold" />
           Prediction Pipeline
         </motion.h2>
         <motion.p

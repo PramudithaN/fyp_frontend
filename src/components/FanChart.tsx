@@ -143,11 +143,11 @@ export default function FanChart({ fan, lastPrice, lastPriceDate }: FanChartProp
   const qualityPct = Math.min((avgSamples / 100) * 100, 100);
   let qualityColor: string;
   if (qualityPct >= 75) {
-    qualityColor = "#10B981";
+    qualityColor = "#f59e0b";
   } else if (qualityPct >= 40) {
     qualityColor = "#F59E0B";
   } else {
-    qualityColor = "#EF4444";
+    qualityColor = "#9ca3af";
   }
 
   return (
@@ -173,15 +173,15 @@ export default function FanChart({ fan, lastPrice, lastPriceDate }: FanChartProp
           Point forecast
         </span>
         <span className="flex items-center gap-1.5">
-          <div className="w-6 h-3 rounded-sm bg-oil-cyan/30" />
+          <div className="w-6 h-3 rounded-sm bg-oil-gold/30" />
           P25–P75
         </span>
         <span className="flex items-center gap-1.5">
-          <div className="w-6 h-3 rounded-sm bg-oil-cyan/15" />
+          <div className="w-6 h-3 rounded-sm bg-oil-gold/15" />
           P10–P90
         </span>
         <span className="flex items-center gap-1.5">
-          <div className="w-6 h-0.5 bg-oil-cyan border-dashed" style={{ borderTop: "1px dashed #22d3ee" }} />
+          <div className="w-6 h-0.5 bg-oil-gold border-dashed" style={{ borderTop: "1px dashed #f59e0b" }} />
           Median (P50)
         </span>
       </div>
@@ -189,19 +189,6 @@ export default function FanChart({ fan, lastPrice, lastPriceDate }: FanChartProp
       <div className="h-[400px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={chartData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-            <defs>
-              {/* Outer band P10–P90 */}
-              <linearGradient id="fanOuter" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#22D3EE" stopOpacity={0.12} />
-                <stop offset="100%" stopColor="#22D3EE" stopOpacity={0.04} />
-              </linearGradient>
-              {/* Inner band P25–P75 */}
-              <linearGradient id="fanInner" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#22D3EE" stopOpacity={0.28} />
-                <stop offset="100%" stopColor="#22D3EE" stopOpacity={0.12} />
-              </linearGradient>
-            </defs>
-
             <CartesianGrid
               strokeDasharray="3 3"
               stroke="rgba(255,255,255,0.04)"
@@ -229,7 +216,8 @@ export default function FanChart({ fan, lastPrice, lastPriceDate }: FanChartProp
               type="monotone"
               dataKey="band_outer"
               stroke="none"
-              fill="url(#fanOuter)"
+              fill="#f59e0b"
+              fillOpacity={0.08}
               isAnimationActive={false}
             />
 
@@ -238,7 +226,8 @@ export default function FanChart({ fan, lastPrice, lastPriceDate }: FanChartProp
               type="monotone"
               dataKey="band_inner"
               stroke="none"
-              fill="url(#fanInner)"
+              fill="#f59e0b"
+              fillOpacity={0.18}
               isAnimationActive={false}
             />
 
@@ -246,7 +235,7 @@ export default function FanChart({ fan, lastPrice, lastPriceDate }: FanChartProp
             <Line
               type="monotone"
               dataKey="p50"
-              stroke="#22D3EE"
+              stroke="#f59e0b"
               strokeWidth={1}
               strokeDasharray="4 3"
               dot={false}

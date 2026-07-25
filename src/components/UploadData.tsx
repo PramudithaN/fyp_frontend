@@ -244,7 +244,7 @@ function UploaderSection({
         </div>
       ) : null}
 
-      <div className="absolute inset-0 bg-[linear-gradient(150deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01)_35%,rgba(255,255,255,0.00)_65%)]" />
+      <div className="absolute inset-0 bg-white/5" />
 
       <div className="relative z-10 min-h-[calc(100vh-220px)] grid place-items-center px-6 py-10">
         <div className="w-full max-w-2xl rounded-3xl border border-white/12 bg-oil-black/35 shadow-[0_18px_60px_rgba(0,0,0,0.45)] backdrop-blur-2xl px-6 py-8 md:px-10 md:py-10 flex flex-col items-center text-center">
@@ -393,8 +393,8 @@ function PredictionsResults({ predictions }: { readonly predictions: PredictionR
                   <span className="text-xs text-gray-500 font-semibold uppercase tracking-wider">
                     Average Forecast
                   </span>
-                  <div className="p-2 rounded-xl bg-blue-500/10">
-                    <DollarSign size={16} className="text-blue-400" />
+                  <div className="p-2 rounded-xl bg-oil-gold/10">
+                    <DollarSign size={16} className="text-oil-gold" />
                   </div>
                 </div>
                 <div className="text-3xl font-bold text-white font-display">
@@ -416,8 +416,8 @@ function PredictionsResults({ predictions }: { readonly predictions: PredictionR
                   <span className="text-xs text-gray-500 font-semibold uppercase tracking-wider">
                     Min Forecast
                   </span>
-                  <div className="p-2 rounded-xl bg-red-500/10">
-                    <TrendingDown size={16} className="text-red-400" />
+                  <div className="p-2 rounded-xl bg-oil-gold/10">
+                    <TrendingDown size={16} className="text-oil-gold" />
                   </div>
                 </div>
                 <div className="text-3xl font-bold text-white font-display">
@@ -437,8 +437,8 @@ function PredictionsResults({ predictions }: { readonly predictions: PredictionR
                   <span className="text-xs text-gray-500 font-semibold uppercase tracking-wider">
                     Max Forecast
                   </span>
-                  <div className="p-2 rounded-xl bg-emerald-500/10">
-                    <TrendingUp size={16} className="text-emerald-400" />
+                  <div className="p-2 rounded-xl bg-oil-gold/10">
+                    <TrendingUp size={16} className="text-oil-gold" />
                   </div>
                 </div>
                 <div className="text-3xl font-bold text-white font-display">
@@ -461,18 +461,6 @@ function PredictionsResults({ predictions }: { readonly predictions: PredictionR
               </h2>
               <ResponsiveContainer width="100%" height={400}>
                 <AreaChart data={chartData}>
-                  <defs>
-                    <linearGradient
-                      id="forecastGradient"
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
-                    >
-                      <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="#F59E0B" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
                   <XAxis
                     dataKey="date"
@@ -502,7 +490,8 @@ function PredictionsResults({ predictions }: { readonly predictions: PredictionR
                     dataKey="price"
                     stroke="#F59E0B"
                     strokeWidth={2}
-                    fill="url(#forecastGradient)"
+                    fill="#F59E0B"
+                    fillOpacity={0.18}
                   />
                 </AreaChart>
               </ResponsiveContainer>
@@ -553,8 +542,8 @@ function PredictionsResults({ predictions }: { readonly predictions: PredictionR
                           <span
                             className={`text-sm font-medium ${
                               forecast.forecasted_return >= 0
-                                ? "text-emerald-400"
-                                : "text-red-400"
+                                ? "text-oil-gold"
+                                : "text-oil-gold"
                             }`}
                           >
                             {forecast.forecasted_return >= 0 ? "+" : ""}
@@ -576,12 +565,12 @@ function PredictionsResults({ predictions }: { readonly predictions: PredictionR
               className="glass p-6 rounded-2xl flex items-start gap-4"
             >
               <div className={`p-3 rounded-xl shrink-0 ${
-                isPositive ? "bg-emerald-500/10" : "bg-red-500/10"
+                isPositive ? "bg-oil-gold/10" : "bg-oil-gold/10"
               }`}>
                 {isPositive ? (
-                  <TrendingUp size={24} className="text-emerald-400" />
+                  <TrendingUp size={24} className="text-oil-gold" />
                 ) : (
-                  <TrendingDown size={24} className="text-red-400" />
+                  <TrendingDown size={24} className="text-oil-gold" />
                 )}
               </div>
               <div>
@@ -592,7 +581,7 @@ function PredictionsResults({ predictions }: { readonly predictions: PredictionR
                   Based on your uploaded data, oil prices are forecasted to{" "}
                   <span
                     className={`font-bold ${
-                      isPositive ? "text-emerald-400" : "text-red-400"
+                      isPositive ? "text-oil-gold" : "text-oil-gold"
                     }`}
                   >
                     {isPositive ? "increase" : "decrease"}
@@ -600,7 +589,7 @@ function PredictionsResults({ predictions }: { readonly predictions: PredictionR
                   by{" "}
                   <span
                     className={`font-bold ${
-                      isPositive ? "text-emerald-400" : "text-red-400"
+                      isPositive ? "text-oil-gold" : "text-oil-gold"
                     }`}
                   >
                     {Math.abs(priceChange).toFixed(2)} USD ({Math.abs(priceChangePercent).toFixed(2)}%)
@@ -753,12 +742,12 @@ function UploadData() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.22 }}
-            className="flex items-start gap-3 rounded-2xl border border-red-500/35 bg-red-500/10 px-5 py-4"
+            className="flex items-start gap-3 rounded-2xl border border-oil-gold/30 bg-oil-gold/10 px-5 py-4"
           >
-            <AlertCircle size={20} className="text-red-400 shrink-0 mt-0.5" />
+            <AlertCircle size={20} className="text-oil-gold shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-semibold text-red-300">Upload Error</p>
-              <p className="text-sm text-red-200/75 mt-0.5 leading-relaxed">{error}</p>
+              <p className="text-sm font-semibold text-oil-gold">Upload Error</p>
+              <p className="text-sm text-oil-gold mt-0.5 leading-relaxed">{error}</p>
             </div>
           </motion.div>
         ) : null}

@@ -2,10 +2,15 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { describe, it, expect } from 'vitest';
 import Navbar from './Navbar';
+import { CurrencyProvider } from '../context/CurrencyContext';
 
-// Helper to render with Router
+// Helper to render with Router and CurrencyProvider
 const renderWithRouter = (ui: React.ReactElement) => {
-  return render(ui, { wrapper: BrowserRouter });
+  return render(
+    <CurrencyProvider>
+      <BrowserRouter>{ui}</BrowserRouter>
+    </CurrencyProvider>
+  );
 };
 
 describe('Navbar Component', () => {

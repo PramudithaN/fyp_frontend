@@ -25,7 +25,7 @@ const HowItWorksSection = () => {
       ref={howRef}
       className="py-24 px-4 sm:px-6 md:px-8 lg:px-10 relative"
     >
-      <div className="absolute inset-0 bg-gradient-to-b from-oil-black via-oil-dark/30 to-oil-black" />
+      <div className="absolute inset-0 bg-oil-black/70" />
       <div className="max-w-5xl mx-auto relative z-10">
         <motion.div
           initial="hidden"

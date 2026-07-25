@@ -16,9 +16,9 @@ const techStack = [
   {
     title: "Frontend",
     icon: <Code className="w-4 h-4" />,
-    accent: "#3b82f6",
-    accentFaint: "rgba(59,130,246,0.08)",
-    hoverBorder: "hover:border-blue-500/30",
+    accent: "#f59e0b",
+    accentFaint: "rgba(245,158,11,0.08)",
+    hoverBorder: "hover:border-oil-gold/30",
     badges: [
       { label: "React 18", sub: "TypeScript" },
       { label: "Tailwind CSS", sub: "v4" },
@@ -31,9 +31,9 @@ const techStack = [
   {
     title: "Backend & ML",
     icon: <Cpu className="w-4 h-4" />,
-    accent: "#a78bfa",
-    accentFaint: "rgba(167,139,250,0.08)",
-    hoverBorder: "hover:border-violet-400/30",
+    accent: "#f59e0b",
+    accentFaint: "rgba(245,158,11,0.08)",
+    hoverBorder: "hover:border-oil-gold/30",
     badges: [
       { label: "Python", sub: "FastAPI" },
       { label: "PyTorch", sub: "deep learning" },
@@ -46,9 +46,9 @@ const techStack = [
   {
     title: "Data Sources",
     icon: <Database className="w-4 h-4" />,
-    accent: "#10b981",
-    accentFaint: "rgba(16,185,129,0.08)",
-    hoverBorder: "hover:border-emerald-400/30",
+    accent: "#f59e0b",
+    accentFaint: "rgba(245,158,11,0.08)",
+    hoverBorder: "hover:border-oil-gold/30",
     badges: [
       { label: "Yahoo Finance", sub: "price history" },
       { label: "OilPrice.com", sub: "market data" },
@@ -75,7 +75,7 @@ const TechStackSection = () => {
           variants={childFade}
           className="text-2xl md:text-3xl font-bold text-white font-display flex items-center gap-3"
         >
-          <div className="w-1 h-8 rounded-full bg-linear-to-b from-oil-blue to-oil-cyan" />
+          <div className="w-1 h-8 rounded-full bg-oil-gold" />
           Technical Stack
         </motion.h2>
       </motion.div>

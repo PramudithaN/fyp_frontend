@@ -21,32 +21,32 @@ const CapabilitiesSection = () => {
 
   const capabilities = [
     {
-      icon: <Zap className="text-amber-400" size={20} />,
+      icon: <Zap className="text-oil-gold" size={20} />,
       text: "React 18+ with TypeScript",
       desc: "Modern, type-safe frontend with strict typing.",
     },
     {
-      icon: <Zap className="text-amber-400" size={20} />,
+      icon: <Zap className="text-oil-gold" size={20} />,
       text: "Vite Build System",
       desc: "Sub-second HMR and optimized production builds.",
     },
     {
-      icon: <Network className="text-blue-400" size={20} />,
+      icon: <Network className="text-oil-gold" size={20} />,
       text: "React Router v6",
       desc: "Seamless client-side routing and navigation.",
     },
     {
-      icon: <Code className="text-emerald-400" size={20} />,
+      icon: <Code className="text-oil-gold" size={20} />,
       text: "Modern Design Stack",
       desc: "Tailwind CSS, Framer Motion, glassmorphism.",
     },
     {
-      icon: <Layers className="text-pink-400" size={20} />,
+      icon: <Layers className="text-oil-gold" size={20} />,
       text: "Recharts Visualization",
       desc: "Interactive, responsive financial charts.",
     },
     {
-      icon: <BrainCircuit className="text-purple-400" size={20} />,
+      icon: <BrainCircuit className="text-oil-gold" size={20} />,
       text: "FinBERT Integration",
       desc: "Financial domain NLP for market sentiment.",
     },
@@ -64,7 +64,7 @@ const CapabilitiesSection = () => {
           variants={childFade}
           className="text-2xl md:text-3xl font-bold text-white font-display flex items-center gap-3"
         >
-          <div className="w-1 h-8 rounded-full bg-gradient-to-b from-oil-gold to-oil-amber" />
+          <div className="w-1 h-8 rounded-full bg-oil-gold" />
           Core Capabilities
         </motion.h2>
       </motion.div>

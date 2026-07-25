@@ -24,7 +24,7 @@ const AnimatedButton = ({
 }: AnimatedButtonProps) => {
   const variantClasses = {
     primary:
-      "px-8 py-4 bg-gradient-to-r from-oil-gold to-oil-amber text-oil-black font-bold text-base rounded-2xl glow-amber hover:glow-amber-strong",
+      "px-8 py-4 bg-oil-gold text-oil-black font-bold text-base rounded-2xl hover:bg-oil-amber",
     secondary:
       "px-8 py-4 glass hover:bg-white/10 text-white font-medium text-base rounded-2xl",
     ghost:

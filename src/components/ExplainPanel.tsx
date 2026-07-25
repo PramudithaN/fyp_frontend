@@ -14,9 +14,9 @@ import { ExplainResponse } from "../types/api";
 /* ─── Model display metadata ─── */
 const MODEL_META: Record<string, { label: string; color: string }> = {
   arima: { label: "ARIMA", color: "#f59e0b" },
-  gru_mid: { label: "Mid-GRU", color: "#06b6d4" },
-  gru_sent: { label: "Sentiment-GRU", color: "#a78bfa" },
-  xgb_hf: { label: "XGBoost-HF", color: "#10b981" },
+  gru_mid: { label: "Mid-GRU", color: "#f59e0b" },
+  gru_sent: { label: "Sentiment-GRU", color: "#f59e0b" },
+  xgb_hf: { label: "XGBoost-HF", color: "#f59e0b" },
 };
 
 /* ─── Confidence level styling ─── */
@@ -25,9 +25,9 @@ const CONFIDENCE_STYLE: Record<
   { text: string; badge: string; dot: string }
 > = {
   high: {
-    text: "text-emerald-400",
-    badge: "bg-emerald-500/10 border border-emerald-500/30",
-    dot: "#10b981",
+    text: "text-oil-gold",
+    badge: "bg-oil-gold/10 border border-oil-gold/30",
+    dot: "#f59e0b",
   },
   medium: {
     text: "text-amber-400",
@@ -35,9 +35,9 @@ const CONFIDENCE_STYLE: Record<
     dot: "#f59e0b",
   },
   low: {
-    text: "text-red-400",
-    badge: "bg-red-500/10 border border-red-500/30",
-    dot: "#ef4444",
+    text: "text-oil-gold",
+    badge: "bg-oil-gold/10 border border-oil-gold/30",
+    dot: "#9ca3af",
   },
 };
 
@@ -161,8 +161,8 @@ export default function ExplainPanel({ data, onClose }: Readonly<ExplainPanelPro
         {/* Panel header */}
         <div className="flex items-center justify-between px-5 sm:px-8 pt-2 pb-4 border-b border-white/5 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-violet-500/10 border border-violet-500/20">
-              <Brain size={20} className="text-violet-400" />
+            <div className="p-2 rounded-xl bg-oil-gold/10 border border-oil-gold/30">
+              <Brain size={20} className="text-oil-gold" />
             </div>
             <div>
               <h2 className="text-base font-bold text-white font-display">
@@ -197,10 +197,10 @@ export default function ExplainPanel({ data, onClose }: Readonly<ExplainPanelPro
                 transition={{ delay: 0.05 }}
                 className="glass p-4 rounded-2xl"
               >
-                <div className="text-[10px] text-oil-cyan/80 font-semibold uppercase tracking-widest mb-2">
+                <div className="text-[10px] text-oil-gold/80 font-semibold uppercase tracking-widest mb-2">
                   Forecast Price (T+1)
                 </div>
-                <div className="text-2xl font-bold text-oil-cyan font-display">
+                <div className="text-2xl font-bold text-oil-gold font-display">
                   ${data.prediction.toFixed(2)}
                 </div>
                 <div className="mt-1.5 text-[11px] text-gray-500">
@@ -230,7 +230,7 @@ export default function ExplainPanel({ data, onClose }: Readonly<ExplainPanelPro
                     initial={{ width: 0 }}
                     animate={{ width: "100%" }}
                     transition={{ duration: 1.1, delay: 0.35, ease: "easeOut" }}
-                    className="h-full rounded-full bg-linear-to-r from-oil-amber to-oil-light-gold"
+                    className="h-full rounded-full bg-oil-gold"
                   />
                 </div>
                 <motion.div
@@ -400,14 +400,14 @@ export default function ExplainPanel({ data, onClose }: Readonly<ExplainPanelPro
                 transition={{ delay: 0.3 }}
                 className="glass p-5 rounded-2xl"
               >
-                <SectionHeader dot="#06b6d4">
+                <SectionHeader dot="#f59e0b">
                   Top Feature Drivers (SHAP)
                 </SectionHeader>
 
                 <div className="space-y-4">
                   {data.top_features.map((feature, i) => {
                     const isPos = feature.shap_value >= 0;
-                    const barColor = isPos ? "#10b981" : "#ef4444";
+                    const barColor = isPos ? "#f59e0b" : "#9ca3af";
                     const pct =
                       (Math.abs(feature.shap_value) / maxShapAbs) * 100;
                     let shapDisplayValue = `${feature.shap_value.toFixed(6)}`;
@@ -437,7 +437,7 @@ export default function ExplainPanel({ data, onClose }: Readonly<ExplainPanelPro
                               val: {feature.feature_value.toFixed(4)}
                             </span>
                             <span
-                              className={`text-xs font-mono font-semibold ${isPos ? "text-emerald-400" : "text-red-400"}`}
+                              className={`text-xs font-mono font-semibold ${isPos ? "text-oil-gold" : "text-oil-gold"}`}
                             >
                               {shapDisplayValue}
                             </span>
@@ -480,7 +480,7 @@ export default function ExplainPanel({ data, onClose }: Readonly<ExplainPanelPro
               transition={{ delay: 0.4 }}
               className="glass p-5 rounded-2xl"
             >
-              <SectionHeader dot="#a78bfa">Sentiment Headlines</SectionHeader>
+              <SectionHeader dot="#f59e0b">Sentiment Headlines</SectionHeader>
 
               {data.sentiment_headlines.length === 0 ? (
                 <div className="flex items-center gap-3 py-3 text-sm text-gray-500">
@@ -499,7 +499,7 @@ export default function ExplainPanel({ data, onClose }: Readonly<ExplainPanelPro
                       transition={{ delay: 0.45 + i * 0.05 }}
                       className="flex items-start gap-2 text-sm text-gray-300 leading-relaxed"
                     >
-                      <div className="w-1 h-1 rounded-full bg-violet-400 mt-2 shrink-0" />
+                      <div className="w-1 h-1 rounded-full bg-oil-gold/10 mt-2 shrink-0" />
                       {headline}
                     </motion.li>
                   ))}
@@ -533,7 +533,7 @@ export default function ExplainPanel({ data, onClose }: Readonly<ExplainPanelPro
                 transition={{ delay: 0.48 }}
                 className="glass p-5 rounded-2xl"
               >
-                <SectionHeader dot="#10b981">Explainability Notes</SectionHeader>
+                <SectionHeader dot="#f59e0b">Explainability Notes</SectionHeader>
                 <div className="space-y-3 text-sm leading-relaxed">
                   {data.total_sentiment_impact_usd !== undefined && (
                     <p className="text-gray-300">
@@ -622,8 +622,8 @@ export function ExplainPanelSkeleton({ onClose }: Readonly<{ onClose: () => void
         {/* Header */}
         <div className="flex items-center justify-between px-5 sm:px-8 pt-2 pb-4 border-b border-white/5 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-violet-500/10 border border-violet-500/20">
-              <Brain size={20} className="text-violet-400" />
+            <div className="p-2 rounded-xl bg-oil-gold/10 border border-oil-gold/30">
+              <Brain size={20} className="text-oil-gold" />
             </div>
             <div>
               <p className="text-base font-bold text-white font-display">

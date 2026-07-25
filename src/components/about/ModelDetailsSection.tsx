@@ -81,6 +81,18 @@ const childFade = {
   },
 };
 
+const toChartNumber = (value: unknown): number => {
+  if (typeof value === "number") return value;
+  if (typeof value === "string") {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+  if (Array.isArray(value) && value.length > 0) {
+    return toChartNumber(value[0]);
+  }
+  return 0;
+};
+
 const modelFamilies = [
   {
     title: "Statistical Core",
@@ -92,19 +104,19 @@ const modelFamilies = [
     title: "Sequence Learner",
     model: "Mid-GRU",
     desc: "1-layer GRU (hidden_size=64, dropout=0.3) on 14 price and technical features.",
-    color: "text-oil-cyan",
+    color: "text-oil-gold",
   },
   {
     title: "Sentiment Learner",
     model: "Sentiment-GRU",
     desc: "Dual-stream GRU with attention: 14 price features + 16 sentiment/news features.",
-    color: "text-violet-300",
+    color: "text-oil-gold",
   },
   {
     title: "High-Frequency Booster",
     model: "XGBoost-HF",
     desc: "Per-horizon XGBRegressor with n_estimators=500, max_depth=3, lr=0.05, subsample=0.8.",
-    color: "text-emerald-300",
+    color: "text-oil-gold",
   },
 ];
 
@@ -121,28 +133,28 @@ const layerFlow = [
     model: "Mid-GRU",
     input: "Price and technical features",
     output: "Mid-frequency forecast",
-    color: "text-oil-cyan",
+    color: "text-oil-gold",
   },
   {
     step: "L3",
     model: "Sentiment-GRU",
     input: "Dual stream (price + sentiment)",
     output: "Sentiment-aware forecast",
-    color: "text-violet-300",
+    color: "text-oil-gold",
   },
   {
     step: "L4",
     model: "XGBoost-HF",
     input: "8 high-frequency features",
     output: "High-frequency forecast",
-    color: "text-emerald-300",
+    color: "text-oil-gold",
   },
   {
     step: "L5",
     model: "Ridge Stacking",
     input: "4 sub-model outputs",
     output: "Final ensemble forecast",
-    color: "text-amber-200",
+    color: "text-oil-gold",
   },
 ];
 
@@ -179,17 +191,17 @@ const servingSteps = [
 // Executive headline metrics at H5 t+1
 const execRings = [
   { pct: 77.3, label: "77.3%", sublabel: "Dir. Acc (t+1)", color: "#f59e0b" },
-  { pct: 76.2, label: "76.2%", sublabel: "F1 Score (t+1)", color: "#22d3ee" },
-  { pct: 82,   label: "0.82",  sublabel: "AUC-ROC (t+1)", color: "#a78bfa" },
+  { pct: 76.2, label: "76.2%", sublabel: "F1 Score (t+1)", color: "#f59e0b" },
+  { pct: 82,   label: "0.82",  sublabel: "AUC-ROC (t+1)", color: "#f59e0b" },
 ];
 
 // H5 model comparison (RMSE × 1000 for readable axis labels)
 const modelCompData = [
   { name: "Ensemble+Sent", rmse: 14.7, dirAcc: 77.3, color: "#f59e0b" },
-  { name: "Ensemble",      rmse: 14.8, dirAcc: 70.5, color: "#22d3ee" },
-  { name: "Mid-GRU",       rmse: 15.0, dirAcc: 58.0, color: "#06b6d4" },
-  { name: "Sent-GRU",      rmse: 15.2, dirAcc: 52.3, color: "#a78bfa" },
-  { name: "XGBoost-HF",    rmse: 15.3, dirAcc: 51.4, color: "#10b981" },
+  { name: "Ensemble",      rmse: 14.8, dirAcc: 70.5, color: "#f59e0b" },
+  { name: "Mid-GRU",       rmse: 15.0, dirAcc: 58.0, color: "#f59e0b" },
+  { name: "Sent-GRU",      rmse: 15.2, dirAcc: 52.3, color: "#f59e0b" },
+  { name: "XGBoost-HF",    rmse: 15.3, dirAcc: 51.4, color: "#f59e0b" },
   { name: "ARIMA",         rmse: 15.6, dirAcc: 47.9, color: "#6b7280" },
 ];
 
@@ -222,7 +234,7 @@ const ModelDetailsSection = () => {
           variants={childFade}
           className="text-2xl md:text-3xl font-bold text-white font-display flex items-center gap-3"
         >
-          <div className="w-1 h-8 rounded-full bg-linear-to-b from-oil-gold to-oil-amber" />
+          <div className="w-1 h-8 rounded-full bg-oil-gold" />
           Model Details
         </motion.h2>
         <motion.p variants={childFade} className="text-gray-400 text-sm mt-3 max-w-3xl leading-relaxed">
@@ -250,14 +262,14 @@ const ModelDetailsSection = () => {
           ))}
           {/* Stat chips for raw values */}
           <div className="flex flex-col items-center gap-2">
-            <div className="w-[76px] h-[76px] rounded-full border border-violet-400/30 bg-violet-500/5 flex items-center justify-center">
-              <span className="text-sm font-bold text-violet-300 font-mono">0.01467</span>
+            <div className="w-[76px] h-[76px] rounded-full border border-oil-gold/30 bg-oil-gold/10 flex items-center justify-center">
+              <span className="text-sm font-bold text-oil-gold font-mono">0.01467</span>
             </div>
             <span className="text-[11px] text-gray-400 text-center leading-tight max-w-[80px]">RMSE (Best)</span>
           </div>
           <div className="flex flex-col items-center gap-2">
-            <div className="w-[76px] h-[76px] rounded-full border border-emerald-400/30 bg-emerald-500/5 flex items-center justify-center">
-              <span className="text-sm font-bold text-emerald-300 font-mono">$0.65</span>
+            <div className="w-[76px] h-[76px] rounded-full border border-oil-gold/30 bg-oil-gold/10 flex items-center justify-center">
+              <span className="text-sm font-bold text-oil-gold font-mono">$0.65</span>
             </div>
             <span className="text-[11px] text-gray-400 text-center leading-tight max-w-[80px]">USD Error/barrel</span>
           </div>
@@ -327,14 +339,14 @@ const ModelDetailsSection = () => {
         className="glass rounded-2xl p-5 border border-white/10 mb-4"
       >
         <div className="flex items-center gap-2 mb-5">
-          <Database size={16} className="text-oil-cyan" />
+          <Database size={16} className="text-oil-gold" />
           <h3 className="text-sm uppercase tracking-[0.18em] text-gray-400 font-semibold">Inputs</h3>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[
-            { label: "Price & Technical", count: 14, total: 30, color: "#22d3ee", icon: <Database size={16} className="text-oil-cyan" />, sub: "log_return · 7 lags · vol · RSI · momentum" },
+            { label: "Price & Technical", count: 14, total: 30, color: "#f59e0b", icon: <Database size={16} className="text-oil-gold" />, sub: "log_return · 7 lags · vol · RSI · momentum" },
             { label: "Sentiment & News", count: 10, total: 30, color: "#f59e0b", icon: <Sparkles size={16} className="text-oil-gold" />, sub: "decay · volume · log_volume · high_regime" },
-            { label: "EMA-Derived", count: 12, total: 30, color: "#10b981", icon: <Layers size={16} className="text-emerald-300" />, sub: "3, 7, 14-day EMAs across 4 signal streams" },
+            { label: "EMA-Derived", count: 12, total: 30, color: "#f59e0b", icon: <Layers size={16} className="text-oil-gold" />, sub: "3, 7, 14-day EMAs across 4 signal streams" },
           ].map((feat, i) => (
             <motion.div
               key={feat.label}
@@ -367,7 +379,7 @@ const ModelDetailsSection = () => {
         <p className="text-[11px] text-gray-600 mt-3">All sentiment features lagged by 1 day · Features standardised with StandardScaler (train set only) · 30 total unique features</p>
       </motion.div>
 
-      {/* ── Outputs: glowing highlight cards ── */}
+      {/* ── Outputs: unified highlight cards ── */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -391,18 +403,18 @@ const ModelDetailsSection = () => {
             },
             {
               icon: <Gauge size={22} />,
-              color: "#22d3ee",
-              glow: "rgba(34,211,238,0.12)",
-              border: "border-oil-cyan/20",
+              color: "#f59e0b",
+              glow: "rgba(245,158,11,0.10)",
+              border: "border-oil-gold/20",
               title: "Uncertainty Bands",
               value: "P10 – P90",
               sub: "Fan-chart quantiles with confidence interval and cross-model agreement score.",
             },
             {
               icon: <BarChart3 size={22} />,
-              color: "#a78bfa",
-              glow: "rgba(167,139,250,0.12)",
-              border: "border-violet-400/20",
+              color: "#f59e0b",
+              glow: "rgba(245,158,11,0.10)",
+              border: "border-oil-gold/20",
               title: "Explainability",
               value: "4 sub-models",
               sub: "Per-model contribution bars and top SHAP feature drivers for every prediction run.",
@@ -438,13 +450,13 @@ const ModelDetailsSection = () => {
         className="glass rounded-2xl p-5 border border-white/10 mb-8"
       >
         <div className="flex items-center gap-2 mb-6">
-          <Workflow size={16} className="text-emerald-300" />
+          <Workflow size={16} className="text-oil-gold" />
           <h3 className="text-sm uppercase tracking-[0.18em] text-gray-400 font-semibold">Serving Flow</h3>
         </div>
         <div className="relative pl-8">
           {/* vertical line */}
           <motion.div
-            className="absolute left-[15px] top-0 w-px bg-linear-to-b from-emerald-400/50 via-emerald-400/20 to-transparent"
+            className="absolute left-[15px] top-0 w-px bg-oil-gold/10"
             initial={{ height: 0 }}
             animate={inView ? { height: "100%" } : { height: 0 }}
             transition={{ duration: 1.4, ease: "easeOut", delay: 0.4 }}
@@ -460,12 +472,12 @@ const ModelDetailsSection = () => {
               >
                 {/* dot */}
                 <motion.div
-                  className="absolute -left-8 w-[30px] h-[30px] rounded-full border-2 border-emerald-400/50 bg-[#191713] flex items-center justify-center shrink-0 z-10"
+                  className="absolute -left-8 w-[30px] h-[30px] rounded-full border-2 border-oil-gold/30 bg-[#191713] flex items-center justify-center shrink-0 z-10"
                   initial={{ scale: 0 }}
                   animate={inView ? { scale: 1 } : { scale: 0 }}
                   transition={{ type: "spring", stiffness: 240, delay: 0.4 + i * 0.12 }}
                 >
-                  <span className="text-[10px] font-bold text-emerald-300">{step.step}</span>
+                  <span className="text-[10px] font-bold text-oil-gold">{step.step}</span>
                 </motion.div>
                 <div className="rounded-xl bg-white/3 border border-white/8 p-3 w-full">
                   <div className="text-sm font-semibold text-white mb-1">{step.title}</div>
@@ -485,7 +497,7 @@ const ModelDetailsSection = () => {
         className="glass rounded-2xl p-5 border border-white/10 mb-8"
       >
         <div className="flex items-center gap-2 mb-5">
-          <BarChart3 size={16} className="text-oil-cyan" />
+          <BarChart3 size={16} className="text-oil-gold" />
           <h3 className="text-sm uppercase tracking-[0.18em] text-gray-400 font-semibold">
             Cross-Horizon Results
           </h3>
@@ -502,13 +514,15 @@ const ModelDetailsSection = () => {
                   <XAxis dataKey="horizon" tick={{ fill: "#6b7280", fontSize: 11 }} axisLine={false} tickLine={false} />
                   <YAxis domain={[14, 16]} tick={{ fill: "#6b7280", fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={(v) => v.toFixed(0)} />
                   <Tooltip
+                    cursor={false}
                     contentStyle={{ background: "#191713", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, fontSize: 12 }}
-                    formatter={(v: number | undefined) => [`${(v ?? 0).toFixed(2)} ×10⁻³`, "RMSE"]}
-                    labelStyle={{ color: "#9ca3af" }}
+                    formatter={(v) => [`${toChartNumber(v).toFixed(2)} ×10⁻³`, "RMSE"]}
+                    labelStyle={{ color: "#cbd5e1" }}
+                    itemStyle={{ color: "#f3f4f6" }}
                   />
                   <Bar dataKey="rmse" radius={[6, 6, 0, 0]}>
                     {horizonResults.map((r) => (
-                      <Cell key={r.horizon} fill={r.horizon === "H5" ? "#f59e0b" : r.horizon === "H7" ? "#22d3ee" : "#a78bfa"} />
+                      <Cell key={r.horizon} fill={r.horizon === "H5" ? "#f59e0b" : r.horizon === "H7" ? "#f59e0b" : "#f59e0b"} />
                     ))}
                   </Bar>
                 </BarChart>
@@ -525,13 +539,15 @@ const ModelDetailsSection = () => {
                   <XAxis dataKey="horizon" tick={{ fill: "#6b7280", fontSize: 11 }} axisLine={false} tickLine={false} />
                   <YAxis domain={[40, 70]} tick={{ fill: "#6b7280", fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={(v) => `${v}%`} />
                   <Tooltip
+                    cursor={false}
                     contentStyle={{ background: "#191713", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, fontSize: 12 }}
-                    formatter={(v: number | undefined) => [`${v ?? 0}%`, "Dir. Acc"]}
-                    labelStyle={{ color: "#9ca3af" }}
+                    formatter={(v) => [`${toChartNumber(v)}%`, "Dir. Acc"]}
+                    labelStyle={{ color: "#cbd5e1" }}
+                    itemStyle={{ color: "#f3f4f6" }}
                   />
                   <Bar dataKey="dirAcc" radius={[6, 6, 0, 0]}>
                     {horizonResults.map((r) => (
-                      <Cell key={r.horizon} fill={r.horizon === "H5" ? "#f59e0b" : r.horizon === "H7" ? "#22d3ee" : "#a78bfa"} />
+                      <Cell key={r.horizon} fill={r.horizon === "H5" ? "#f59e0b" : r.horizon === "H7" ? "#f59e0b" : "#f59e0b"} />
                     ))}
                   </Bar>
                 </BarChart>
@@ -548,13 +564,15 @@ const ModelDetailsSection = () => {
                   <XAxis dataKey="horizon" tick={{ fill: "#6b7280", fontSize: 11 }} axisLine={false} tickLine={false} />
                   <YAxis domain={[0.5, 0.85]} tick={{ fill: "#6b7280", fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={(v) => `$${v.toFixed(2)}`} />
                   <Tooltip
+                    cursor={false}
                     contentStyle={{ background: "#191713", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, fontSize: 12 }}
-                    formatter={(v: number | undefined) => [`$${(v ?? 0).toFixed(2)}`, "USD Error"]}
-                    labelStyle={{ color: "#9ca3af" }}
+                    formatter={(v) => [`$${toChartNumber(v).toFixed(2)}`, "USD Error"]}
+                    labelStyle={{ color: "#cbd5e1" }}
+                    itemStyle={{ color: "#f3f4f6" }}
                   />
                   <Bar dataKey="usd" radius={[6, 6, 0, 0]}>
                     {horizonResults.map((r) => (
-                      <Cell key={r.horizon} fill={r.horizon === "H5" ? "#10b981" : r.horizon === "H7" ? "#34d399" : "#6ee7b7"} />
+                      <Cell key={r.horizon} fill={r.horizon === "H5" ? "#f59e0b" : r.horizon === "H7" ? "#f59e0b" : "#f59e0b"} />
                     ))}
                   </Bar>
                 </BarChart>
@@ -572,7 +590,7 @@ const ModelDetailsSection = () => {
         className="glass rounded-2xl p-5 border border-white/10 mb-8"
       >
         <div className="flex items-center gap-2 mb-5">
-          <Target size={16} className="text-violet-300" />
+          <Target size={16} className="text-oil-gold" />
           <h3 className="text-sm uppercase tracking-[0.18em] text-gray-400 font-semibold">
             Model Comparison at H5
           </h3>
@@ -588,9 +606,11 @@ const ModelDetailsSection = () => {
                   <XAxis type="number" domain={[14, 16]} tick={{ fill: "#6b7280", fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={(v) => v.toFixed(1)} />
                   <YAxis type="category" dataKey="name" tick={{ fill: "#9ca3af", fontSize: 10 }} axisLine={false} tickLine={false} width={90} />
                   <Tooltip
+                    cursor={false}
                     contentStyle={{ background: "#191713", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, fontSize: 12 }}
-                    formatter={(v: number | undefined) => [`${(v ?? 0).toFixed(2)} ×10⁻³`, "RMSE"]}
-                    labelStyle={{ color: "#9ca3af" }}
+                    formatter={(v) => [`${toChartNumber(v).toFixed(2)} ×10⁻³`, "RMSE"]}
+                    labelStyle={{ color: "#cbd5e1" }}
+                    itemStyle={{ color: "#f3f4f6" }}
                   />
                   <Bar dataKey="rmse" radius={[0, 6, 6, 0]}>
                     {modelCompData.map((d) => (
@@ -611,9 +631,11 @@ const ModelDetailsSection = () => {
                   <XAxis type="number" domain={[40, 85]} tick={{ fill: "#6b7280", fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={(v) => `${v}%`} />
                   <YAxis type="category" dataKey="name" tick={{ fill: "#9ca3af", fontSize: 10 }} axisLine={false} tickLine={false} width={90} />
                   <Tooltip
+                    cursor={false}
                     contentStyle={{ background: "#191713", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, fontSize: 12 }}
-                    formatter={(v: number | undefined) => [`${v ?? 0}%`, "Dir. Accuracy"]}
-                    labelStyle={{ color: "#9ca3af" }}
+                    formatter={(v) => [`${toChartNumber(v)}%`, "Dir. Accuracy"]}
+                    labelStyle={{ color: "#cbd5e1" }}
+                    itemStyle={{ color: "#f3f4f6" }}
                   />
                   <Bar dataKey="dirAcc" radius={[0, 6, 6, 0]}>
                     {modelCompData.map((d) => (
@@ -641,8 +663,8 @@ const ModelDetailsSection = () => {
           </h3>
         </div>
         <p className="text-xs text-gray-500 mb-5 leading-relaxed">
-          Positive delta = RMSE got <span className="text-red-300">worse</span> with sentiment. &nbsp;
-          Negative delta = RMSE got <span className="text-emerald-300">better</span> with sentiment.
+          Positive delta = RMSE got <span className="text-oil-gold">worse</span> with sentiment. &nbsp;
+          Negative delta = RMSE got <span className="text-oil-gold">better</span> with sentiment.
         </p>
         <div className="h-52">
           <ResponsiveContainer width="100%" height="100%">
@@ -655,22 +677,24 @@ const ModelDetailsSection = () => {
                 domain={[-1, 2.2]}
               />
               <Tooltip
+                cursor={false}
                 contentStyle={{ background: "#191713", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, fontSize: 12 }}
-                formatter={(v: number | undefined, name: string | undefined) => [
-                  `${(v ?? 0) > 0 ? "+" : ""}${v ?? 0}% RMSE`,
+                formatter={(v, name) => [
+                  `${toChartNumber(v) > 0 ? "+" : ""}${toChartNumber(v)}% RMSE`,
                   name === "gruDelta" ? "GRU-only" : "Full Ensemble",
                 ]}
-                labelStyle={{ color: "#9ca3af" }}
+                labelStyle={{ color: "#cbd5e1" }}
+                itemStyle={{ color: "#f3f4f6" }}
               />
               <ReferenceLine y={0} stroke="rgba(255,255,255,0.15)" strokeDasharray="4 3" />
-              <Bar dataKey="gruDelta" name="gruDelta" radius={[6, 6, 0, 0]} fill="#ef4444" opacity={0.85} />
-              <Bar dataKey="ensembleDelta" name="ensembleDelta" radius={[6, 6, 0, 0]} fill="#10b981" opacity={0.85} />
+              <Bar dataKey="gruDelta" name="gruDelta" radius={[6, 6, 0, 0]} fill="#9ca3af" opacity={0.85} />
+              <Bar dataKey="ensembleDelta" name="ensembleDelta" radius={[6, 6, 0, 0]} fill="#f59e0b" opacity={0.85} />
             </BarChart>
           </ResponsiveContainer>
         </div>
         <div className="flex items-center gap-5 mt-3 text-xs text-gray-400">
-          <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm bg-red-500 inline-block" /> GRU-only with sentiment</span>
-          <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm bg-emerald-500 inline-block" /> Full ensemble with sentiment</span>
+          <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm bg-oil-gold/10 inline-block" /> GRU-only with sentiment</span>
+          <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm bg-oil-gold/10 inline-block" /> Full ensemble with sentiment</span>
         </div>
       </motion.div>
     </section>

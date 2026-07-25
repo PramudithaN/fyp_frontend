@@ -236,7 +236,7 @@ const News = () => {
               <p className="text-xs uppercase tracking-[0.22em] text-oil-light-gold/80 mb-2">
                 Live Market Intelligence
               </p>
-              <h1 className="text-3xl md:text-4xl font-display font-bold text-gradient-white">
+              <h1 className="text-3xl md:text-4xl font-display font-bold text-white">
                 Energy News Feed
               </h1>
               <p className="text-sm text-gray-400 mt-3 max-w-2xl">
@@ -337,7 +337,7 @@ const News = () => {
         </form>
 
         {error && (
-          <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+          <div className="rounded-2xl border border-oil-gold/30 bg-oil-gold/10 px-4 py-3 text-sm text-oil-gold">
             {error}
           </div>
         )}
@@ -380,11 +380,11 @@ const News = () => {
                         onError={handleImageError}
                       />
                     ) : (
-                      <div className="h-full w-full bg-gradient-to-br from-oil-gold/20 via-oil-gold/5 to-oil-dark flex items-center justify-center">
+                      <div className="h-full w-full bg-oil-dark/80 flex items-center justify-center">
                         <Newspaper className="text-oil-light-gold/70" size={34} />
                       </div>
                     )}
-                    <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/55 to-transparent" />
+                    <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-black/45" />
                   </div>
 
                   <div className="flex items-center justify-between gap-3 text-xs text-gray-400">
@@ -437,9 +437,9 @@ const News = () => {
         {/* ── FinBERT Model Metrics ── */}
         <section className="space-y-4">
           <div className="flex items-center gap-3">
-            <div className="w-1 h-6 rounded-full bg-linear-to-b from-oil-cyan to-oil-blue" />
+            <div className="w-1 h-6 rounded-full bg-oil-gold" />
             <h2 className="text-lg font-bold text-white font-display flex items-center gap-2">
-              <Brain size={18} className="text-oil-cyan" />
+              <Brain size={18} className="text-oil-gold" />
               FinBERT Sentiment Model Metrics
             </h2>
           </div>
@@ -453,7 +453,7 @@ const News = () => {
           )}
 
           {!finbertLoading && finbertError && (
-            <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+            <div className="rounded-2xl border border-oil-gold/30 bg-oil-gold/10 px-4 py-3 text-sm text-oil-gold">
               {finbertError}
             </div>
           )}
@@ -462,12 +462,12 @@ const News = () => {
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              className="glass-strong rounded-3xl p-6 border border-oil-cyan/15 space-y-5"
+              className="glass-strong rounded-3xl p-6 border border-oil-gold/15 space-y-5"
             >
               {/* Device & Load info */}
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="glass rounded-2xl px-5 py-4 flex items-start gap-3">
-                  <Cpu size={18} className="text-oil-cyan mt-0.5 shrink-0" />
+                  <Cpu size={18} className="text-oil-gold mt-0.5 shrink-0" />
                   <div>
                     <p className="text-xs uppercase tracking-widest text-gray-500 mb-1">Device</p>
                     <p className="text-base font-semibold text-white">
@@ -516,7 +516,7 @@ const News = () => {
 
                   <div className="glass rounded-2xl px-5 py-4">
                     <p className="text-xs text-gray-500 mb-1">Articles Processed</p>
-                    <p className="text-2xl font-bold text-oil-cyan font-display">
+                    <p className="text-2xl font-bold text-oil-gold font-display">
                       {finbertMetrics.last_inference_article_count ?? <span className="text-gray-500 text-sm">—</span>}
                     </p>
                   </div>

@@ -4,20 +4,19 @@ import { motion } from "framer-motion";
 const Footer = () => {
   return (
     <footer className="relative border-t border-white/5 bg-oil-dark/50">
-      {/* Gradient line at top */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-oil-gold/30 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-oil-gold/30" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-10 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {/* Brand */}
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-oil-gold to-oil-amber flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-oil-gold flex items-center justify-center">
                 <span className="text-oil-black font-bold text-sm font-display">
                   O
                 </span>
               </div>
-              <span className="text-lg font-bold font-display text-gradient-gold">
+              <span className="text-lg font-bold font-display text-oil-gold">
                 PetroCast
               </span>
             </div>
@@ -72,7 +71,7 @@ const Footer = () => {
             <motion.div
               animate={{ scale: [1, 1.2, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
-              className="w-2 h-2 rounded-full bg-oil-green"
+              className="w-2 h-2 rounded-full bg-oil-gold"
             />
             <span className="text-xs text-gray-500">Models Active</span>
           </div>

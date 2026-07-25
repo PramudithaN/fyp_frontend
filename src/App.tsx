@@ -5,11 +5,11 @@ import Home from "./components/Home";
 import About from "./components/About";
 import Dashboard from "./components/Dashboard";
 import News from "./components/News";
-import UploadData from "./components/UploadData";
 import PerformanceMonitor from "./components/PerformanceMonitor";
 import Footer from "./components/Footer";
 import { NotificationProvider } from "./context/NotificationContext";
 import { DateConfigProvider } from "./context/DateConfigContext";
+import { CurrencyProvider } from "./context/CurrencyContext";
 
 function App() {
   const oilTheme = {
@@ -38,22 +38,23 @@ function App() {
   return (
     <ConfigProvider theme={oilTheme}>
       <DateConfigProvider locale="en-US">
-        <NotificationProvider>
-          <div className="min-h-screen bg-oil-black text-gray-200 selection:bg-oil-gold/30 selection:text-white overflow-x-hidden">
-            <Navbar />
-            <main>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/upload" element={<UploadData />} />
-                <Route path="/news" element={<News />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/performance" element={<PerformanceMonitor />} />
-              </Routes>
-            </main>
-            <Footer />
-          </div>
-        </NotificationProvider>
+        <CurrencyProvider>
+          <NotificationProvider>
+            <div className="min-h-screen bg-oil-black text-gray-200 selection:bg-oil-gold/30 selection:text-white overflow-x-hidden">
+              <Navbar />
+              <main>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/news" element={<News />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/performance" element={<PerformanceMonitor />} />
+                </Routes>
+              </main>
+              <Footer />
+            </div>
+          </NotificationProvider>
+        </CurrencyProvider>
       </DateConfigProvider>
     </ConfigProvider>
   );

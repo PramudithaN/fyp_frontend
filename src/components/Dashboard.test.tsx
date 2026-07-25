@@ -134,12 +134,16 @@ vi.mock('recharts', () => ({
   ReferenceLine: () => null,
 }));
 
+import { CurrencyProvider } from '../context/CurrencyContext';
+
 const renderWithProviders = () =>
   render(
     <DateConfigProvider locale="en-US" timezone="UTC">
-      <NotificationProvider>
-        <Dashboard />
-      </NotificationProvider>
+      <CurrencyProvider>
+        <NotificationProvider>
+          <Dashboard />
+        </NotificationProvider>
+      </CurrencyProvider>
     </DateConfigProvider>,
   );
 

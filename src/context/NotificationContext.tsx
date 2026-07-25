@@ -52,15 +52,15 @@ const CONFIG: Record<
 > = {
   success: {
     icon: <CheckCircle size={18} />,
-    border: "border-emerald-500/40",
-    iconColor: "text-emerald-400",
-    bg: "bg-emerald-500/10",
+    border: "border-oil-gold/30",
+    iconColor: "text-oil-gold",
+    bg: "bg-oil-gold/10",
   },
   error: {
     icon: <XCircle size={18} />,
-    border: "border-red-500/40",
-    iconColor: "text-red-400",
-    bg: "bg-red-500/10",
+    border: "border-oil-gold/30",
+    iconColor: "text-oil-gold",
+    bg: "bg-oil-gold/10",
   },
   warning: {
     icon: <AlertTriangle size={18} />,
@@ -70,9 +70,9 @@ const CONFIG: Record<
   },
   info: {
     icon: <Info size={18} />,
-    border: "border-oil-cyan/40",
-    iconColor: "text-oil-cyan",
-    bg: "bg-oil-cyan/10",
+    border: "border-oil-gold/40",
+    iconColor: "text-oil-gold",
+    bg: "bg-oil-gold/10",
   },
 };
 
