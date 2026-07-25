@@ -277,7 +277,7 @@ const Navbar = () => {
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden text-gray-400 hover:text-white p-2 rounded-lg hover:bg-white/5 transition-colors"
+            className="md:hidden text-gray-300 hover:text-white p-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 transition-colors"
           >
             {mobileOpen ? <X size={24} /> : <Menu size={24} />}
           </motion.button>
@@ -299,14 +299,14 @@ const Navbar = () => {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="fixed top-0 right-0 bottom-0 w-72 bg-white border-l border-slate-200 shadow-2xl z-50 md:hidden flex flex-col"
+              className="fixed top-0 right-0 bottom-0 w-72 bg-oil-dark/95 backdrop-blur-xl border-l border-white/10 shadow-2xl shadow-black/60 z-50 md:hidden flex flex-col"
             >
-              <div className="p-6 border-b border-slate-200">
+              <div className="p-6 border-b border-white/10">
                 <div className="flex items-center justify-between">
-                  <span className="text-lg font-bold font-display text-slate-700">PetroCast</span>
+                  <span className="text-lg font-bold font-display text-gradient-gold">PetroCast</span>
                   <button
                     onClick={() => setMobileOpen(false)}
-                    className="p-2 rounded-lg hover:bg-slate-100 text-slate-500"
+                    className="p-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-colors"
                   >
                     <X size={20} />
                   </button>
@@ -326,8 +326,8 @@ const Navbar = () => {
                         to={item.path}
                         className={`flex items-center gap-3 px-4 py-3.5 rounded-xl text-base font-medium transition-all ${
                           isActive
-                            ? "bg-[#fff8e6] text-[#ca8a04] border border-[#f4d58a]"
-                            : "text-slate-600 hover:text-slate-800 hover:bg-slate-100"
+                            ? "border border-oil-gold/30 bg-oil-gold/15 text-oil-gold"
+                            : "border border-transparent text-gray-300 hover:text-white hover:bg-white/8 hover:border-white/10"
                         }`}
                       >
                         {item.icon}
@@ -337,9 +337,9 @@ const Navbar = () => {
                   );
                 })}
               </div>
-              <div className="p-4 border-t border-slate-200">
+              <div className="p-4 border-t border-white/10">
                 <Link to="/dashboard" onClick={() => setMobileOpen(false)}>
-                  <button className="w-full px-5 py-3 bg-[#c8942d] text-[#1f2937] font-semibold text-sm rounded-xl flex items-center justify-center gap-2 cursor-pointer hover:bg-[#b88626] transition-colors">
+                  <button className="w-full px-5 py-3 bg-oil-gold text-oil-black font-semibold text-sm rounded-xl flex items-center justify-center gap-2 cursor-pointer hover:bg-oil-light-gold transition-colors">
                     <AreaChart size={16} />
                     Live Forecast
                   </button>
