@@ -1,28 +1,17 @@
 import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Pagination } from "antd";
 import { motion } from "framer-motion";
-import {
-  Brain,
-  Calendar,
-  Cpu,
-  ExternalLink,
-  Newspaper,
-  RefreshCw,
-  Search,
-  Timer,
-} from "lucide-react";
+import { Calendar, ExternalLink, Newspaper, RefreshCw, Search } from "lucide-react";
 import { fetchNews, FetchNewsOptions, getCachedNews } from "../api";
 import { NewsArticle } from "../types/api";
 import AnimatedButton from "./ui/AnimatedButton";
 import { useNotification } from "../context/NotificationContext";
 
-// Preload an image URL by creating an in-memory Image object
 const preloadImage = (src: string) => {
   const img = new Image();
   img.src = src;
 };
 
-// Per-image component that shows a skeleton while loading and fades in on load
 const NewsImage = ({
   src,
   alt,
@@ -38,9 +27,7 @@ const NewsImage = ({
 
   return (
     <>
-      {!loaded && (
-        <div className="skeleton-loader absolute inset-0 animate-pulse" />
-      )}
+      {!loaded && <div className="skeleton-loader absolute inset-0 animate-pulse" />}
       <img
         src={src}
         alt={alt}
@@ -71,18 +58,6 @@ const formatArticleDate = (dateString: string) => {
   }).format(date);
 };
 
-const FINBERT_METRICS_URL = "https://pramudithan-oil-price-prediction.hf.space/finbert/metrics";
-
-interface FinBertMetrics {
-  model_load_time_seconds: number | null;
-  model_loaded_at: string | null;
-  device: string | null;
-  last_inference_run_at: string | null;
-  last_inference_article_count: number | null;
-  last_inference_total_seconds: number | null;
-  last_inference_per_article_seconds: number | null;
-}
-
 const initialCachedNews = getCachedNews();
 
 const News = () => {
@@ -94,15 +69,11 @@ const News = () => {
   const [daysInput, setDaysInput] = useState("7");
   const [dateInput, setDateInput] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [finbertMetrics, setFinbertMetrics] = useState<FinBertMetrics | null>(null);
-  const [finbertLoading, setFinbertLoading] = useState(true);
-  const [finbertError, setFinbertError] = useState<string | null>(null);
   const { notify } = useNotification();
   const initialFetchDone = useRef(false);
 
   const distinctDates = useMemo(
-    () =>
-      new Set(articles.map((article) => article.article_date).filter(Boolean)).size,
+    () => new Set(articles.map((article) => article.article_date).filter(Boolean)).size,
     [articles],
   );
 
@@ -112,7 +83,6 @@ const News = () => {
     return articles.slice(start, end);
   }, [articles, currentPage]);
 
-  // Preload next page images in the background for instant display when user navigates
   useEffect(() => {
     const nextStart = currentPage * ARTICLES_PER_PAGE;
     const nextPageArticles = articles.slice(nextStart, nextStart + ARTICLES_PER_PAGE);
@@ -145,14 +115,12 @@ const News = () => {
         setError(null);
       }
 
-      setError(null);
       const result = await fetchNews(options, requestOptions);
       setArticles(result.articles);
       setFailedImages({});
       setCurrentPage(1);
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Failed to fetch news articles";
+      const message = err instanceof Error ? err.message : "Failed to fetch news articles";
       setError(message);
       notify({ type: "error", title: "News fetch failed", message });
     } finally {
@@ -166,23 +134,6 @@ const News = () => {
     if (initialFetchDone.current) return;
     initialFetchDone.current = true;
     loadNews();
-  }, []);
-
-  useEffect(() => {
-    setFinbertLoading(true);
-    fetch(FINBERT_METRICS_URL)
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json() as Promise<FinBertMetrics>;
-      })
-      .then((data) => {
-        setFinbertMetrics(data);
-        setFinbertError(null);
-      })
-      .catch((err) => {
-        setFinbertError(err instanceof Error ? err.message : "Failed to load FinBERT metrics");
-      })
-      .finally(() => setFinbertLoading(false));
   }, []);
 
   const handleFilterSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -225,74 +176,73 @@ const News = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-oil-black pt-24 pb-16 px-4 sm:px-6 md:px-8">
-      <div className="pointer-events-none absolute inset-0 bg-grid-pattern opacity-80" />
-      <div className="pointer-events-none absolute -top-20 left-1/2 -translate-x-1/2 w-[560px] h-[560px] rounded-full bg-oil-gold/10 blur-[150px]" />
+    <div className="relative min-h-screen bg-oil-black pt-24 pb-20 px-4 sm:px-6 md:px-8">
+      <div className="pointer-events-none absolute inset-0 bg-grid-pattern opacity-50" />
+      <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[660px] h-[420px] rounded-full bg-oil-gold/10 blur-[120px]" />
 
       <div className="relative max-w-6xl mx-auto space-y-7">
-        <header className="glass-strong rounded-3xl p-6 md:p-8 border border-oil-gold/15">
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-5">
+        <header className="rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.08] to-white/[0.02] p-7 md:p-9">
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
             <div>
-              <p className="text-xs uppercase tracking-[0.22em] text-oil-light-gold/80 mb-2">
-                Live Market Intelligence
+              <p className="text-[11px] uppercase tracking-[0.2em] text-oil-gold/90 font-semibold">
+                Market Intelligence Feed
               </p>
-              <h1 className="text-3xl md:text-4xl font-display font-bold text-white">
-                Energy News Feed
+              <h1 className="text-3xl md:text-4xl font-display font-bold text-white mt-3">
+                Energy News Desk
               </h1>
-              <p className="text-sm text-gray-400 mt-3 max-w-2xl">
-                Monitor the latest macro, policy, and commodity headlines that can
-                shift Brent crude expectations.
+              <p className="text-base text-gray-300 mt-3 max-w-2xl leading-7">
+                A cleaner editorial feed for tracking headlines that can influence near-term Brent price direction.
+                Browse by recency windows or inspect a specific publication date.
               </p>
             </div>
-            <div className="grid grid-cols-2 gap-3 text-xs text-gray-400">
-              <div className="glass rounded-xl px-4 py-3">
-                <p className="uppercase tracking-wide text-gray-500">Articles</p>
-                <p className="text-xl text-white font-semibold mt-1">{articles.length}</p>
+
+            <div className="grid grid-cols-2 gap-3 min-w-[220px]">
+              <div className="rounded-xl border border-white/10 bg-oil-black/35 px-4 py-3">
+                <p className="text-[10px] uppercase tracking-[0.14em] text-gray-500">Articles</p>
+                <p className="text-2xl font-display font-bold text-white mt-1">{articles.length}</p>
               </div>
-              <div className="glass rounded-xl px-4 py-3">
-                <p className="uppercase tracking-wide text-gray-500">Distinct Dates</p>
-                <p className="text-xl text-white font-semibold mt-1">{distinctDates}</p>
+              <div className="rounded-xl border border-white/10 bg-oil-black/35 px-4 py-3">
+                <p className="text-[10px] uppercase tracking-[0.14em] text-gray-500">Distinct Dates</p>
+                <p className="text-2xl font-display font-bold text-white mt-1">{distinctDates}</p>
               </div>
             </div>
           </div>
         </header>
 
-        <form
-          onSubmit={handleFilterSubmit}
-          className="glass-strong rounded-2xl p-5 border border-white/10"
-        >
+        <form onSubmit={handleFilterSubmit} className="rounded-2xl border border-white/10 bg-[#14120f]/90 p-5 sm:p-6">
           <div className="flex flex-col xl:flex-row gap-4 xl:items-end xl:justify-between">
-            <div className="flex items-center gap-4 flex-wrap">
-              <label className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
-                <input
-                  type="radio"
-                  name="news-mode"
-                  value="recent"
-                  checked={mode === "recent"}
-                  onChange={() => setMode("recent")}
-                  className="accent-oil-gold"
-                />
-                <span>Most recent distinct dates</span>
-              </label>
-              <label className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
-                <input
-                  type="radio"
-                  name="news-mode"
-                  value="date"
-                  checked={mode === "date"}
-                  onChange={() => setMode("date")}
-                  className="accent-oil-gold"
-                />
-                <span>Exact date</span>
-              </label>
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.16em] text-gray-500 font-semibold mb-2">View Mode</p>
+              <div className="inline-flex rounded-xl border border-white/10 bg-oil-black/40 p-1 gap-1">
+                <button
+                  type="button"
+                  onClick={() => setMode("recent")}
+                  className={`px-3 py-2 rounded-lg text-sm transition-colors ${
+                    mode === "recent"
+                      ? "bg-oil-gold text-oil-black font-semibold"
+                      : "text-gray-300 hover:bg-white/5"
+                  }`}
+                >
+                  Recent Dates
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMode("date")}
+                  className={`px-3 py-2 rounded-lg text-sm transition-colors ${
+                    mode === "date"
+                      ? "bg-oil-gold text-oil-black font-semibold"
+                      : "text-gray-300 hover:bg-white/5"
+                  }`}
+                >
+                  Exact Date
+                </button>
+              </div>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 w-full xl:w-auto">
               {mode === "recent" ? (
                 <div className="flex flex-col gap-1">
-                  <label htmlFor="days" className="text-xs text-gray-400">
-                    Distinct dates count
-                  </label>
+                  <label htmlFor="days" className="text-xs text-gray-400">Distinct date count</label>
                   <input
                     id="days"
                     type="number"
@@ -304,9 +254,7 @@ const News = () => {
                 </div>
               ) : (
                 <div className="flex flex-col gap-1">
-                  <label htmlFor="article-date" className="text-xs text-gray-400">
-                    Article date
-                  </label>
+                  <label htmlFor="article-date" className="text-xs text-gray-400">Article date</label>
                   <input
                     id="article-date"
                     type="date"
@@ -322,12 +270,7 @@ const News = () => {
                   <Search size={16} />
                   Apply
                 </AnimatedButton>
-                <AnimatedButton
-                  type="button"
-                  variant="secondary"
-                  onClick={handleReset}
-                  className="h-11 px-4"
-                >
+                <AnimatedButton type="button" variant="secondary" onClick={handleReset} className="h-11 px-4">
                   <RefreshCw size={16} />
                   Reset
                 </AnimatedButton>
@@ -337,91 +280,101 @@ const News = () => {
         </form>
 
         {error && (
-          <div className="rounded-2xl border border-oil-gold/30 bg-oil-gold/10 px-4 py-3 text-sm text-oil-gold">
+          <div className="rounded-xl border border-oil-gold/35 bg-oil-gold/10 px-4 py-3 text-sm text-oil-gold">
             {error}
           </div>
         )}
 
         {loading && (
-          <div className="grid md:grid-cols-2 gap-4">
-            {[1, 2, 3, 4].map((key) => (
-              <div key={key} className="skeleton-loader h-48 rounded-2xl animate-pulse" />
+          <div className="space-y-3">
+            {[1, 2, 3].map((key) => (
+              <div key={key} className="skeleton-loader h-44 rounded-2xl animate-pulse" />
             ))}
           </div>
         )}
 
         {!loading && articles.length === 0 && (
-          <div className="glass-strong rounded-2xl p-10 border border-white/10 text-center">
-            <Newspaper className="mx-auto text-gray-500" size={36} />
+          <div className="rounded-2xl border border-white/10 bg-[#14120f]/90 p-10 text-center">
+            <Newspaper className="mx-auto text-gray-500" size={34} />
             <p className="mt-3 text-white font-semibold">No articles found</p>
-            <p className="text-sm text-gray-400 mt-1">
-              Try a different date filter or reset to the default latest feed.
-            </p>
+            <p className="text-sm text-gray-400 mt-1">Try a different filter or reset to the default feed.</p>
           </div>
         )}
 
         {!loading && articles.length > 0 && (
-          <div className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-4">
+          <section className="space-y-5">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="text-xl sm:text-2xl font-display font-bold text-white">Latest Coverage</h2>
+              <p className="text-xs uppercase tracking-[0.14em] text-gray-500">
+                Page {currentPage} of {Math.max(1, Math.ceil(articles.length / ARTICLES_PER_PAGE))}
+              </p>
+            </div>
+
+            <div className="space-y-4">
               {pagedArticles.map((article, index) => (
                 <motion.article
                   key={`${article.id}-${(currentPage - 1) * ARTICLES_PER_PAGE + index}`}
-                  initial={{ opacity: 0, y: 18 }}
+                  initial={{ opacity: 0, y: 14 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.04 }}
-                  className="glass-strong rounded-2xl p-4 border border-white/10 flex flex-col gap-4"
+                  className="rounded-2xl border border-white/10 bg-[#14120f]/90 p-4 sm:p-5"
                 >
-                  <div className="relative overflow-hidden rounded-xl h-44 bg-oil-dark/80 border border-white/10">
-                    {article.image_url && !failedImages[article.id] ? (
-                      <NewsImage
-                        src={article.image_url}
-                        alt={article.title}
-                        articleId={article.id}
-                        onError={handleImageError}
-                      />
-                    ) : (
-                      <div className="h-full w-full bg-oil-dark/80 flex items-center justify-center">
-                        <Newspaper className="text-oil-light-gold/70" size={34} />
+                  <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-4">
+                    <div className="relative overflow-hidden rounded-xl h-44 md:h-full bg-oil-dark/80 border border-white/10">
+                      {article.image_url && !failedImages[article.id] ? (
+                        <NewsImage
+                          src={article.image_url}
+                          alt={article.title}
+                          articleId={article.id}
+                          onError={handleImageError}
+                        />
+                      ) : (
+                        <div className="h-full w-full bg-oil-dark/80 flex items-center justify-center">
+                          <Newspaper className="text-oil-light-gold/70" size={32} />
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex flex-col">
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-gray-400 mb-3">
+                        <span className="inline-flex items-center gap-1.5">
+                          <Calendar size={13} />
+                          {formatArticleDate(article.article_date)}
+                        </span>
+                        <span className="uppercase tracking-[0.12em] text-oil-gold/80">
+                          {article.source ?? "Unknown source"}
+                        </span>
                       </div>
-                    )}
-                    <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-black/45" />
+
+                      <h3 className="text-xl font-display font-semibold text-white leading-snug mb-3">
+                        {article.title}
+                      </h3>
+
+                      <p className="text-sm sm:text-base text-gray-300 leading-7 line-clamp-4 flex-1">
+                        {article.summary ?? "No summary available for this article."}
+                      </p>
+
+                      {article.url && (
+                        <div className="pt-4 mt-4 border-t border-white/10">
+                          <a
+                            href={article.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 text-sm text-oil-gold hover:text-oil-light-gold transition-colors"
+                          >
+                            Open full article
+                            <ExternalLink size={15} />
+                          </a>
+                        </div>
+                      )}
+                    </div>
                   </div>
-
-                  <div className="flex items-center justify-between gap-3 text-xs text-gray-400">
-                    <span className="inline-flex items-center gap-1.5">
-                      <Calendar size={14} />
-                      {formatArticleDate(article.article_date)}
-                    </span>
-                    <span className="uppercase tracking-wide text-oil-light-gold/80">
-                      {article.source ?? "Unknown source"}
-                    </span>
-                  </div>
-
-                  <h2 className="text-lg font-semibold text-white leading-snug">
-                    {article.title}
-                  </h2>
-
-                  <p className="text-sm text-gray-400 leading-relaxed line-clamp-4 flex-1">
-                    {article.summary ?? "No summary available for this article."}
-                  </p>
-
-                  {article.url && (
-                    <a
-                      href={article.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-sm text-oil-gold hover:text-oil-light-gold transition-colors"
-                    >
-                      Read source
-                      <ExternalLink size={15} />
-                    </a>
-                  )}
                 </motion.article>
               ))}
             </div>
 
             {articles.length > ARTICLES_PER_PAGE && (
-              <div className="flex justify-center">
+              <div className="flex justify-center pt-2">
                 <Pagination
                   current={currentPage}
                   pageSize={ARTICLES_PER_PAGE}
@@ -431,118 +384,8 @@ const News = () => {
                 />
               </div>
             )}
-          </div>
+          </section>
         )}
-
-        {/* ── FinBERT Model Metrics ── */}
-        <section className="space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="w-1 h-6 rounded-full bg-oil-gold" />
-            <h2 className="text-lg font-bold text-white font-display flex items-center gap-2">
-              <Brain size={18} className="text-oil-gold" />
-              FinBERT Sentiment Model Metrics
-            </h2>
-          </div>
-
-          {finbertLoading && (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
-              {[1, 2, 3, 4].map((k) => (
-                <div key={k} className="skeleton-loader h-24 rounded-2xl animate-pulse" />
-              ))}
-            </div>
-          )}
-
-          {!finbertLoading && finbertError && (
-            <div className="rounded-2xl border border-oil-gold/30 bg-oil-gold/10 px-4 py-3 text-sm text-oil-gold">
-              {finbertError}
-            </div>
-          )}
-
-          {!finbertLoading && finbertMetrics && (
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="glass-strong rounded-3xl p-6 border border-oil-gold/15 space-y-5"
-            >
-              {/* Device & Load info */}
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div className="glass rounded-2xl px-5 py-4 flex items-start gap-3">
-                  <Cpu size={18} className="text-oil-gold mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-xs uppercase tracking-widest text-gray-500 mb-1">Device</p>
-                    <p className="text-base font-semibold text-white">
-                      {finbertMetrics.device ?? <span className="text-gray-500">—</span>}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="glass rounded-2xl px-5 py-4 flex items-start gap-3">
-                  <Timer size={18} className="text-oil-gold mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-xs uppercase tracking-widest text-gray-500 mb-1">Model Load Time</p>
-                    <p className="text-base font-semibold text-white">
-                      {finbertMetrics.model_load_time_seconds === null
-                        ? <span className="text-gray-500">—</span>
-                        : `${finbertMetrics.model_load_time_seconds.toFixed(2)} s`}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="glass rounded-2xl px-5 py-4 flex items-start gap-3">
-                  <Calendar size={18} className="text-purple-400 mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-xs uppercase tracking-widest text-gray-500 mb-1">Model Loaded At</p>
-                    <p className="text-base font-semibold text-white">
-                      {finbertMetrics.model_loaded_at
-                        ? new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeStyle: "short" }).format(new Date(finbertMetrics.model_loaded_at))
-                        : <span className="text-gray-500">—</span>}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Last Inference stats */}
-              <div>
-                <p className="text-xs uppercase tracking-widest text-gray-500 mb-3">Last Inference Run</p>
-                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <div className="glass rounded-2xl px-5 py-4">
-                    <p className="text-xs text-gray-500 mb-1">Run At</p>
-                    <p className="text-sm font-semibold text-white">
-                      {finbertMetrics.last_inference_run_at
-                        ? new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeStyle: "short" }).format(new Date(finbertMetrics.last_inference_run_at))
-                        : <span className="text-gray-500">—</span>}
-                    </p>
-                  </div>
-
-                  <div className="glass rounded-2xl px-5 py-4">
-                    <p className="text-xs text-gray-500 mb-1">Articles Processed</p>
-                    <p className="text-2xl font-bold text-oil-gold font-display">
-                      {finbertMetrics.last_inference_article_count ?? <span className="text-gray-500 text-sm">—</span>}
-                    </p>
-                  </div>
-
-                  <div className="glass rounded-2xl px-5 py-4">
-                    <p className="text-xs text-gray-500 mb-1">Total Duration</p>
-                    <p className="text-2xl font-bold text-oil-gold font-display">
-                      {finbertMetrics.last_inference_total_seconds === null
-                        ? <span className="text-gray-500 text-sm">—</span>
-                        : `${finbertMetrics.last_inference_total_seconds.toFixed(2)} s`}
-                    </p>
-                  </div>
-
-                  <div className="glass rounded-2xl px-5 py-4">
-                    <p className="text-xs text-gray-500 mb-1">Per Article</p>
-                    <p className="text-2xl font-bold text-purple-400 font-display">
-                      {finbertMetrics.last_inference_per_article_seconds === null
-                        ? <span className="text-gray-500 text-sm">—</span>
-                        : `${finbertMetrics.last_inference_per_article_seconds.toFixed(3)} s`}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </section>
       </div>
     </div>
   );
