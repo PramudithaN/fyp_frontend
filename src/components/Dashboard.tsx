@@ -9,12 +9,13 @@ import {
   SentimentOverviewResponse,
 } from "../types/api";
 import {
+  fetchBenchmarkDerivedForecast as fetchBenchmarkDerivedForecastApi,
+  fetchBenchmarkQuotes as fetchBenchmarkQuotesApi,
   fetchHistoricalPricesProgressive as fetchHistoricalPricesProgressiveApi,
   fetchPredictionComparison as fetchPredictionComparisonApi,
   fetchPredictions as fetchPredictionsApi,
   fetchExplain as fetchExplainApi,
   fetchSentimentProgressively as fetchSentimentProgressivelyApi,
-  getCachedPrediction,
   getCachedPredictionComparison,
 } from "../api";
 import {
@@ -51,6 +52,7 @@ import CountUp from "react-countup";
 import AnimatedButton from "./ui/AnimatedButton";
 import ExplainPanel, { ExplainPanelSkeleton } from "./ExplainPanel";
 import { useNotification } from "../context/NotificationContext";
+import { BENCHMARKS, useCurrency, type CrudeBenchmark } from "../context/CurrencyContext";
 import { useDateUtils } from "../utils/dateUtils";
 
 /* ─── Skeleton Loader ─── */
@@ -91,7 +93,8 @@ const formatCurrency = (
   value: number | null | undefined,
   digits = 2,
   fallback = "0.00",
-): string => `$${formatFixed(value, digits, fallback)}`;
+  symbol = "$",
+): string => `${symbol}${formatFixed(value, digits, fallback)}`;
 
 const SkeletonDashboard = () => (
   <div className="px-4 sm:px-6 md:px-8 lg:px-10 pt-24 pb-8 space-y-8 max-w-400 mx-auto min-h-screen">
@@ -165,7 +168,17 @@ const SentimentGauge = ({ value }: { value: number }) => {
 };
 
 /* ─── Custom Chart Tooltip ─── */
-const CustomTooltip = ({ active, payload, label }: any) => {
+const CustomTooltip = ({
+  active,
+  payload,
+  label,
+  formatCurrencyValue,
+}: {
+  active?: boolean;
+  payload?: any[];
+  label?: string;
+  formatCurrencyValue: (value: number | null | undefined, digits?: number, fallback?: string) => string;
+}) => {
   if (!active || !payload?.length) return null;
   const point = payload[0]?.payload;
   if (!point) return null;
@@ -185,7 +198,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
           <div className="w-2 h-2 rounded-full bg-oil-cyan" />
           <span className="text-xs text-gray-500">Actual</span>
           <span className="text-lg font-bold text-oil-cyan font-display ml-auto">
-            {formatCurrency(actualVal)}
+            {formatCurrencyValue(actualVal)}
           </span>
         </div>
       )}
@@ -194,7 +207,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
           <div className="w-2 h-2 rounded-full bg-oil-gold" />
           <span className="text-xs text-gray-500">Forecast (Median)</span>
           <span className="text-lg font-bold text-oil-gold font-display ml-auto">
-            {formatCurrency(forecastVal)}
+            {formatCurrencyValue(forecastVal)}
           </span>
         </div>
       )}
@@ -202,11 +215,11 @@ const CustomTooltip = ({ active, payload, label }: any) => {
         <div className="mt-2 space-y-1 text-xs">
           <div className="flex items-center justify-between gap-3">
             <span className="text-gray-500">Lower Bound</span>
-            <span className="font-mono text-gray-300">{formatCurrency(lowerVal)}</span>
+            <span className="font-mono text-gray-300">{formatCurrencyValue(lowerVal)}</span>
           </div>
           <div className="flex items-center justify-between gap-3">
             <span className="text-gray-500">Upper Bound</span>
-            <span className="font-mono text-gray-300">{formatCurrency(upperVal)}</span>
+            <span className="font-mono text-gray-300">{formatCurrencyValue(upperVal)}</span>
           </div>
         </div>
       )}
@@ -219,7 +232,17 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   );
 };
 
-const AnalyticsTooltip = ({ active, payload, label }: any) => {
+const AnalyticsTooltip = ({
+  active,
+  payload,
+  label,
+  formatCurrencyValue,
+}: {
+  active?: boolean;
+  payload?: any[];
+  label?: string;
+  formatCurrencyValue: (value: number | null | undefined, digits?: number, fallback?: string) => string;
+}) => {
   if (!active || !payload?.length) return null;
 
   const point = payload[0]?.payload;
@@ -231,27 +254,27 @@ const AnalyticsTooltip = ({ active, payload, label }: any) => {
       <div className="space-y-2 text-xs">
         <div className="flex items-center justify-between gap-4">
           <span className="text-gray-500">Actual</span>
-          <span className="font-mono text-oil-cyan">{formatCurrency(point.actualPrice)}</span>
+          <span className="font-mono text-oil-cyan">{formatCurrencyValue(point.actualPrice)}</span>
         </div>
         <div className="flex items-center justify-between gap-4">
           <span className="text-gray-500">Predicted</span>
-          <span className="font-mono text-oil-gold">{formatCurrency(point.predictedPrice)}</span>
+          <span className="font-mono text-oil-gold">{formatCurrencyValue(point.predictedPrice)}</span>
         </div>
         {isFiniteNumber(point.lowerBound) && isFiniteNumber(point.upperBound) && (
           <>
             <div className="flex items-center justify-between gap-4">
               <span className="text-gray-500">Lower Bound</span>
-              <span className="font-mono text-emerald-400">{formatCurrency(point.lowerBound)}</span>
+              <span className="font-mono text-emerald-400">{formatCurrencyValue(point.lowerBound)}</span>
             </div>
             <div className="flex items-center justify-between gap-4">
               <span className="text-gray-500">Upper Bound</span>
-              <span className="font-mono text-emerald-400">{formatCurrency(point.upperBound)}</span>
+              <span className="font-mono text-emerald-400">{formatCurrencyValue(point.upperBound)}</span>
             </div>
           </>
         )}
         <div className="flex items-center justify-between gap-4">
           <span className="text-gray-500">Absolute Error</span>
-          <span className="font-mono text-white">{formatCurrency(point.absoluteError)}</span>
+          <span className="font-mono text-white">{formatCurrencyValue(point.absoluteError)}</span>
         </div>
         <div className="flex items-center justify-between gap-4">
           <span className="text-gray-500">Prediction Count</span>
@@ -262,7 +285,17 @@ const AnalyticsTooltip = ({ active, payload, label }: any) => {
   );
 };
 
-const HistoricalPriceTooltip = ({ active, payload, label }: any) => {
+const HistoricalPriceTooltip = ({
+  active,
+  payload,
+  label,
+  formatCurrencyValue,
+}: {
+  active?: boolean;
+  payload?: any[];
+  label?: string;
+  formatCurrencyValue: (value: number | null | undefined, digits?: number, fallback?: string) => string;
+}) => {
   if (!active || !payload?.length) return null;
   const point = payload[0]?.payload;
   if (!point) return null;
@@ -270,11 +303,11 @@ const HistoricalPriceTooltip = ({ active, payload, label }: any) => {
   return (
     <div className="glass-strong p-4 rounded-xl shadow-2xl min-w-45">
       <p className="text-xs text-gray-400 mb-2">{label}</p>
-      <p className="text-lg font-bold text-oil-cyan mb-1">${point.price.toFixed(2)}</p>
+      <p className="text-lg font-bold text-oil-cyan mb-1">{formatCurrencyValue(point.price)}</p>
       <p className="text-xs text-gray-500">
-        O: {point.open.toFixed(2)}  H: {point.high.toFixed(2)}
+        O: {formatCurrencyValue(point.open)}  H: {formatCurrencyValue(point.high)}
       </p>
-      <p className="text-xs text-gray-500">L: {point.low.toFixed(2)}</p>
+      <p className="text-xs text-gray-500">L: {formatCurrencyValue(point.low)}</p>
     </div>
   );
 };
@@ -340,6 +373,13 @@ const toDateOnly = (value: string): string => value.split("T")[0];
 const SENTIMENT_DISPLAY_START_DATE = "2014-01-01";
 const SENTIMENT_DISPLAY_END_DATE = "2025-12-31";
 
+const BENCHMARK_TO_API_TARGET: Record<CrudeBenchmark, "brent" | "wti" | "opec" | "dubai"> = {
+  Brent: "brent",
+  WTI: "wti",
+  OPEC: "opec",
+  Dubai: "dubai",
+};
+
 type DashboardTab = "forecast" | "historical" | "analytics";
 type DashboardNotificationScope =
   | "forecast"
@@ -354,7 +394,6 @@ const NOTIFICATION_SCOPE_TO_TAB: Record<DashboardNotificationScope, DashboardTab
   fan: "analytics",
 };
 
-const initialCachedPrediction = getCachedPrediction();
 const initialCachedPredictionComparison = getCachedPredictionComparison(
   DEFAULT_ANALYTICS_START_DATE,
   DEFAULT_ANALYTICS_END_DATE,
@@ -362,14 +401,14 @@ const initialCachedPredictionComparison = getCachedPredictionComparison(
 
 function Dashboard() { // NOSONAR: This container intentionally orchestrates multiple tabs/data sources in one screen.
   const [activeTab, setActiveTab] = useState<DashboardTab>("forecast");
-  const [data, setData] = useState<PredictionResponse | null>(() => initialCachedPrediction);
+  const [data, setData] = useState<PredictionResponse | null>(null);
   const [historicalData, setHistoricalData] =
     useState<HistoricalPricesResponse | null>(null);
   const [analyticsData, setAnalyticsData] =
     useState<PredictionComparisonResponse | null>(() => initialCachedPredictionComparison);
   const [sentimentData, setSentimentData] =
     useState<SentimentOverviewResponse | null>(null);
-  const [loading, setLoading] = useState<boolean>(!initialCachedPrediction);
+  const [loading, setLoading] = useState<boolean>(true);
   const [historicalLoading, setHistoricalLoading] = useState<boolean>(true);
   const [sentimentLoading, setSentimentLoading] = useState<boolean>(true);
   const [sentimentProgress, setSentimentProgress] = useState<number>(0);
@@ -386,18 +425,42 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
   const [analyticsEndDate, setAnalyticsEndDate] =
     useState<string>(DEFAULT_ANALYTICS_END_DATE);
   const [refreshing, setRefreshing] = useState(false);
+  const [benchmarkSwitchLoading, setBenchmarkSwitchLoading] = useState(false);
   const [explainOpen, setExplainOpen] = useState(false);
   const [explainLoading, setExplainLoading] = useState(false);
   const [explainData, setExplainData] = useState<ExplainResponse | null>(null);
   const [explainError, setExplainError] = useState<string | null>(null);
+  const [forecastDisclaimer, setForecastDisclaimer] = useState<string | null>(null);
+  const [forecastSeriesLabel, setForecastSeriesLabel] = useState<string>("Model Forecast");
+  const { benchmark, currencyDetails, unitDetails } = useCurrency();
   const { notify } = useNotification();
   const dateUtils = useDateUtils();
   // Guards against React StrictMode double-invocation firing the initial fetches twice.
   const initialFetchDone = useRef(false);
+  const benchmarkWatchInitialized = useRef(false);
+  const benchmarkApiMode = useRef<"unknown" | "available" | "unavailable">("unknown");
+  const legacyBrentPredictionCache = useRef<PredictionResponse | null>(null);
   const lastSentimentRangeRef = useRef<string | null>(null);
   const pendingNotifications = useRef<
     Partial<Record<DashboardNotificationScope, Parameters<typeof notify>[0]>>
   >({});
+
+  const currencyScaleFactor = currencyDetails.rate * unitDetails.multiplier;
+  const currencySymbol = currencyDetails.symbol;
+
+  const toDisplayCurrency = (value: number | null | undefined): number | null => {
+    if (!isFiniteNumber(value)) return null;
+    return value * currencyScaleFactor;
+  };
+
+  const formatDisplayCurrency = (
+    value: number | null | undefined,
+    digits = 2,
+    fallback = "0.00",
+  ): string => {
+    const converted = toDisplayCurrency(value);
+    return formatCurrency(converted, digits, fallback, currencySymbol);
+  };
 
   const flushNotificationsForTab = useCallback(
     (tab: DashboardTab) => {
@@ -440,9 +503,7 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
     const primaryRequests: Promise<unknown>[] = [];
 
     // Prioritize forecast + actual comparison so both series can render together.
-    if (!initialCachedPrediction) {
-      primaryRequests.push(fetchPredictions());
-    }
+    primaryRequests.push(fetchPredictions());
 
     if (!initialCachedPredictionComparison) {
       primaryRequests.push(
@@ -462,12 +523,132 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
     });
   }, []);
 
-  const fetchPredictions = async (requestOptions?: { forceRefresh?: boolean }) => {
+  useEffect(() => {
+    if (!initialFetchDone.current) return;
+    if (!benchmarkWatchInitialized.current) {
+      benchmarkWatchInitialized.current = true;
+      return;
+    }
+
+    setBenchmarkSwitchLoading(true);
+    void fetchPredictions().finally(() => {
+      setBenchmarkSwitchLoading(false);
+    });
+  }, [benchmark]);
+
+  const fetchPredictions = async () => {
     try {
       setLoading(true);
       setError(null);
-      const result = await fetchPredictionsApi(requestOptions);
-      setData(result);
+      const target = BENCHMARK_TO_API_TARGET[benchmark];
+
+      const buildFallbackPredictionData = (legacy: PredictionResponse): PredictionResponse => {
+        const offset = BENCHMARKS[benchmark].priceOffset;
+        const isBrent = benchmark === "Brent";
+
+        const fallbackForecasts = legacy.forecasts.map((forecast) => ({
+          ...forecast,
+          forecasted_price: isBrent
+            ? forecast.forecasted_price
+            : forecast.forecasted_price + offset,
+          ...(typeof forecast.lower_bound === "number"
+            ? { lower_bound: isBrent ? forecast.lower_bound : forecast.lower_bound + offset }
+            : {}),
+          ...(typeof forecast.upper_bound === "number"
+            ? { upper_bound: isBrent ? forecast.upper_bound : forecast.upper_bound + offset }
+            : {}),
+          benchmark: target,
+          benchmark_label: BENCHMARKS[benchmark].name,
+          forecast_type: isBrent ? "model" : "derived_from_brent",
+          brent_forecasted_price: forecast.forecasted_price,
+        }));
+
+        return {
+          ...legacy,
+          last_price: isBrent ? legacy.last_price : legacy.last_price + offset,
+          forecasts: fallbackForecasts,
+          benchmark_target: target,
+          benchmark_label: BENCHMARKS[benchmark].name,
+          quality: isBrent ? "model_target" : "indicative",
+          disclaimer: isBrent
+            ? undefined
+            : "Brent is model-backed. Non-Brent forecasts are transformed estimates, not separately trained model outputs.",
+          forecast_mode: isBrent ? "model" : "estimated",
+        };
+      };
+
+      if (benchmarkApiMode.current === "unavailable") {
+        const legacy =
+          legacyBrentPredictionCache.current ??
+          (await fetchPredictionsApi({ forceRefresh: false }));
+        legacyBrentPredictionCache.current = legacy;
+        const fallbackData = buildFallbackPredictionData(legacy);
+        const isBrent = benchmark === "Brent";
+        setForecastDisclaimer(isBrent ? null : fallbackData.disclaimer ?? null);
+        setForecastSeriesLabel(isBrent ? "Model Forecast" : "Estimated from Brent");
+        setData(fallbackData);
+        return;
+      }
+
+      const [derivedResult, quotesResult] = await Promise.allSettled([
+        fetchBenchmarkDerivedForecastApi(target, {
+          method: "spread",
+          lookbackDays: 60,
+        }),
+        fetchBenchmarkQuotesApi({ lookbackDays: 60 }),
+      ]);
+
+      if (derivedResult.status === "fulfilled") {
+        benchmarkApiMode.current = "available";
+        const response = derivedResult.value;
+        const selectedQuote =
+          quotesResult.status === "fulfilled"
+            ? quotesResult.value.quotes.find((quote) => quote.benchmark === target)
+            : undefined;
+
+        const normalized: PredictionResponse = {
+          success: response.success,
+          data_source: target === "brent" ? "predict:model" : "derived_from_brent",
+          last_price_date:
+            selectedQuote?.as_of ?? response.based_on_price_date ?? response.prediction_date ?? "",
+          last_price: selectedQuote?.price ?? response.forecasts[0]?.forecasted_price ?? 0,
+          forecasts: response.forecasts,
+          market_state: "UNKNOWN",
+          is_market_open: false,
+          benchmark_target: response.target,
+          benchmark_label: response.target_label,
+          quality: response.quality,
+          disclaimer: response.disclaimer,
+          forecast_mode: response.target === "brent" ? "model" : "estimated",
+        };
+
+        setForecastDisclaimer(response.target === "brent" ? null : response.disclaimer ?? null);
+        setForecastSeriesLabel(
+          response.target === "brent" ? "Model Forecast" : "Estimated from Brent",
+        );
+        setData(normalized);
+      } else {
+        const derivedErrorMessage =
+          derivedResult.reason instanceof Error
+            ? derivedResult.reason.message
+            : String(derivedResult.reason ?? "");
+        if (/status:\s*404/.test(derivedErrorMessage)) {
+          benchmarkApiMode.current = "unavailable";
+        }
+
+        // Backward compatibility: if benchmark endpoints are unavailable, fall back to legacy Brent model.
+        const legacy =
+          legacyBrentPredictionCache.current ??
+          (await fetchPredictionsApi({ forceRefresh: false }));
+        legacyBrentPredictionCache.current = legacy;
+        const isBrent = benchmark === "Brent";
+
+        const fallbackData: PredictionResponse = buildFallbackPredictionData(legacy);
+
+        setForecastDisclaimer(isBrent ? null : fallbackData.disclaimer ?? null);
+        setForecastSeriesLabel(isBrent ? "Model Forecast" : "Estimated from Brent");
+        setData(fallbackData);
+      }
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Failed to fetch predictions";
       setError(msg);
@@ -609,11 +790,13 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
 
   const handleRefresh = async () => {
     setRefreshing(true);
+    benchmarkApiMode.current = "unknown";
+    legacyBrentPredictionCache.current = null;
     lastSentimentRangeRef.current = null;
 
     try {
       await Promise.allSettled([
-        fetchPredictions({ forceRefresh: true }),
+        fetchPredictions(),
         // fetchFan(),
         fetchHistoricalPrices(),
         fetchSentimentOverview(
@@ -698,8 +881,6 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
     URL.revokeObjectURL(url);
   };
 
-  const formatPrice = (price: number): string => price.toFixed(2);
-
   if (loading && !data) return <SkeletonDashboard />;
 
   if (error) {
@@ -742,8 +923,17 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
       : 0;
   const priceChangePercent =
     data.last_price > 0 ? (priceChange / data.last_price) * 100 : 0;
+  const displayLastPrice = toDisplayCurrency(data.last_price) ?? 0;
+  const displayPriceChange = toDisplayCurrency(priceChange) ?? 0;
   const isPositive = priceChange >= 0;
   const isMarketRunning = data.is_market_open ?? false;
+  const isBrentTarget = (data.benchmark_target ?? "brent") === "brent";
+  const benchmarkPriceOffset = BENCHMARKS[benchmark].priceOffset;
+
+  const applyBenchmarkOffset = (value: number | null | undefined): number | null => {
+    if (!isFiniteNumber(value)) return null;
+    return value + benchmarkPriceOffset;
+  };
 
   // Build combined chart data: actual prices from Jan + forecast prices
   const lastPriceDateISO = data.last_price_date.split("T")[0];
@@ -767,7 +957,7 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
     .map((item) => ({
       date: dateUtils.format(item.date, "short"),
       rawDate: item.date.split("T")[0],
-      actualPrice: item.actual_price,
+      actualPrice: applyBenchmarkOffset(item.actual_price),
       forecastPrice: null as number | null,
       lowerBound: null,
       upperBound: null,
@@ -799,7 +989,7 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
         lastActual.forecastPrice = lastActual.actualPrice;
         return [...bridgedActual, ...forecastPricesForChart];
       })()
-    : [];
+    : forecastPricesForChart;
 
   const tableData = validForecasts.map((forecast, index) => ({
     ...forecast,
@@ -827,7 +1017,7 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
       key: "forecasted_price",
       render: (price: number) => (
         <span className="font-mono font-bold text-oil-gold text-base">
-          ${formatPrice(price)}
+          {formatDisplayCurrency(price)}
         </span>
       ),
     },
@@ -837,7 +1027,7 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
       key: "lower_bound",
       render: (price?: number) => (
         <span className="font-mono text-gray-300 text-sm">
-          {isFiniteNumber(price) ? `$${formatPrice(price)}` : "-"}
+          {isFiniteNumber(price) ? formatDisplayCurrency(price) : "-"}
         </span>
       ),
     },
@@ -847,7 +1037,7 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
       key: "upper_bound",
       render: (price?: number) => (
         <span className="font-mono text-gray-300 text-sm">
-          {isFiniteNumber(price) ? `$${formatPrice(price)}` : "-"}
+          {isFiniteNumber(price) ? formatDisplayCurrency(price) : "-"}
         </span>
       ),
     },
@@ -879,7 +1069,7 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
           }`}
         >
           {val >= 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
-          <span className="font-mono">${Math.abs(val).toFixed(2)}</span>
+          <span className="font-mono">{formatDisplayCurrency(Math.abs(val))}</span>
           <span className="text-xs opacity-60">
             ({val >= 0 ? "+" : ""}
             {((val / data.last_price) * 100).toFixed(2)}%)
@@ -904,10 +1094,10 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
 
   const historicalChartData = (historicalData?.data ?? []).map((item) => ({
     date: dateUtils.format(item.date, "short"),
-    price: item.price,
-    open: item.open,
-    high: item.high,
-    low: item.low,
+    price: applyBenchmarkOffset(item.price) ?? item.price,
+    open: applyBenchmarkOffset(item.open) ?? item.open,
+    high: applyBenchmarkOffset(item.high) ?? item.high,
+    low: applyBenchmarkOffset(item.low) ?? item.low,
     changePct: item.change_pct,
     rawDate: item.date,
   }));
@@ -961,18 +1151,24 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
     : "-";
   const analyticsChartData = (analyticsData?.comparison ?? []).map((item) => ({
     date: dateUtils.format(item.date, "short"),
-    actualPrice: item.actual_price,
-    predictedPrice: item.predicted_price,
-    medianPrice: item.predicted_price_median,
-    latestPrice: item.predicted_price_latest,
-    lowerBound: item.predicted_price_lower_bound,
-    upperBound: item.predicted_price_upper_bound,
+    actualPrice: applyBenchmarkOffset(item.actual_price),
+    predictedPrice: applyBenchmarkOffset(item.predicted_price),
+    medianPrice: applyBenchmarkOffset(item.predicted_price_median),
+    latestPrice: applyBenchmarkOffset(item.predicted_price_latest),
+    lowerBound: applyBenchmarkOffset(item.predicted_price_lower_bound),
+    upperBound: applyBenchmarkOffset(item.predicted_price_upper_bound),
     forecastBand:
-      isFiniteNumber(item.predicted_price_lower_bound) &&
-      isFiniteNumber(item.predicted_price_upper_bound)
+      isFiniteNumber(applyBenchmarkOffset(item.predicted_price_lower_bound)) &&
+      isFiniteNumber(applyBenchmarkOffset(item.predicted_price_upper_bound))
         ? ([
-            Math.min(item.predicted_price_lower_bound, item.predicted_price_upper_bound),
-            Math.max(item.predicted_price_lower_bound, item.predicted_price_upper_bound),
+            Math.min(
+              applyBenchmarkOffset(item.predicted_price_lower_bound) as number,
+              applyBenchmarkOffset(item.predicted_price_upper_bound) as number,
+            ),
+            Math.max(
+              applyBenchmarkOffset(item.predicted_price_lower_bound) as number,
+              applyBenchmarkOffset(item.predicted_price_upper_bound) as number,
+            ),
           ] as [number, number])
         : null,
     absoluteError: item.abs_error,
@@ -994,7 +1190,17 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
 
   return (
     <>
-    <div className="px-4 sm:px-6 md:px-8 lg:px-10 pt-24 pb-8 space-y-8 max-w-400 mx-auto min-h-screen bg-oil-black">
+    <div className="relative px-4 sm:px-6 md:px-8 lg:px-10 pt-24 pb-8 space-y-8 max-w-400 mx-auto min-h-screen bg-oil-black">
+      {benchmarkSwitchLoading && (
+        <div className="absolute inset-0 z-30 flex items-center justify-center rounded-2xl bg-oil-black/45 backdrop-blur-[1px]">
+          <div className="glass-strong rounded-2xl px-6 py-4 border border-oil-gold/25">
+            <div className="flex items-center gap-3 text-sm text-gray-200">
+              <RefreshCw size={16} className="animate-spin text-oil-gold" />
+              <span>Updating benchmark data...</span>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -1012,9 +1218,9 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
             <span>Market Intelligence</span>
           </div>
           <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight font-display flex items-center gap-4">
-            Brent Crude Oil{' '}
+            {data.benchmark_label ?? BENCHMARKS[benchmark].name}{' '}
             <span className="text-lg text-gray-500 font-normal font-sans">
-              BZ=F
+              {BENCHMARKS[benchmark].symbol}
             </span>
           </h1>
           <p className="text-gray-500 mt-2 flex items-center gap-2 text-sm">
@@ -1044,6 +1250,11 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
                 }`}
               />
               {isMarketRunning ? "Open" : "Closed"}
+            </span>
+          </p>
+          <p className="text-gray-500 mt-2 flex items-center gap-2 text-sm">
+            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-white/5 text-gray-300 border border-white/10">
+              {isBrentTarget ? "Model Forecast" : "Estimated from Brent"}
             </span>
           </p>
         </div>
@@ -1129,15 +1340,17 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
                   </div>
                 </div>
                 <div className="text-3xl font-bold text-white font-display">
-                  $
                   <CountUp
-                    end={data.last_price}
+                    end={displayLastPrice}
                     decimals={2}
                     duration={1.5}
+                    prefix={currencySymbol}
                     preserveValue
                   />
                 </div>
-                <div className="mt-2 text-xs text-gray-500">Brent Crude Oil</div>
+                <div className="mt-2 text-xs text-gray-500">
+                  {data.benchmark_label ?? BENCHMARKS[benchmark].name}
+                </div>
               </motion.div>
 
               {/* Forecast Change */}
@@ -1170,10 +1383,10 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
                 >
                   {isPositive ? "+" : ""}
                   <CountUp
-                    end={priceChange}
+                    end={displayPriceChange}
                     decimals={2}
                     duration={1.5}
-                    prefix="$"
+                    prefix={currencySymbol}
                     preserveValue
                   />
                 </div>
@@ -1257,7 +1470,7 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
                   </span>
                   <span className="flex items-center gap-1.5 text-gray-400">
                     <div className="w-2.5 h-2.5 rounded-full bg-oil-gold" />
-                    Forecast (Median)
+                    {forecastSeriesLabel} (Median)
                   </span>
                   <span className="flex items-center gap-1.5 text-gray-400">
                     <div className="w-4 h-2 rounded-sm bg-oil-gold/15 border border-oil-gold/35" />
@@ -1304,9 +1517,13 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
                       minPrice - safePriceRange * 0.3,
                       maxPrice + safePriceRange * 0.3,
                     ]}
-                    tickFormatter={(val) => formatCurrency(parseFiniteNumber(val), 2, "-")}
+                    tickFormatter={(val) =>
+                      formatDisplayCurrency(parseFiniteNumber(val), 2, "-")
+                    }
                   />
-                  <Tooltip content={<CustomTooltip />} />
+                  <Tooltip
+                    content={<CustomTooltip formatCurrencyValue={formatDisplayCurrency} />}
+                  />
                   <Area
                     type="monotone"
                     dataKey="forecastBand"
@@ -1360,7 +1577,7 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
                     stroke="rgba(255,255,255,0.15)"
                     strokeDasharray="4 4"
                     label={{
-                      value: `Current $${data.last_price.toFixed(2)}`,
+                      value: `Current ${formatDisplayCurrency(data.last_price)}`,
                       fill: "#666",
                       fontSize: 11,
                     }}
@@ -1369,6 +1586,11 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
                 </ResponsiveContainer>
                 )}
             </div>
+            {!isBrentTarget && forecastDisclaimer && (
+              <div className="mt-4 rounded-xl border border-amber-400/20 bg-amber-500/5 px-4 py-3 text-xs text-amber-200">
+                {forecastDisclaimer}
+              </div>
+            )}
           </motion.div>
 
           {/* Price Range Bar */}
@@ -1383,7 +1605,7 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
                   Forecast Price Range
                 </span>
                 <span className="text-gray-400 font-mono text-xs">
-                  ${minPrice.toFixed(2)} — ${maxPrice.toFixed(2)}
+                  {formatDisplayCurrency(minPrice)} — {formatDisplayCurrency(maxPrice)}
                 </span>
               </div>
               <div className="relative h-2 bg-white/5 rounded-full overflow-hidden">
@@ -1603,9 +1825,15 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
                           historicalMinPrice - historicalPriceRange * 0.15,
                           historicalMaxPrice + historicalPriceRange * 0.15,
                         ]}
-                        tickFormatter={(val) => `$${val.toFixed(0)}`}
+                        tickFormatter={(val) =>
+                          formatDisplayCurrency(parseFiniteNumber(val), 0, "0")
+                        }
                       />
-                      <Tooltip content={<HistoricalPriceTooltip />} />
+                      <Tooltip
+                        content={
+                          <HistoricalPriceTooltip formatCurrencyValue={formatDisplayCurrency} />
+                        }
+                      />
                       <Line
                         type="monotone"
                         dataKey="price"
@@ -1850,7 +2078,7 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
                   Predicted vs Actual Price Analytics
                 </h3>
                 <p className="text-sm text-gray-500 mt-2 max-w-3xl leading-relaxed">
-                  Compare realized Brent prices against the model&apos;s aggregated predictions for a custom date range.
+                  Compare realized {data.benchmark_label ?? BENCHMARKS[benchmark].name} prices against forecasted values for a custom date range.
                 </p>
               </div>
 
@@ -1956,7 +2184,7 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
                     MAE
                   </div>
                   <div className="text-3xl font-bold text-oil-gold font-display">
-                    {formatCurrency(analyticsMetrics?.mae)}
+                    {formatDisplayCurrency(analyticsMetrics?.mae)}
                   </div>
                   <div className="text-xs text-gray-500 mt-2">
                     Mean absolute error across the selected window
@@ -1973,7 +2201,7 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
                     RMSE
                   </div>
                   <div className="text-3xl font-bold text-emerald-300 font-display">
-                    {formatCurrency(analyticsMetrics?.rmse)}
+                    {formatDisplayCurrency(analyticsMetrics?.rmse)}
                   </div>
                   <div className="text-xs text-gray-500 mt-2">
                     Penalizes larger misses more heavily
@@ -2062,10 +2290,12 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
                             analyticsMaxPrice + analyticsPriceRange * 0.15,
                           ]}
                           tickFormatter={(value) =>
-                            formatCurrency(parseFiniteNumber(value), 0, "0")
+                            formatDisplayCurrency(parseFiniteNumber(value), 0, "0")
                           }
                         />
-                        <Tooltip content={<AnalyticsTooltip />} />
+                        <Tooltip
+                          content={<AnalyticsTooltip formatCurrencyValue={formatDisplayCurrency} />}
+                        />
                         <Area
                           type="monotone"
                           dataKey="forecastBand"

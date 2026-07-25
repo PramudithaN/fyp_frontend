@@ -1,4 +1,7 @@
 import {
+  BenchmarkDerivedForecastResponse,
+  BenchmarkQuotesResponse,
+  BenchmarkTarget,
   ExplainResponse,
   FanResponse,
   HistoricalPricesResponse,
@@ -16,6 +19,8 @@ const FAN_API_URL = `${BASE_API_URL}/predictions/fan`;
 const COMPARE_API_URL = `${BASE_API_URL}/predictions/compare`;
 const HISTORICAL_API_URL = `${BASE_API_URL}/historical/prices`;
 const NEWS_API_URL = `${BASE_API_URL}/news`;
+const BENCHMARK_QUOTES_API_URL = `${BASE_API_URL}/benchmarks/quotes`;
+const BENCHMARK_DERIVED_FORECAST_API_URL = `${BASE_API_URL}/benchmarks/derived-forecast`;
 const UPLOAD_EXCEL_API_URL = `${BASE_API_URL}/predict/upload-excel`;
 const UPLOAD_EXCEL_TEMPLATE_URL = `${BASE_API_URL}/predict/upload-excel/template`;
 const EXPLAIN_API_URL = `${BASE_API_URL}/explain`;
@@ -138,6 +143,125 @@ const normalizePredictionResponse = (payload: unknown): PredictionResponse => {
     market_open_time: toStringOrNull(response.market_open_time) ?? undefined,
     market_close_time: toStringOrNull(response.market_close_time) ?? undefined,
     timezone_info: toStringOrNull(response.timezone_info) ?? undefined,
+  };
+};
+
+const toBenchmarkTarget = (value: unknown): BenchmarkTarget => {
+  const normalized = toStringOrDefault(value).trim().toLowerCase();
+  if (normalized === "wti") return "wti";
+  if (normalized === "opec") return "opec";
+  if (normalized === "dubai") return "dubai";
+  return "brent";
+};
+
+const normalizeBenchmarkQuotesResponse = (
+  payload: unknown,
+): BenchmarkQuotesResponse => {
+  const { root, response } = unwrapRecordPayload(payload);
+  const rawQuotes = Array.isArray(response.quotes) ? response.quotes : [];
+
+  return {
+    success: resolveSuccessFlag(root, response),
+    currency: toStringOrDefault(response.currency, "USD"),
+    unit: toStringOrDefault(response.unit, "bbl"),
+    base_benchmark: toBenchmarkTarget(response.base_benchmark),
+    generated_at: toStringOrDefault(response.generated_at),
+    quotes: rawQuotes
+      .map((item) => {
+        const quote = isRecord(item) ? item : {};
+        const benchmark = toBenchmarkTarget(quote.benchmark);
+        const quoteType: "direct" | "derived" =
+          toStringOrDefault(quote.quote_type, "direct") === "derived"
+            ? "derived"
+            : "direct";
+
+        return {
+          benchmark,
+          display_name: toStringOrDefault(quote.display_name, benchmark.toUpperCase()),
+          ticker: toStringOrNull(quote.ticker),
+          price: toFiniteNumberOrNull(quote.price),
+          as_of: toStringOrDefault(quote.as_of),
+          quote_type: quoteType,
+          source: toStringOrDefault(quote.source, "unknown"),
+          quality: toStringOrDefault(quote.quality, "unknown"),
+          status: toStringOrDefault(quote.status, "unknown"),
+          note: toStringOrNull(quote.note),
+        };
+      })
+      .filter((quote) => quote.as_of.length > 0),
+  };
+};
+
+const normalizeBenchmarkDerivedForecastResponse = (
+  payload: unknown,
+): BenchmarkDerivedForecastResponse => {
+  const { root, response } = unwrapRecordPayload(payload);
+  const rawTransform = isRecord(response.transform) ? response.transform : {};
+  const rawForecasts = Array.isArray(response.forecasts) ? response.forecasts : [];
+
+  const forecasts = rawForecasts
+    .map((item, index) => {
+      const forecast = isRecord(item) ? item : {};
+      const date = toStringOrDefault(forecast.date);
+
+      if (!date) return null;
+
+      const medianPrice =
+        toFiniteNumberOrNull(forecast.forecasted_price) ??
+        toFiniteNumberOrNull(forecast.median_price) ??
+        toFiniteNumberOrNull(forecast.p50) ??
+        0;
+
+      const lowerBound = toFiniteNumberOrNull(forecast.lower_bound);
+      const upperBound = toFiniteNumberOrNull(forecast.upper_bound);
+      const benchmark = toStringOrNull(forecast.benchmark);
+      const benchmarkLabel = toStringOrNull(forecast.benchmark_label);
+      const forecastType = toStringOrNull(forecast.forecast_type);
+      const brentForecastedPrice = toFiniteNumberOrNull(forecast.brent_forecasted_price);
+
+      return {
+        date,
+        forecasted_price: medianPrice,
+        forecasted_return: toFiniteNumberOrDefault(forecast.forecasted_return),
+        horizon: toIntegerOrZero(forecast.horizon) || index + 1,
+        ...(lowerBound === null ? {} : { lower_bound: lowerBound }),
+        ...(upperBound === null ? {} : { upper_bound: upperBound }),
+        ...(benchmark === null ? {} : { benchmark }),
+        ...(benchmarkLabel === null ? {} : { benchmark_label: benchmarkLabel }),
+        ...(forecastType === null ? {} : { forecast_type: forecastType }),
+        ...(brentForecastedPrice === null
+          ? {}
+          : { brent_forecasted_price: brentForecastedPrice }),
+      };
+    })
+    .filter((forecast): forecast is NonNullable<typeof forecast> => forecast !== null);
+
+  const method = toStringOrDefault(response.method, "spread");
+
+  return {
+    success: resolveSuccessFlag(root, response),
+    target: toBenchmarkTarget(response.target),
+    target_label: toStringOrDefault(response.target_label, "Brent Crude"),
+    method: method === "ratio" ? "ratio" : "spread",
+    currency: toStringOrDefault(response.currency, "USD"),
+    unit: toStringOrDefault(response.unit, "bbl"),
+    quality: toStringOrDefault(response.quality, "unknown"),
+    disclaimer: toStringOrNull(response.disclaimer) ?? undefined,
+    transform: {
+      spread: toFiniteNumberOrNull(rawTransform.spread) ?? undefined,
+      ratio: toFiniteNumberOrNull(rawTransform.ratio) ?? undefined,
+      lookback_days: toIntegerOrZero(rawTransform.lookback_days) || 60,
+      sample_days: toIntegerOrZero(rawTransform.sample_days) || undefined,
+      source: toStringOrNull(rawTransform.source) ?? undefined,
+      fallback_used:
+        typeof rawTransform.fallback_used === "boolean"
+          ? rawTransform.fallback_used
+          : undefined,
+    },
+    prediction_date: toStringOrNull(response.prediction_date) ?? undefined,
+    based_on_price_date: toStringOrNull(response.based_on_price_date) ?? undefined,
+    generated_at: toStringOrNull(response.generated_at) ?? undefined,
+    forecasts,
   };
 };
 
@@ -364,6 +488,48 @@ const fetchJson = async <T>(url: string): Promise<T> => {
   }
 
   return response.json();
+};
+
+export interface FetchBenchmarkQuotesOptions {
+  lookbackDays?: number;
+}
+
+export const fetchBenchmarkQuotes = async (
+  options?: FetchBenchmarkQuotesOptions,
+): Promise<BenchmarkQuotesResponse> => {
+  const lookbackDays = options?.lookbackDays ?? 60;
+  const params = new URLSearchParams({ lookback_days: String(lookbackDays) });
+  const url = `${BENCHMARK_QUOTES_API_URL}?${params.toString()}`;
+  return normalizeBenchmarkQuotesResponse(await fetchJson<unknown>(url));
+};
+
+export interface FetchBenchmarkForecastOptions {
+  method?: "spread" | "ratio";
+  lookbackDays?: number;
+}
+
+export const fetchBenchmarkDerivedForecast = async (
+  target: BenchmarkTarget,
+  options?: FetchBenchmarkForecastOptions,
+): Promise<BenchmarkDerivedForecastResponse> => {
+  const method = options?.method ?? "spread";
+  const lookbackDays = options?.lookbackDays ?? 60;
+  const params = new URLSearchParams({
+    target,
+    method,
+    lookback_days: String(lookbackDays),
+  });
+
+  const url = `${BENCHMARK_DERIVED_FORECAST_API_URL}?${params.toString()}`;
+
+  try {
+    return normalizeBenchmarkDerivedForecastResponse(await fetchJson<unknown>(url));
+  } catch (error) {
+    if (error instanceof Error && /status:\s*503/.test(error.message)) {
+      throw new Error("Forecast not ready yet. Please retry shortly.");
+    }
+    throw error;
+  }
 };
 
 const PREDICTION_CACHE_TTL_MS = APP_CONFIG.predictCacheTtlSeconds * 1000;

@@ -6,6 +6,10 @@ export interface Forecast {
   horizon: number;
   lower_bound?: number;
   upper_bound?: number;
+  benchmark?: string;
+  benchmark_label?: string;
+  forecast_type?: string;
+  brent_forecasted_price?: number;
 }
 
 export interface PredictionResponse {
@@ -19,6 +23,60 @@ export interface PredictionResponse {
   market_open_time?: string;
   market_close_time?: string;
   timezone_info?: string;
+  benchmark_target?: string;
+  benchmark_label?: string;
+  quality?: string;
+  disclaimer?: string;
+  forecast_mode?: "model" | "estimated";
+}
+
+export type BenchmarkTarget = "brent" | "wti" | "opec" | "dubai";
+
+export interface BenchmarkQuote {
+  benchmark: BenchmarkTarget;
+  display_name: string;
+  ticker: string | null;
+  price: number | null;
+  as_of: string;
+  quote_type: "direct" | "derived";
+  source: string;
+  quality: string;
+  status: string;
+  note: string | null;
+}
+
+export interface BenchmarkQuotesResponse {
+  success: boolean;
+  currency: string;
+  unit: string;
+  base_benchmark: BenchmarkTarget;
+  generated_at: string;
+  quotes: BenchmarkQuote[];
+}
+
+export interface BenchmarkDerivedTransform {
+  spread?: number;
+  ratio?: number;
+  lookback_days: number;
+  sample_days?: number;
+  source?: string;
+  fallback_used?: boolean;
+}
+
+export interface BenchmarkDerivedForecastResponse {
+  success: boolean;
+  target: BenchmarkTarget;
+  target_label: string;
+  method: "spread" | "ratio";
+  currency: string;
+  unit: string;
+  quality: string;
+  disclaimer?: string;
+  transform?: BenchmarkDerivedTransform;
+  prediction_date?: string;
+  based_on_price_date?: string;
+  generated_at?: string;
+  forecasts: Forecast[];
 }
 
 export interface HistoricalPricePoint {

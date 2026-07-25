@@ -4,6 +4,8 @@ import { AreaChart, ChevronDown, Globe, Home, Info, Menu, Newspaper, X, Wrench }
 import { useState, useEffect, useRef } from "react";
 import AnimatedButton from "./ui/AnimatedButton";
 import { ApiExportModal } from "./ui/ApiExportModal";
+import { fetchBenchmarkQuotes } from "../api";
+import type { BenchmarkQuote, BenchmarkTarget } from "../types/api";
 import {
   useCurrency,
   CURRENCIES,
@@ -14,12 +16,20 @@ import {
   type VolumeUnit,
 } from "../context/CurrencyContext";
 
+const BENCHMARK_TO_TARGET: Record<CrudeBenchmark, BenchmarkTarget> = {
+  Brent: "brent",
+  WTI: "wti",
+  OPEC: "opec",
+  Dubai: "dubai",
+};
+
 const Navbar = () => {
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [controlsOpen, setControlsOpen] = useState(false);
   const [apiModalOpen, setApiModalOpen] = useState(false);
+  const [benchmarkQuotes, setBenchmarkQuotes] = useState<Partial<Record<CrudeBenchmark, BenchmarkQuote>>>({});
   const controlsRef = useRef<HTMLDivElement | null>(null);
   const {
     benchmark,
@@ -62,12 +72,43 @@ const Navbar = () => {
     { title: "About", path: "/about", icon: <Info size={18} /> },
   ];
 
-  const benchmarkPrices: Record<CrudeBenchmark, number> = {
+  const fallbackBenchmarkPrices: Record<CrudeBenchmark, number> = {
     Brent: 78.45,
     WTI: 74.3,
     OPEC: 77.05,
     Dubai: 76.35,
   };
+
+  useEffect(() => {
+    let mounted = true;
+
+    const loadBenchmarkQuotes = async () => {
+      try {
+        const response = await fetchBenchmarkQuotes({ lookbackDays: 60 });
+        if (!mounted) return;
+
+        const quoteMap: Partial<Record<CrudeBenchmark, BenchmarkQuote>> = {};
+
+        (Object.keys(BENCHMARKS) as CrudeBenchmark[]).forEach((key) => {
+          const target = BENCHMARK_TO_TARGET[key];
+          const found = response.quotes.find((quote) => quote.benchmark === target);
+          if (found) {
+            quoteMap[key] = found;
+          }
+        });
+
+        setBenchmarkQuotes(quoteMap);
+      } catch {
+        // Keep fallback prices if quotes endpoint is temporarily unavailable.
+      }
+    };
+
+    void loadBenchmarkQuotes();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const currencyRegionCode: Record<CurrencyCode, string> = {
     USD: "US",
@@ -179,6 +220,9 @@ const Navbar = () => {
                           {(Object.keys(BENCHMARKS) as CrudeBenchmark[]).map((key) => {
                             const option = BENCHMARKS[key];
                             const selected = benchmark === key;
+                            const quote = benchmarkQuotes[key];
+                            const displayPrice = quote?.price ?? fallbackBenchmarkPrices[key];
+                            const isEstimated = quote?.quote_type === "derived";
                             return (
                               <button
                                 key={option.id}
@@ -191,7 +235,14 @@ const Navbar = () => {
                                 }`}
                               >
                                 <p className="text-sm font-semibold leading-tight">{option.name}</p>
-                                <p className="text-[11px] opacity-70 leading-tight mt-1">${benchmarkPrices[key].toFixed(2)} /bbl</p>
+                                <div className="mt-1 flex items-center gap-2">
+                                  <p className="text-[11px] opacity-70 leading-tight">${displayPrice.toFixed(2)} /bbl</p>
+                                  {isEstimated && (
+                                    <span className="rounded-full border border-amber-400/40 bg-amber-500/10 px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-amber-200">
+                                      Estimated
+                                    </span>
+                                  )}
+                                </div>
                               </button>
                             );
                           })}
