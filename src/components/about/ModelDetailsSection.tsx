@@ -1,703 +1,166 @@
-import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Cell,
-  ReferenceLine,
-} from "recharts";
-import {
-  BrainCircuit,
-  Database,
-  TrendingUp,
-  Gauge,
-  Layers,
-  BarChart3,
-  Sparkles,
-  Workflow,
-  CheckCircle2,
-  Target,
-  GitMerge,
-} from "lucide-react";
+import { BarChart3, BrainCircuit, GitMerge, Sparkles, Target } from "lucide-react";
 
-/* ─── Radial ring for percentage-type metrics ─── */
-const CIRC = 2 * Math.PI * 30; // r=30
-const MetricRing = ({
-  pct,
-  label,
-  sublabel,
-  color,
-  inView,
-}: {
-  pct: number;
-  label: string;
-  sublabel: string;
-  color: string;
-  inView: boolean;
-}) => (
-  <div className="flex flex-col items-center gap-2">
-    <div className="relative w-[76px] h-[76px]">
-      <svg viewBox="0 0 72 72" className="w-full h-full -rotate-90">
-        <circle
-          cx="36" cy="36" r="30"
-          stroke="rgba(255,255,255,0.06)" strokeWidth="5" fill="none"
-        />
-        <motion.circle
-          cx="36" cy="36" r="30"
-          stroke={color} strokeWidth="5" fill="none" strokeLinecap="round"
-          initial={{ strokeDasharray: `0 ${CIRC}` }}
-          animate={
-            inView
-              ? { strokeDasharray: `${(pct / 100) * CIRC} ${CIRC}` }
-              : { strokeDasharray: `0 ${CIRC}` }
-          }
-          transition={{ duration: 1.6, ease: "easeOut", delay: 0.3 }}
-        />
-      </svg>
-      <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-[11px] font-bold text-white font-mono leading-tight text-center">{label}</span>
-      </div>
-    </div>
-    <span className="text-[11px] text-gray-400 text-center leading-tight max-w-[80px]">{sublabel}</span>
-  </div>
-);
-
-const stagger = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.12 } },
-};
-
-const childFade = {
-  hidden: { opacity: 0, y: 24 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5 },
-  },
-};
-
-const toChartNumber = (value: unknown): number => {
-  if (typeof value === "number") return value;
-  if (typeof value === "string") {
-    const parsed = Number(value);
-    return Number.isFinite(parsed) ? parsed : 0;
-  }
-  if (Array.isArray(value) && value.length > 0) {
-    return toChartNumber(value[0]);
-  }
-  return 0;
-};
-
-const modelFamilies = [
+const modelBlocks = [
   {
-    title: "Statistical Core",
-    model: "ARIMA",
-    desc: "Trend component model with grid-searched order over p={0,1,2}, d={0,1}, q={0,1,2}.",
-    color: "text-oil-gold",
+    name: "ARIMA (Trend Specialist)",
+    role: "Captures low-frequency directional structure from decomposed trend modes.",
+    config: "Grid search on p, d, q over constrained order sets.",
   },
   {
-    title: "Sequence Learner",
-    model: "Mid-GRU",
-    desc: "1-layer GRU (hidden_size=64, dropout=0.3) on 14 price and technical features.",
-    color: "text-oil-gold",
+    name: "Mid-GRU (Cycle Specialist)",
+    role: "Learns medium-frequency temporal dependencies in price and technical indicators.",
+    config: "Single-layer GRU with regularized hidden-state learning.",
   },
   {
-    title: "Sentiment Learner",
-    model: "Sentiment-GRU",
-    desc: "Dual-stream GRU with attention: 14 price features + 16 sentiment/news features.",
-    color: "text-oil-gold",
+    name: "Sentiment-GRU (Context Specialist)",
+    role: "Fuses market and language-derived features with attention-based weighting.",
+    config: "Dual-stream sequence modeling with lagged sentiment policy.",
   },
   {
-    title: "High-Frequency Booster",
-    model: "XGBoost-HF",
-    desc: "Per-horizon XGBRegressor with n_estimators=500, max_depth=3, lr=0.05, subsample=0.8.",
-    color: "text-oil-gold",
+    name: "XGBoost-HF (Noise Specialist)",
+    role: "Models high-frequency residual behavior and short-horizon nonlinear jumps.",
+    config: "Per-horizon gradient boosting with conservative depth and subsampling.",
   },
 ];
 
-const layerFlow = [
-  {
-    step: "L1",
-    model: "ARIMA",
-    input: "VMD trend component",
-    output: "Trend log-return forecast",
-    color: "text-oil-gold",
-  },
-  {
-    step: "L2",
-    model: "Mid-GRU",
-    input: "Price and technical features",
-    output: "Mid-frequency forecast",
-    color: "text-oil-gold",
-  },
-  {
-    step: "L3",
-    model: "Sentiment-GRU",
-    input: "Dual stream (price + sentiment)",
-    output: "Sentiment-aware forecast",
-    color: "text-oil-gold",
-  },
-  {
-    step: "L4",
-    model: "XGBoost-HF",
-    input: "8 high-frequency features",
-    output: "High-frequency forecast",
-    color: "text-oil-gold",
-  },
-  {
-    step: "L5",
-    model: "Ridge Stacking",
-    input: "4 sub-model outputs",
-    output: "Final ensemble forecast",
-    color: "text-oil-gold",
-  },
+const architectureRows = [
+  { key: "Ensemble Strategy", value: "Per-horizon ridge stacking over four specialist outputs" },
+  { key: "Leakage Controls", value: "Sentiment features are lagged by one trading day" },
+  { key: "Validation Pattern", value: "Walk-forward cross validation for robust temporal generalization" },
+  { key: "Training Split", value: "70% train, 15% validation, 15% test" },
+  { key: "Feature Scope", value: "30 total features across price, technical, sentiment, and EMA groups" },
 ];
 
-const servingSteps = [
-  {
-    step: "01",
-    title: "VMD Decomposition",
-    details: "Log-return series is decomposed into K=3 modes (alpha=2000, tau=0, DC=0, init=1, tol=1e-7).",
-  },
-  {
-    step: "02",
-    title: "Feature Engineering",
-    details: "Builds 30 total features (14 price and technical + 16 sentiment/news), with sentiment lagged by 1 day.",
-  },
-  {
-    step: "03",
-    title: "Sub-model Inference",
-    details: "ARIMA, Mid-GRU, Sentiment-GRU, and XGBoost each run direct multi-step forecasting.",
-  },
-  {
-    step: "04",
-    title: "Ensemble Aggregation",
-    details: "Per-step Ridge stacker (alpha=1.0, 5-fold walk-forward CV) combines 4 model outputs.",
-  },
-  {
-    step: "05",
-    title: "Evaluation & Delivery",
-    details: "Evaluated with RMSE/MAE/MAPE/USD and directional metrics (Accuracy, Precision, Recall, F1, AUC).",
-  },
+const horizonTable = [
+  { horizon: "H5", rmse: "0.01467", mae: "0.01153", directional: "57.5%", usd: "$0.65" },
+  { horizon: "H7", rmse: "0.01477", mae: "0.01162", directional: "58.1%", usd: "$0.68" },
+  { horizon: "H14", rmse: "0.01515", mae: "0.01194", directional: "52.3%", usd: "$0.72" },
 ];
 
-/* ─── Chart data ─── */
-
-// Executive headline metrics at H5 t+1
-const execRings = [
-  { pct: 77.3, label: "77.3%", sublabel: "Dir. Acc (t+1)", color: "#f59e0b" },
-  { pct: 76.2, label: "76.2%", sublabel: "F1 Score (t+1)", color: "#f59e0b" },
-  { pct: 82,   label: "0.82",  sublabel: "AUC-ROC (t+1)", color: "#f59e0b" },
-];
-
-// H5 model comparison (RMSE × 1000 for readable axis labels)
-const modelCompData = [
-  { name: "Ensemble+Sent", rmse: 14.7, dirAcc: 77.3, color: "#f59e0b" },
-  { name: "Ensemble",      rmse: 14.8, dirAcc: 70.5, color: "#f59e0b" },
-  { name: "Mid-GRU",       rmse: 15.0, dirAcc: 58.0, color: "#f59e0b" },
-  { name: "Sent-GRU",      rmse: 15.2, dirAcc: 52.3, color: "#f59e0b" },
-  { name: "XGBoost-HF",    rmse: 15.3, dirAcc: 51.4, color: "#f59e0b" },
-  { name: "ARIMA",         rmse: 15.6, dirAcc: 47.9, color: "#6b7280" },
-];
-
-// Cross-horizon performance
-const horizonResults = [
-  { horizon: "H5",  rmse: 14.67, mae: 11.53, dirAcc: 57.5, usd: 0.65 },
-  { horizon: "H7",  rmse: 14.77, mae: 11.62, dirAcc: 58.1, usd: 0.68 },
-  { horizon: "H14", rmse: 15.15, mae: 11.94, dirAcc: 52.3, usd: 0.72 },
-];
-
-// Sentiment ablation: positive delta = RMSE got worse, negative = got better
-const sentimentData = [
-  { horizon: "H5",  gruDelta: 1.04,  ensembleDelta: -0.32 },
-  { horizon: "H7",  gruDelta: 0.24,  ensembleDelta: -0.40 },
-  { horizon: "H14", gruDelta: 1.81,  ensembleDelta: -0.29 },
+const ablationRows = [
+  {
+    horizon: "H5",
+    gruOnly: "+1.04%",
+    fullEnsemble: "-0.32%",
+    interpretation: "Sentiment hurts stand-alone GRU but improves the final stacked forecast.",
+  },
+  {
+    horizon: "H7",
+    gruOnly: "+0.24%",
+    fullEnsemble: "-0.40%",
+    interpretation: "Small isolated noise, net positive once aggregated by the ridge layer.",
+  },
+  {
+    horizon: "H14",
+    gruOnly: "+1.81%",
+    fullEnsemble: "-0.29%",
+    interpretation: "Long-horizon sentiment drift is stabilized by ensemble blending.",
+  },
 ];
 
 const ModelDetailsSection = () => {
-  const [sectionRef, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
-
   return (
-    <section ref={sectionRef} className="mb-20">
-      <motion.div
-        initial="hidden"
-        animate={inView ? "visible" : "hidden"}
-        variants={stagger}
-        className="mb-10"
-      >
-        <motion.h2
-          variants={childFade}
-          className="text-2xl md:text-3xl font-bold text-white font-display flex items-center gap-3"
-        >
-          <div className="w-1 h-8 rounded-full bg-oil-gold" />
-          Model Details
-        </motion.h2>
-        <motion.p variants={childFade} className="text-gray-400 text-sm mt-3 max-w-3xl leading-relaxed">
-          PDF-driven summary of the full VMD-based ensemble documented in version 10 (March 2026),
-          including architecture, features, training setup, and performance outcomes.
-        </motion.p>
-      </motion.div>
+    <div className="space-y-7">
+      <p className="text-base text-gray-300 leading-8 max-w-4xl">
+        PetroCast uses a specialist-ensemble architecture where each sub-model is responsible for a
+        different regime of market behavior. The final forecast is produced by ridge stacking and then
+        surfaced with uncertainty and explainability metadata.
+      </p>
 
-      {/* ── Executive Performance Rings ── */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.5 }}
-        className="glass rounded-2xl p-6 border border-white/10 mb-8"
-      >
-        <div className="flex items-center gap-2 mb-5">
-          <CheckCircle2 size={16} className="text-oil-gold" />
-          <h3 className="text-sm uppercase tracking-[0.18em] text-gray-400 font-semibold">
-            Best Ensemble Performance (H5, t+1)
-          </h3>
-        </div>
-        <div className="flex flex-wrap items-center justify-around gap-6">
-          {execRings.map((r) => (
-            <MetricRing key={r.sublabel} pct={r.pct} label={r.label} sublabel={r.sublabel} color={r.color} inView={inView} />
-          ))}
-          {/* Stat chips for raw values */}
-          <div className="flex flex-col items-center gap-2">
-            <div className="w-[76px] h-[76px] rounded-full border border-oil-gold/30 bg-oil-gold/10 flex items-center justify-center">
-              <span className="text-sm font-bold text-oil-gold font-mono">0.01467</span>
-            </div>
-            <span className="text-[11px] text-gray-400 text-center leading-tight max-w-[80px]">RMSE (Best)</span>
-          </div>
-          <div className="flex flex-col items-center gap-2">
-            <div className="w-[76px] h-[76px] rounded-full border border-oil-gold/30 bg-oil-gold/10 flex items-center justify-center">
-              <span className="text-sm font-bold text-oil-gold font-mono">$0.65</span>
-            </div>
-            <span className="text-[11px] text-gray-400 text-center leading-tight max-w-[80px]">USD Error/barrel</span>
-          </div>
-        </div>
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.5 }}
-        className="glass rounded-2xl p-5 border border-white/10 mb-8"
-      >
-        <div className="flex items-center gap-2 mb-4">
+      <section className="rounded-xl border border-white/10 overflow-hidden">
+        <div className="px-5 py-4 border-b border-white/10 bg-white/[0.03] flex items-center gap-2">
           <GitMerge size={16} className="text-oil-gold" />
-          <h3 className="text-sm uppercase tracking-[0.18em] text-gray-400 font-semibold">
-            Architecture Layers
-          </h3>
+          <h3 className="text-sm uppercase tracking-[0.16em] text-gray-300 font-semibold">Architecture Controls</h3>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-3">
-          {layerFlow.map((layer) => (
-            <div key={layer.step} className="rounded-xl bg-white/3 border border-white/8 p-3">
-              <div className="text-[11px] uppercase tracking-[0.18em] text-gray-500 mb-1">{layer.step}</div>
-              <div className={`text-sm font-bold ${layer.color}`}>{layer.model}</div>
-              <div className="text-xs text-gray-400 mt-2">Input: {layer.input}</div>
-              <div className="text-xs text-gray-500 mt-1">Output: {layer.output}</div>
-            </div>
-          ))}
-        </div>
-      </motion.div>
-
-      <motion.div
-        initial="hidden"
-        animate={inView ? "visible" : "hidden"}
-        variants={stagger}
-        className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8"
-      >
-        {modelFamilies.map((family) => (
-          <motion.article
-            key={family.model}
-            variants={childFade}
-            whileHover={{ scale: 1.01 }}
-            className="glass rounded-2xl p-5 border border-white/10 hover:border-oil-gold/20 transition-all duration-300"
+        {architectureRows.map((row, index) => (
+          <div
+            key={row.key}
+            className={`grid grid-cols-1 md:grid-cols-[220px_1fr] gap-3 px-5 py-4 ${
+              index !== architectureRows.length - 1 ? "border-b border-white/10" : ""
+            }`}
           >
-            <div className="flex items-start gap-3">
-              <div className="p-2.5 rounded-xl bg-white/5">
-                <BrainCircuit size={18} className={family.color} />
-              </div>
-              <div>
-                <div className="text-[11px] uppercase tracking-[0.18em] text-gray-500 mb-1">
-                  {family.title}
-                </div>
-                <h3 className={`text-base font-bold font-display ${family.color}`}>
-                  {family.model}
-                </h3>
-                <p className="text-sm text-gray-400 mt-2 leading-relaxed">{family.desc}</p>
-              </div>
-            </div>
-          </motion.article>
+            <p className="text-xs uppercase tracking-[0.14em] text-gray-500 font-semibold">{row.key}</p>
+            <p className="text-base text-gray-300 leading-7">{row.value}</p>
+          </div>
         ))}
-      </motion.div>
+      </section>
 
-      {/* ── Inputs: animated feature-count bars ── */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.5 }}
-        className="glass rounded-2xl p-5 border border-white/10 mb-4"
-      >
-        <div className="flex items-center gap-2 mb-5">
-          <Database size={16} className="text-oil-gold" />
-          <h3 className="text-sm uppercase tracking-[0.18em] text-gray-400 font-semibold">Inputs</h3>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[
-            { label: "Price & Technical", count: 14, total: 30, color: "#f59e0b", icon: <Database size={16} className="text-oil-gold" />, sub: "log_return · 7 lags · vol · RSI · momentum" },
-            { label: "Sentiment & News", count: 10, total: 30, color: "#f59e0b", icon: <Sparkles size={16} className="text-oil-gold" />, sub: "decay · volume · log_volume · high_regime" },
-            { label: "EMA-Derived", count: 12, total: 30, color: "#f59e0b", icon: <Layers size={16} className="text-oil-gold" />, sub: "3, 7, 14-day EMAs across 4 signal streams" },
-          ].map((feat, i) => (
-            <motion.div
-              key={feat.label}
-              initial={{ opacity: 0, x: -16 }}
-              animate={inView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="rounded-xl bg-white/3 border border-white/8 p-4"
-            >
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  {feat.icon}
-                  <span className="text-xs font-semibold text-white">{feat.label}</span>
-                </div>
-                <span className="text-lg font-bold font-mono" style={{ color: feat.color }}>{feat.count}</span>
-              </div>
-              {/* fill bar */}
-              <div className="h-1.5 rounded-full bg-white/8 overflow-hidden mb-3">
-                <motion.div
-                  className="h-full rounded-full"
-                  style={{ backgroundColor: feat.color }}
-                  initial={{ width: 0 }}
-                  animate={inView ? { width: `${(feat.count / feat.total) * 100}%` } : { width: 0 }}
-                  transition={{ duration: 1.2, delay: 0.4 + i * 0.1, ease: "easeOut" }}
-                />
-              </div>
-              <p className="text-[11px] text-gray-500 leading-relaxed">{feat.sub}</p>
-            </motion.div>
-          ))}
-        </div>
-        <p className="text-[11px] text-gray-600 mt-3">All sentiment features lagged by 1 day · Features standardised with StandardScaler (train set only) · 30 total unique features</p>
-      </motion.div>
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {modelBlocks.map((model) => (
+          <article key={model.name} className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <BrainCircuit size={16} className="text-oil-gold" />
+              <h4 className="text-lg font-display font-bold text-white">{model.name}</h4>
+            </div>
+            <p className="text-base text-gray-300 leading-7">{model.role}</p>
+            <p className="text-sm text-gray-400 leading-relaxed mt-3">{model.config}</p>
+          </article>
+        ))}
+      </section>
 
-      {/* ── Outputs: unified highlight cards ── */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.5, delay: 0.05 }}
-        className="glass rounded-2xl p-5 border border-white/10 mb-8"
-      >
-        <div className="flex items-center gap-2 mb-5">
-          <Gauge size={16} className="text-oil-gold" />
-          <h3 className="text-sm uppercase tracking-[0.18em] text-gray-400 font-semibold">Outputs</h3>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[
-            {
-              icon: <TrendingUp size={22} />,
-              color: "#f59e0b",
-              glow: "rgba(245,158,11,0.15)",
-              border: "border-oil-gold/20",
-              title: "Point Forecasts",
-              value: "H5 / H7 / H14",
-              sub: "Daily closing price forecasts for 5, 7 and 14 trading day horizons, direct multi-step.",
-            },
-            {
-              icon: <Gauge size={22} />,
-              color: "#f59e0b",
-              glow: "rgba(245,158,11,0.10)",
-              border: "border-oil-gold/20",
-              title: "Uncertainty Bands",
-              value: "P10 – P90",
-              sub: "Fan-chart quantiles with confidence interval and cross-model agreement score.",
-            },
-            {
-              icon: <BarChart3 size={22} />,
-              color: "#f59e0b",
-              glow: "rgba(245,158,11,0.10)",
-              border: "border-oil-gold/20",
-              title: "Explainability",
-              value: "4 sub-models",
-              sub: "Per-model contribution bars and top SHAP feature drivers for every prediction run.",
-            },
-          ].map((out, i) => (
-            <motion.div
-              key={out.title}
-              initial={{ opacity: 0, y: 16 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: 0.1 + i * 0.1 }}
-              whileHover={{ scale: 1.02 }}
-              className={`rounded-xl border ${out.border} p-4 transition-all duration-300`}
-              style={{ background: out.glow }}
-            >
-              <div className="flex items-start justify-between mb-3">
-                <div className="p-2 rounded-lg" style={{ backgroundColor: `${out.color}18` }}>
-                  <span style={{ color: out.color }}>{out.icon}</span>
-                </div>
-                <span className="text-xs font-bold font-mono" style={{ color: out.color }}>{out.value}</span>
-              </div>
-              <div className="text-sm font-bold text-white mb-1">{out.title}</div>
-              <p className="text-[11px] text-gray-400 leading-relaxed">{out.sub}</p>
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
-
-      {/* ── Serving Flow: connected vertical timeline ── */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.5, delay: 0.1 }}
-        className="glass rounded-2xl p-5 border border-white/10 mb-8"
-      >
-        <div className="flex items-center gap-2 mb-6">
-          <Workflow size={16} className="text-oil-gold" />
-          <h3 className="text-sm uppercase tracking-[0.18em] text-gray-400 font-semibold">Serving Flow</h3>
-        </div>
-        <div className="relative pl-8">
-          {/* vertical line */}
-          <motion.div
-            className="absolute left-[15px] top-0 w-px bg-oil-gold/10"
-            initial={{ height: 0 }}
-            animate={inView ? { height: "100%" } : { height: 0 }}
-            transition={{ duration: 1.4, ease: "easeOut", delay: 0.4 }}
-          />
-          <ol className="space-y-0">
-            {servingSteps.map((step, i) => (
-              <motion.li
-                key={step.step}
-                initial={{ opacity: 0, x: -12 }}
-                animate={inView ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.45, delay: 0.3 + i * 0.12 }}
-                className="relative flex gap-4 pb-6 last:pb-0"
-              >
-                {/* dot */}
-                <motion.div
-                  className="absolute -left-8 w-[30px] h-[30px] rounded-full border-2 border-oil-gold/30 bg-[#191713] flex items-center justify-center shrink-0 z-10"
-                  initial={{ scale: 0 }}
-                  animate={inView ? { scale: 1 } : { scale: 0 }}
-                  transition={{ type: "spring", stiffness: 240, delay: 0.4 + i * 0.12 }}
-                >
-                  <span className="text-[10px] font-bold text-oil-gold">{step.step}</span>
-                </motion.div>
-                <div className="rounded-xl bg-white/3 border border-white/8 p-3 w-full">
-                  <div className="text-sm font-semibold text-white mb-1">{step.title}</div>
-                  <p className="text-[11px] text-gray-400 leading-relaxed">{step.details}</p>
-                </div>
-              </motion.li>
-            ))}
-          </ol>
-        </div>
-      </motion.div>
-
-      {/* ── Cross-Horizon Results: bar charts ── */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.5 }}
-        className="glass rounded-2xl p-5 border border-white/10 mb-8"
-      >
-        <div className="flex items-center gap-2 mb-5">
+      <section className="rounded-xl border border-white/10 overflow-hidden">
+        <div className="px-5 py-4 border-b border-white/10 bg-white/[0.03] flex items-center gap-2">
           <BarChart3 size={16} className="text-oil-gold" />
-          <h3 className="text-sm uppercase tracking-[0.18em] text-gray-400 font-semibold">
-            Cross-Horizon Results
-          </h3>
-          <span className="text-[11px] text-gray-600 ml-1">(RMSE ×10³ · Dir. Acc % · USD Error)</span>
+          <h3 className="text-sm uppercase tracking-[0.16em] text-gray-300 font-semibold">Cross-Horizon Summary</h3>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* RMSE per horizon */}
-          <div>
-            <p className="text-[11px] text-gray-500 uppercase tracking-widest mb-3 text-center">RMSE ×10³</p>
-            <div className="h-40">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={horizonResults} barSize={28}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
-                  <XAxis dataKey="horizon" tick={{ fill: "#6b7280", fontSize: 11 }} axisLine={false} tickLine={false} />
-                  <YAxis domain={[14, 16]} tick={{ fill: "#6b7280", fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={(v) => v.toFixed(0)} />
-                  <Tooltip
-                    cursor={false}
-                    contentStyle={{ background: "#191713", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, fontSize: 12 }}
-                    formatter={(v) => [`${toChartNumber(v).toFixed(2)} ×10⁻³`, "RMSE"]}
-                    labelStyle={{ color: "#cbd5e1" }}
-                    itemStyle={{ color: "#f3f4f6" }}
-                  />
-                  <Bar dataKey="rmse" radius={[6, 6, 0, 0]}>
-                    {horizonResults.map((r) => (
-                      <Cell key={r.horizon} fill={r.horizon === "H5" ? "#f59e0b" : r.horizon === "H7" ? "#f59e0b" : "#f59e0b"} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-          {/* Directional Accuracy per horizon */}
-          <div>
-            <p className="text-[11px] text-gray-500 uppercase tracking-widest mb-3 text-center">Dir. Accuracy %</p>
-            <div className="h-40">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={horizonResults} barSize={28}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
-                  <XAxis dataKey="horizon" tick={{ fill: "#6b7280", fontSize: 11 }} axisLine={false} tickLine={false} />
-                  <YAxis domain={[40, 70]} tick={{ fill: "#6b7280", fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={(v) => `${v}%`} />
-                  <Tooltip
-                    cursor={false}
-                    contentStyle={{ background: "#191713", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, fontSize: 12 }}
-                    formatter={(v) => [`${toChartNumber(v)}%`, "Dir. Acc"]}
-                    labelStyle={{ color: "#cbd5e1" }}
-                    itemStyle={{ color: "#f3f4f6" }}
-                  />
-                  <Bar dataKey="dirAcc" radius={[6, 6, 0, 0]}>
-                    {horizonResults.map((r) => (
-                      <Cell key={r.horizon} fill={r.horizon === "H5" ? "#f59e0b" : r.horizon === "H7" ? "#f59e0b" : "#f59e0b"} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-          {/* USD Error per horizon */}
-          <div>
-            <p className="text-[11px] text-gray-500 uppercase tracking-widest mb-3 text-center">USD Error / barrel</p>
-            <div className="h-40">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={horizonResults} barSize={28}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
-                  <XAxis dataKey="horizon" tick={{ fill: "#6b7280", fontSize: 11 }} axisLine={false} tickLine={false} />
-                  <YAxis domain={[0.5, 0.85]} tick={{ fill: "#6b7280", fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={(v) => `$${v.toFixed(2)}`} />
-                  <Tooltip
-                    cursor={false}
-                    contentStyle={{ background: "#191713", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, fontSize: 12 }}
-                    formatter={(v) => [`$${toChartNumber(v).toFixed(2)}`, "USD Error"]}
-                    labelStyle={{ color: "#cbd5e1" }}
-                    itemStyle={{ color: "#f3f4f6" }}
-                  />
-                  <Bar dataKey="usd" radius={[6, 6, 0, 0]}>
-                    {horizonResults.map((r) => (
-                      <Cell key={r.horizon} fill={r.horizon === "H5" ? "#f59e0b" : r.horizon === "H7" ? "#f59e0b" : "#f59e0b"} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        </div>
-      </motion.div>
 
-      {/* ── Model Comparison at H5 ── */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.5 }}
-        className="glass rounded-2xl p-5 border border-white/10 mb-8"
-      >
-        <div className="flex items-center gap-2 mb-5">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[640px]">
+            <thead>
+              <tr className="border-b border-white/10 text-left">
+                <th className="px-5 py-3 text-xs uppercase tracking-[0.14em] text-gray-500 font-semibold">Horizon</th>
+                <th className="px-5 py-3 text-xs uppercase tracking-[0.14em] text-gray-500 font-semibold">RMSE</th>
+                <th className="px-5 py-3 text-xs uppercase tracking-[0.14em] text-gray-500 font-semibold">MAE</th>
+                <th className="px-5 py-3 text-xs uppercase tracking-[0.14em] text-gray-500 font-semibold">Directional Acc.</th>
+                <th className="px-5 py-3 text-xs uppercase tracking-[0.14em] text-gray-500 font-semibold">USD Error</th>
+              </tr>
+            </thead>
+            <tbody>
+              {horizonTable.map((row) => (
+                <tr key={row.horizon} className="border-b border-white/10 last:border-b-0">
+                  <td className="px-5 py-4 text-base font-semibold text-white">{row.horizon}</td>
+                  <td className="px-5 py-4 text-base text-gray-300">{row.rmse}</td>
+                  <td className="px-5 py-4 text-base text-gray-300">{row.mae}</td>
+                  <td className="px-5 py-4 text-base text-gray-300">{row.directional}</td>
+                  <td className="px-5 py-4 text-base text-gray-300">{row.usd}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section className="rounded-xl border border-white/10 overflow-hidden">
+        <div className="px-5 py-4 border-b border-white/10 bg-white/[0.03] flex items-center gap-2">
           <Target size={16} className="text-oil-gold" />
-          <h3 className="text-sm uppercase tracking-[0.18em] text-gray-400 font-semibold">
-            Model Comparison at H5
-          </h3>
+          <h3 className="text-sm uppercase tracking-[0.16em] text-gray-300 font-semibold">Sentiment Ablation Notes</h3>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* RMSE ×10³ (lower = better) */}
-          <div>
-            <p className="text-[11px] text-gray-500 uppercase tracking-widest mb-3">RMSE ×10³ — lower is better</p>
-            <div className="h-52">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={modelCompData} layout="vertical" barSize={14} margin={{ left: 8, right: 24 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" horizontal={false} />
-                  <XAxis type="number" domain={[14, 16]} tick={{ fill: "#6b7280", fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={(v) => v.toFixed(1)} />
-                  <YAxis type="category" dataKey="name" tick={{ fill: "#9ca3af", fontSize: 10 }} axisLine={false} tickLine={false} width={90} />
-                  <Tooltip
-                    cursor={false}
-                    contentStyle={{ background: "#191713", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, fontSize: 12 }}
-                    formatter={(v) => [`${toChartNumber(v).toFixed(2)} ×10⁻³`, "RMSE"]}
-                    labelStyle={{ color: "#cbd5e1" }}
-                    itemStyle={{ color: "#f3f4f6" }}
-                  />
-                  <Bar dataKey="rmse" radius={[0, 6, 6, 0]}>
-                    {modelCompData.map((d) => (
-                      <Cell key={d.name} fill={d.color} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-          {/* Directional Accuracy (higher = better) */}
-          <div>
-            <p className="text-[11px] text-gray-500 uppercase tracking-widest mb-3">Dir. Accuracy % — higher is better</p>
-            <div className="h-52">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={modelCompData} layout="vertical" barSize={14} margin={{ left: 8, right: 24 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" horizontal={false} />
-                  <XAxis type="number" domain={[40, 85]} tick={{ fill: "#6b7280", fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={(v) => `${v}%`} />
-                  <YAxis type="category" dataKey="name" tick={{ fill: "#9ca3af", fontSize: 10 }} axisLine={false} tickLine={false} width={90} />
-                  <Tooltip
-                    cursor={false}
-                    contentStyle={{ background: "#191713", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, fontSize: 12 }}
-                    formatter={(v) => [`${toChartNumber(v)}%`, "Dir. Accuracy"]}
-                    labelStyle={{ color: "#cbd5e1" }}
-                    itemStyle={{ color: "#f3f4f6" }}
-                  />
-                  <Bar dataKey="dirAcc" radius={[0, 6, 6, 0]}>
-                    {modelCompData.map((d) => (
-                      <Cell key={d.name} fill={d.color} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        </div>
-      </motion.div>
 
-      {/* ── Sentiment Ablation ── */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.5 }}
-        className="glass rounded-2xl p-5 border border-white/10"
-      >
-        <div className="flex items-center gap-2 mb-2">
-          <TrendingUp size={16} className="text-oil-gold" />
-          <h3 className="text-sm uppercase tracking-[0.18em] text-gray-400 font-semibold">
-            Sentiment Impact on RMSE (Ablation)
-          </h3>
+        <div className="space-y-0">
+          {ablationRows.map((row, index) => (
+            <article
+              key={row.horizon}
+              className={`px-5 py-4 ${index !== ablationRows.length - 1 ? "border-b border-white/10" : ""}`}
+            >
+              <div className="grid grid-cols-1 md:grid-cols-[90px_120px_140px_1fr] gap-3">
+                <p className="text-base font-semibold text-white">{row.horizon}</p>
+                <p className="text-sm text-gray-400">GRU only: <span className="text-oil-gold">{row.gruOnly}</span></p>
+                <p className="text-sm text-gray-400">Ensemble: <span className="text-oil-gold">{row.fullEnsemble}</span></p>
+                <p className="text-sm text-gray-300 leading-relaxed">{row.interpretation}</p>
+              </div>
+            </article>
+          ))}
         </div>
-        <p className="text-xs text-gray-500 mb-5 leading-relaxed">
-          Positive delta = RMSE got <span className="text-oil-gold">worse</span> with sentiment. &nbsp;
-          Negative delta = RMSE got <span className="text-oil-gold">better</span> with sentiment.
+      </section>
+
+      <section className="rounded-xl border border-oil-gold/30 bg-oil-gold/10 p-5 flex items-start gap-3">
+        <Sparkles size={16} className="text-oil-gold mt-1" />
+        <p className="text-sm text-gray-200 leading-7">
+          Practical takeaway: sentiment features are most reliable when combined with structural and
+          statistical sub-models. Treat sentiment as a contextual signal rather than a stand-alone predictor.
         </p>
-        <div className="h-52">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={sentimentData} barGap={4} barCategoryGap="30%">
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
-              <XAxis dataKey="horizon" tick={{ fill: "#6b7280", fontSize: 12 }} axisLine={false} tickLine={false} />
-              <YAxis
-                tick={{ fill: "#6b7280", fontSize: 10 }} axisLine={false} tickLine={false}
-                tickFormatter={(v) => `${v > 0 ? "+" : ""}${v}%`}
-                domain={[-1, 2.2]}
-              />
-              <Tooltip
-                cursor={false}
-                contentStyle={{ background: "#191713", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, fontSize: 12 }}
-                formatter={(v, name) => [
-                  `${toChartNumber(v) > 0 ? "+" : ""}${toChartNumber(v)}% RMSE`,
-                  name === "gruDelta" ? "GRU-only" : "Full Ensemble",
-                ]}
-                labelStyle={{ color: "#cbd5e1" }}
-                itemStyle={{ color: "#f3f4f6" }}
-              />
-              <ReferenceLine y={0} stroke="rgba(255,255,255,0.15)" strokeDasharray="4 3" />
-              <Bar dataKey="gruDelta" name="gruDelta" radius={[6, 6, 0, 0]} fill="#9ca3af" opacity={0.85} />
-              <Bar dataKey="ensembleDelta" name="ensembleDelta" radius={[6, 6, 0, 0]} fill="#f59e0b" opacity={0.85} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-        <div className="flex items-center gap-5 mt-3 text-xs text-gray-400">
-          <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm bg-oil-gold/10 inline-block" /> GRU-only with sentiment</span>
-          <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm bg-oil-gold/10 inline-block" /> Full ensemble with sentiment</span>
-        </div>
-      </motion.div>
-    </section>
+      </section>
+    </div>
   );
 };
 

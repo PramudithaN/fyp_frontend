@@ -1,192 +1,98 @@
-import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
-import {
-  Database,
-  Layers,
-  LineChart,
-  BrainCircuit,
-  Gauge,
-} from "lucide-react";
-import type { ReactNode } from "react";
-
-const fadeUp = (delay = 0) => ({
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, delay },
-  },
-});
-
-const stagger = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.12 } },
-};
-
-const childFade = {
-  hidden: { opacity: 0, y: 25 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5 },
-  },
-};
-
-const PipelineStep = ({
-  icon,
-  title,
-  desc,
-  step,
-  isLast,
-  delay,
-}: {
-  icon: ReactNode;
-  title: string;
-  desc: string;
-  step: string;
-  isLast: boolean;
-  delay: number;
-}) => {
-  const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.3 });
-
-  return (
-    <motion.div
-      ref={ref}
-      initial="hidden"
-      animate={inView ? "visible" : "hidden"}
-      variants={fadeUp(delay * 0.12)}
-      className="flex items-start gap-3 relative"
-    >
-      <div className="flex flex-col items-center shrink-0">
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={inView ? { scale: 1 } : { scale: 0 }}
-          transition={{
-            delay: delay * 0.1 + 0.2,
-            type: "spring",
-            stiffness: 200,
-          }}
-          className="w-12 h-12 rounded-2xl bg-oil-gold/10 border border-oil-gold/25 flex items-center justify-center text-oil-gold z-10"
-        >
-          {icon}
-        </motion.div>
-        {!isLast && (
-          <motion.div
-            initial={{ height: 0 }}
-            animate={inView ? { height: "100%" } : { height: 0 }}
-            transition={{ delay: delay * 0.1 + 0.4, duration: 0.5 }}
-            className="w-px bg-oil-gold/30 flex-1 mt-2"
-          />
-        )}
-      </div>
-
-      <div className="pb-10">
-        <span className="text-oil-gold/60 text-xs font-semibold uppercase tracking-widest mb-1 block">
-          Step {step}
-        </span>
-        <h3 className="text-lg font-bold text-white mb-2 font-display">
-          {title}
-        </h3>
-        <p className="text-gray-400 text-sm leading-relaxed max-w-md">
-          {desc}
-        </p>
-      </div>
-    </motion.div>
-  );
-};
+import { BrainCircuit, Database, Gauge, Layers, LineChart } from "lucide-react";
 
 const PipelineSection = () => {
-  const pipelineHighlights = [
-    { label: "VMD Modes", value: "3 (trend / mid / high)" },
-    { label: "Forecast Horizons", value: "H5, H7, H14" },
-    { label: "Train / Val / Test", value: "70% / 15% / 15%" },
-    { label: "Stacking", value: "Ridge · α=1.0 · 5-fold WF-CV" },
-  ];
-
-  const pipeline = [
+  const pipelineSteps = [
     {
-      icon: <Database size={20} />,
+      icon: <Database size={18} className="text-oil-gold" />,
       step: "01",
       title: "Data Ingestion & Alignment",
-      desc: "Daily Brent close prices and lagged sentiment/news signals are aligned by trading date. The working data window spans 2014 to 2026 (~3,000 trading days).",
+      desc: "Daily Brent close prices and lagged sentiment or news signals are aligned by trading date over the active historical window.",
+      input: "Raw market closes + normalized sentiment signals",
+      output: "Calendar-aligned, leakage-safe source table",
     },
     {
-      icon: <Layers size={20} />,
+      icon: <Layers size={18} className="text-oil-gold" />,
       step: "02",
       title: "VMD Signal Decomposition",
-      desc: "Log-return series is decomposed into K=3 modes using VMD (alpha=2000, tau=0, DC=0, init=1, tol=1e-7) to isolate trend, mid-frequency, and high-frequency behavior.",
+      desc: "Log-return series is decomposed into three modes to separate slow trend behavior from mid and high-frequency movement.",
+      input: "Aligned log-return series",
+      output: "Trend, mid-frequency, high-frequency mode streams",
     },
     {
-      icon: <LineChart size={20} />,
+      icon: <LineChart size={18} className="text-oil-gold" />,
       step: "03",
       title: "Feature Engineering",
-      desc: "Builds 30 model features: 14 price/technical (returns, lags, RSI, momentum, volatility) + 16 sentiment/news and EMA features. Sentiment features are lagged by 1 day to prevent leakage.",
+      desc: "Builds price, technical, sentiment, and EMA-derived features with strict lag policies to avoid target leakage.",
+      input: "Mode streams + enriched market context",
+      output: "Model-ready 30-feature matrix",
     },
     {
-      icon: <BrainCircuit size={20} />,
+      icon: <BrainCircuit size={18} className="text-oil-gold" />,
       step: "04",
       title: "Specialist Sub-Model Inference",
-      desc: "ARIMA models trend mode, Mid-GRU learns price cycles, Sentiment-GRU fuses price and sentiment streams with attention, and XGBoost-HF captures high-frequency structure using direct multi-step prediction.",
+      desc: "Four specialist models forecast independently so each can capture a specific signal regime.",
+      input: "Specialized feature subsets per model",
+      output: "Per-horizon sub-model predictions",
     },
     {
-      icon: <Gauge size={20} />,
+      icon: <Gauge size={18} className="text-oil-gold" />,
       step: "05",
       title: "Stacking, Evaluation & Delivery",
-      desc: "Per-horizon Ridge meta-models combine the four sub-model outputs, then forecasts are evaluated (RMSE, MAE, MAPE, USD error, directional metrics) and served to forecast, fan, analytics, and explainability views.",
+      desc: "Ridge meta-models combine specialist outputs, then forecasts are evaluated and published through API and dashboard surfaces.",
+      input: "Sub-model predictions by horizon",
+      output: "Final forecasts, uncertainty bands, explainability payloads",
     },
+  ];
+
+  const controls = [
+    { label: "Forecast Horizons", value: "H5, H7, H14" },
+    { label: "Mode Count", value: "K=3 (trend/mid/high)" },
+    { label: "Split Strategy", value: "70% train, 15% validation, 15% test" },
+    { label: "Stacking", value: "Ridge alpha=1.0, 5-fold walk-forward CV" },
   ];
 
   return (
-    <div className="mb-20">
-      <motion.div
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={stagger}
-        className="mb-12"
-      >
-        <motion.h2
-          variants={childFade}
-          className="text-2xl md:text-3xl font-bold text-white font-display flex items-center gap-3"
-        >
-          <div className="w-1 h-8 rounded-full bg-oil-gold" />
-          Prediction Pipeline
-        </motion.h2>
-        <motion.p
-          variants={childFade}
-          className="text-sm text-gray-400 mt-3 max-w-3xl leading-relaxed"
-        >
-          Updated to reflect the documented VMD-based ensemble architecture (v10), including
-          decomposition-first modeling, horizon-specific stacking, and leakage-safe sentiment usage.
-        </motion.p>
-      </motion.div>
+    <div className="space-y-7">
+      <p className="text-base text-gray-300 leading-8 max-w-4xl">
+        The pipeline follows a decomposition-first architecture. Each phase is isolated and auditable,
+        making it easier to reason about model behavior and reliability before forecasts are consumed.
+      </p>
 
-      <motion.div
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={childFade}
-        className="glass rounded-xl border border-white/10 mb-8 flex flex-wrap divide-x divide-white/8"
-      >
-        {pipelineHighlights.map((item) => (
-          <div key={item.label} className="flex-1 min-w-[140px] px-5 py-3">
-            <div className="text-[10px] uppercase tracking-[0.18em] text-gray-500 mb-1">{item.label}</div>
-            <div className="text-sm font-semibold text-white leading-tight">{item.value}</div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {controls.map((item) => (
+          <div key={item.label} className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
+            <p className="text-xs uppercase tracking-[0.14em] text-gray-500 font-semibold">{item.label}</p>
+            <p className="text-base text-white font-semibold mt-2">{item.value}</p>
           </div>
         ))}
-      </motion.div>
+      </div>
 
-      <div>
-        {pipeline.map((item, index) => (
-          <PipelineStep
-            key={item.step}
-            icon={item.icon}
-            title={item.title}
-            desc={item.desc}
-            step={item.step}
-            isLast={index === pipeline.length - 1}
-            delay={index}
-          />
+      <div className="space-y-4">
+        {pipelineSteps.map((item) => (
+          <article key={item.step} className="rounded-xl border border-white/10 bg-white/[0.02] p-5 sm:p-6">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-lg border border-oil-gold/30 bg-oil-gold/10 flex items-center justify-center text-xs font-bold text-oil-gold">
+                {item.step}
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  {item.icon}
+                  <h3 className="text-xl font-display font-bold text-white">{item.title}</h3>
+                </div>
+                <p className="text-base text-gray-300 leading-7 mb-4">{item.desc}</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="rounded-lg border border-white/10 bg-oil-black/30 px-4 py-3">
+                    <p className="text-[10px] uppercase tracking-[0.14em] text-gray-500 font-semibold">Input</p>
+                    <p className="text-sm text-gray-300 mt-1.5 leading-relaxed">{item.input}</p>
+                  </div>
+                  <div className="rounded-lg border border-white/10 bg-oil-black/30 px-4 py-3">
+                    <p className="text-[10px] uppercase tracking-[0.14em] text-gray-500 font-semibold">Output</p>
+                    <p className="text-sm text-gray-300 mt-1.5 leading-relaxed">{item.output}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
         ))}
       </div>
     </div>

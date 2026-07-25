@@ -1,103 +1,79 @@
-import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
-import { Zap, Network, Code, Layers, BrainCircuit } from "lucide-react";
-
-const stagger = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.12 } },
-};
-
-const childFade = {
-  hidden: { opacity: 0, y: 25 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5 },
-  },
-};
+import { BrainCircuit, Code, Layers, Network, Zap } from "lucide-react";
 
 const CapabilitiesSection = () => {
-  const [capRef, capInView] = useInView({ triggerOnce: true, threshold: 0.1 });
-
-  const capabilities = [
+  const capabilityGroups = [
     {
-      icon: <Zap className="text-oil-gold" size={20} />,
-      text: "React 18+ with TypeScript",
-      desc: "Modern, type-safe frontend with strict typing.",
+      icon: <Zap className="text-oil-gold" size={18} />,
+      title: "Forecast Consumption",
+      bullets: [
+        "Multi-horizon forecast outputs for H5, H7, and H14.",
+        "Fan-range interpretation using quantile envelopes.",
+        "Direction-focused usage for tactical market workflows.",
+      ],
     },
     {
-      icon: <Zap className="text-oil-gold" size={20} />,
-      text: "Vite Build System",
-      desc: "Sub-second HMR and optimized production builds.",
+      icon: <Network className="text-oil-gold" size={18} />,
+      title: "Platform Integration",
+      bullets: [
+        "REST-friendly endpoints for dashboard and external services.",
+        "Stable API contracts for forecast, fan, and explanation payloads.",
+        "Metadata hooks for model-version and freshness checks.",
+      ],
     },
     {
-      icon: <Network className="text-oil-gold" size={20} />,
-      text: "React Router v6",
-      desc: "Seamless client-side routing and navigation.",
+      icon: <Code className="text-oil-gold" size={18} />,
+      title: "Engineering Readiness",
+      bullets: [
+        "Type-safe frontend implementation with composable UI blocks.",
+        "Consistent component boundaries for rapid extension.",
+        "Operationally clear documentation for onboarding and handoff.",
+      ],
     },
     {
-      icon: <Code className="text-oil-gold" size={20} />,
-      text: "Modern Design Stack",
-      desc: "Tailwind CSS, Framer Motion, glassmorphism.",
+      icon: <Layers className="text-oil-gold" size={18} />,
+      title: "Analytics Views",
+      bullets: [
+        "Comparative horizon reporting for error and directional signals.",
+        "Contribution-focused model explainability context.",
+        "Uncertainty cues to support risk-aware decision making.",
+      ],
     },
     {
-      icon: <Layers className="text-oil-gold" size={20} />,
-      text: "Recharts Visualization",
-      desc: "Interactive, responsive financial charts.",
-    },
-    {
-      icon: <BrainCircuit className="text-oil-gold" size={20} />,
-      text: "FinBERT Integration",
-      desc: "Financial domain NLP for market sentiment.",
+      icon: <BrainCircuit className="text-oil-gold" size={18} />,
+      title: "Model Intelligence",
+      bullets: [
+        "Specialist-model design for heterogeneous market dynamics.",
+        "Sentiment context blended through robust ensemble stacking.",
+        "Transparent evaluation metrics aligned with business use.",
+      ],
     },
   ];
 
   return (
-    <div ref={capRef} className="mb-20">
-      <motion.div
-        initial="hidden"
-        animate={capInView ? "visible" : "hidden"}
-        variants={stagger}
-        className="mb-12"
-      >
-        <motion.h2
-          variants={childFade}
-          className="text-2xl md:text-3xl font-bold text-white font-display flex items-center gap-3"
-        >
-          <div className="w-1 h-8 rounded-full bg-oil-gold" />
-          Core Capabilities
-        </motion.h2>
-      </motion.div>
+    <div className="space-y-7">
+      <p className="text-base text-gray-300 leading-8 max-w-4xl">
+        Capabilities are grouped by reader outcome, so stakeholders can quickly map PetroCast outputs
+        to their implementation, analysis, and operational decision needs.
+      </p>
 
-      <motion.div
-        initial="hidden"
-        animate={capInView ? "visible" : "hidden"}
-        variants={stagger}
-        className="grid grid-cols-1 md:grid-cols-2 gap-4"
-      >
-        {capabilities.map((item) => (
-          <motion.div
-            key={item.text}
-            variants={childFade}
-            whileHover={{ scale: 1.02 }}
-            className="group glass p-6 rounded-2xl hover:border-oil-gold/20 transition-all duration-500"
-          >
-            <div className="flex items-start gap-4">
-              <div className="p-3 rounded-xl bg-white/5 group-hover:bg-oil-gold/10 transition-colors shrink-0">
-                {item.icon}
-              </div>
-              <div className="flex-1">
-                <h3 className="text-base font-bold text-gray-100 mb-1 group-hover:text-oil-gold transition-colors">
-                  {item.text}
-                </h3>
-                <p className="text-sm text-gray-400 leading-relaxed">
-                  {item.desc}
-                </p>
-              </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {capabilityGroups.map((group) => (
+          <article key={group.title} className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
+            <div className="flex items-center gap-2 mb-3">
+              {group.icon}
+              <h3 className="text-lg font-display font-bold text-white">{group.title}</h3>
             </div>
-          </motion.div>
+            <ul className="space-y-2.5">
+              {group.bullets.map((bullet) => (
+                <li key={bullet} className="text-base text-gray-300 leading-7 flex items-start gap-2">
+                  <span className="text-oil-gold mt-2 text-[10px]">●</span>
+                  <span>{bullet}</span>
+                </li>
+              ))}
+            </ul>
+          </article>
         ))}
-      </motion.div>
+      </div>
     </div>
   );
 };

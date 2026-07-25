@@ -1,74 +1,70 @@
-import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
-import CountUp from "react-countup";
-import { TrendingUp, Database, LineChart, BrainCircuit } from "lucide-react";
-import type { ReactNode } from "react";
-
-const MetricCard = ({
-  label,
-  value,
-  suffix,
-  icon,
-}: {
-  label: string;
-  value: number;
-  suffix: string;
-  icon: ReactNode;
-}) => {
-  const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.5 });
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 20 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5 }}
-      className="glass p-6 rounded-2xl text-center group hover:border-oil-gold/20 transition-all duration-500"
-    >
-      <div className="p-3 rounded-xl bg-oil-gold/5 w-fit mx-auto mb-4 text-oil-gold group-hover:bg-oil-gold/10 transition-colors">
-        {icon}
-      </div>
-      <div className="text-3xl font-bold font-display text-oil-gold mb-1">
-        {inView ? (
-          <CountUp end={value} duration={2} suffix={suffix} />
-        ) : (
-          `0${suffix}`
-        )}
-      </div>
-      <div className="text-xs text-gray-500 font-medium uppercase tracking-wider">
-        {label}
-      </div>
-    </motion.div>
-  );
-};
+import { BrainCircuit, Database, LineChart, TrendingUp } from "lucide-react";
 
 const MetricsSection = () => {
+  const headlineStats = [
+    {
+      label: "Forecast Horizons",
+      value: "H5 / H7 / H14",
+      note: "Direct multi-step daily Brent forecasts",
+      icon: <TrendingUp size={17} className="text-oil-gold" />,
+    },
+    {
+      label: "Feature Space",
+      value: "30 Features",
+      note: "Price, technical, sentiment, and EMA-derived inputs",
+      icon: <Database size={17} className="text-oil-gold" />,
+    },
+    {
+      label: "History Window",
+      value: "2014 - 2026",
+      note: "Approximately 3,000 aligned trading days",
+      icon: <LineChart size={17} className="text-oil-gold" />,
+    },
+    {
+      label: "Ensemble Width",
+      value: "4 Specialists",
+      note: "ARIMA, Mid-GRU, Sentiment-GRU, XGBoost-HF",
+      icon: <BrainCircuit size={17} className="text-oil-gold" />,
+    },
+  ];
+
+  const snapshotRows = [
+    { key: "Primary Benchmark", value: "Brent crude oil (daily close)" },
+    { key: "Mode Decomposition", value: "VMD, K=3 (trend, mid, high frequency)" },
+    { key: "Train/Validation/Test", value: "70% / 15% / 15%" },
+    { key: "Meta Learner", value: "Ridge stacking, alpha=1.0, 5-fold walk-forward CV" },
+    { key: "Output Endpoints", value: "Forecast, fan chart, explainability" },
+    { key: "Documentation Version", value: "v10.0" },
+  ];
+
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-20">
-      <MetricCard
-        label="Forecast Days"
-        value={5}
-        suffix=""
-        icon={<TrendingUp size={20} />}
-      />
-      <MetricCard
-        label="Data Features"
-        value={20}
-        suffix="+"
-        icon={<Database size={20} />}
-      />
-      <MetricCard
-        label="Historical Years"
-        value={10}
-        suffix="+"
-        icon={<LineChart size={20} />}
-      />
-      <MetricCard
-        label="Models Ensemble"
-        value={3}
-        suffix=""
-        icon={<BrainCircuit size={20} />}
-      />
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {headlineStats.map((stat) => (
+          <article key={stat.label} className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
+            <div className="flex items-center gap-2 mb-3">
+              {stat.icon}
+              <p className="text-[11px] uppercase tracking-[0.16em] text-gray-500 font-semibold">{stat.label}</p>
+            </div>
+            <p className="text-xl font-display font-bold text-white">{stat.value}</p>
+            <p className="text-sm text-gray-400 leading-relaxed mt-2">{stat.note}</p>
+          </article>
+        ))}
+      </div>
+
+      <div className="rounded-xl border border-white/10 overflow-hidden">
+        {snapshotRows.map((row, index) => (
+          <div
+            key={row.key}
+            className={`grid grid-cols-1 md:grid-cols-[220px_1fr] gap-3 p-4 sm:p-5 ${
+              index !== snapshotRows.length - 1 ? "border-b border-white/10" : ""
+            }`}
+          >
+            <p className="text-xs uppercase tracking-[0.14em] text-gray-500 font-semibold">{row.key}</p>
+            <p className="text-base text-gray-300 leading-7">{row.value}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

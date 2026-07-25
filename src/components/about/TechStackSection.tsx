@@ -1,136 +1,61 @@
-import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
 import { Code, Cpu, Database } from "lucide-react";
 
-const stagger = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.1 } },
-};
-
-const childFade = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.45 } },
-};
-
-const techStack = [
+const stackGroups = [
   {
-    title: "Frontend",
-    icon: <Code className="w-4 h-4" />,
-    accent: "#f59e0b",
-    accentFaint: "rgba(245,158,11,0.08)",
-    hoverBorder: "hover:border-oil-gold/30",
-    badges: [
-      { label: "React 18", sub: "TypeScript" },
-      { label: "Tailwind CSS", sub: "v4" },
-      { label: "Framer Motion", sub: "animation" },
-      { label: "Recharts", sub: "visualisation" },
-      { label: "Vite", sub: "build" },
-      { label: "Ant Design", sub: "components" },
-    ],
+    title: "Frontend Experience Layer",
+    icon: <Code className="w-4 h-4 text-oil-gold" />,
+    summary: "User interface, route orchestration, data presentation, and interaction patterns.",
+    technologies: ["React 18", "TypeScript", "Tailwind CSS", "Framer Motion", "Recharts", "Vite"],
   },
   {
-    title: "Backend & ML",
-    icon: <Cpu className="w-4 h-4" />,
-    accent: "#f59e0b",
-    accentFaint: "rgba(245,158,11,0.08)",
-    hoverBorder: "hover:border-oil-gold/30",
-    badges: [
-      { label: "Python", sub: "FastAPI" },
-      { label: "PyTorch", sub: "deep learning" },
-      { label: "FinBERT", sub: "NLP sentiment" },
-      { label: "Scikit-learn", sub: "Ridge stacking" },
-      { label: "XGBoost", sub: "HF model" },
-      { label: "VMD", sub: "decomposition" },
-    ],
+    title: "Modeling and Inference Layer",
+    icon: <Cpu className="w-4 h-4 text-oil-gold" />,
+    summary: "Feature engineering, specialist-model training, stacking, and forecast serving.",
+    technologies: ["Python", "FastAPI", "PyTorch", "FinBERT", "Scikit-learn", "XGBoost", "VMD"],
   },
   {
-    title: "Data Sources",
-    icon: <Database className="w-4 h-4" />,
-    accent: "#f59e0b",
-    accentFaint: "rgba(245,158,11,0.08)",
-    hoverBorder: "hover:border-oil-gold/30",
-    badges: [
-      { label: "Yahoo Finance", sub: "price history" },
-      { label: "OilPrice.com", sub: "market data" },
-      { label: "Trading Economics", sub: "macro signals" },
-      { label: "BOE Reports", sub: "inflation data" },
-      { label: "FT.com", sub: "news articles" },
-      { label: "SQLite", sub: "storage · Pandas" },
-    ],
+    title: "Data and Storage Layer",
+    icon: <Database className="w-4 h-4 text-oil-gold" />,
+    summary: "Market source acquisition, news context ingestion, and local persistence workflows.",
+    technologies: ["Yahoo Finance", "OilPrice.com", "Trading Economics", "BOE reports", "FT.com", "SQLite", "Pandas"],
   },
 ];
 
 const TechStackSection = () => {
-  const [techRef, techInView] = useInView({ triggerOnce: true, threshold: 0.1 });
-
   return (
-    <div ref={techRef} className="mb-16">
-      <motion.div
-        initial="hidden"
-        animate={techInView ? "visible" : "hidden"}
-        variants={stagger}
-        className="mb-10"
-      >
-        <motion.h2
-          variants={childFade}
-          className="text-2xl md:text-3xl font-bold text-white font-display flex items-center gap-3"
-        >
-          <div className="w-1 h-8 rounded-full bg-oil-gold" />
-          Technical Stack
-        </motion.h2>
-      </motion.div>
+    <div className="space-y-7">
+      <p className="text-base text-gray-300 leading-8 max-w-4xl">
+        The stack is presented as an implementation matrix, similar to product documentation systems,
+        so each layer can be reviewed independently during onboarding or architecture decisions.
+      </p>
 
-      <motion.div
-        initial="hidden"
-        animate={techInView ? "visible" : "hidden"}
-        variants={stagger}
-        className="grid grid-cols-1 md:grid-cols-3 gap-5"
-      >
-        {techStack.map((stack) => (
-          <motion.div
-            key={stack.title}
-            variants={childFade}
-            whileHover={{ y: -4 }}
-            className={`group glass rounded-2xl border border-white/10 ${stack.hoverBorder} transition-all duration-400 overflow-hidden`}
-          >
-            {/* coloured top accent bar */}
-            <div className="h-[3px] w-full" style={{ background: stack.accent }} />
-
-            <div className="p-6">
-              {/* header */}
-              <div className="flex items-center gap-2.5 mb-5">
-                <div
-                  className="p-2 rounded-lg"
-                  style={{ background: stack.accentFaint, color: stack.accent }}
-                >
-                  {stack.icon}
-                </div>
-                <h3 className="text-sm font-bold text-white font-display tracking-wide">
-                  {stack.title}
-                </h3>
-              </div>
-
-              {/* badge grid */}
-              <div className="flex flex-wrap gap-2">
-                {stack.badges.map((b) => (
-                  <motion.div
-                    key={b.label}
-                    whileHover={{ scale: 1.04 }}
-                    className="flex flex-col px-3 py-1.5 rounded-lg border border-white/8 bg-white/3 cursor-default"
-                  >
-                    <span className="text-[12px] font-semibold text-gray-100 leading-tight">
-                      {b.label}
-                    </span>
-                    <span className="text-[10px] text-gray-500 leading-tight mt-0.5">
-                      {b.sub}
-                    </span>
-                  </motion.div>
-                ))}
-              </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {stackGroups.map((group) => (
+          <article key={group.title} className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
+            <div className="flex items-center gap-2 mb-3">
+              {group.icon}
+              <h3 className="text-lg font-display font-bold text-white">{group.title}</h3>
             </div>
-          </motion.div>
+            <p className="text-sm text-gray-400 leading-7">{group.summary}</p>
+
+            <div className="flex flex-wrap gap-2 mt-4">
+              {group.technologies.map((tech) => (
+                <span
+                  key={tech}
+                  className="px-3 py-1.5 rounded-full border border-white/12 bg-oil-black/30 text-xs text-gray-300"
+                >
+                  {tech}
+                </span>
+              ))}
+            </div>
+
+            <div className="mt-4 pt-4 border-t border-white/10">
+              <p className="text-[11px] uppercase tracking-[0.14em] text-gray-500 font-semibold">Status</p>
+              <p className="text-sm text-gray-300 mt-1.5">Production aligned</p>
+            </div>
+          </article>
         ))}
-      </motion.div>
+      </div>
     </div>
   );
 };
