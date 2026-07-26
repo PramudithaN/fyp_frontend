@@ -226,8 +226,8 @@ const Navbar = () => {
                                 onClick={() => setBenchmark(key)}
                                 className={`rounded-xl border px-3.5 py-2.5 text-left transition-all duration-150 ${
                                   selected
-                                    ? "border-pc-gold/35 bg-pc-gold/12 shadow-sm shadow-pc-gold/10"
-                                    : "border-white/8 bg-white/3 hover:bg-white/6 hover:border-white/12"
+                                    ? "border-pc-gold/40 bg-pc-gold/15 shadow-sm shadow-pc-gold/10"
+                                    : "border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20"
                                 }`}
                               >
                                 <div className="flex items-center justify-between mb-1">
@@ -238,7 +238,7 @@ const Navbar = () => {
                                     <span className="chip-neutral text-[9px] py-0.5 px-1.5">Est</span>
                                   )}
                                 </div>
-                                <p className="font-mono text-[11px] text-text-muted">${displayPrice.toFixed(2)}/bbl</p>
+                                <p className={`font-mono text-[11px] ${ selected ? "text-pc-gold/80" : "text-text-secondary" }`}>${displayPrice.toFixed(2)}/bbl</p>
                               </button>
                             );
                           })}
@@ -259,12 +259,12 @@ const Navbar = () => {
                                 onClick={() => setCurrency(key)}
                                 className={`rounded-lg border px-2 py-2 text-center transition-all duration-150 ${
                                   selected
-                                    ? "border-pc-gold/35 bg-pc-gold/12 text-pc-gold"
-                                    : "border-white/8 bg-white/3 text-text-secondary hover:bg-white/6"
+                                    ? "border-pc-gold/40 bg-pc-gold/15 text-pc-gold"
+                                    : "border-white/10 bg-white/5 text-text-primary hover:bg-white/10 hover:border-white/20"
                                 }`}
                               >
                                 <p className="text-[11px] font-semibold font-mono">{option.code}</p>
-                                <p className="text-[11px] text-text-muted mt-0.5">{option.symbol.trim() || option.code}</p>
+                                <p className={`text-[11px] mt-0.5 ${ selected ? "text-pc-gold/80" : "text-text-secondary" }`}>{option.symbol.trim() || option.code}</p>
                               </button>
                             );
                           })}
@@ -285,12 +285,12 @@ const Navbar = () => {
                                 onClick={() => setUnit(key)}
                                 className={`rounded-lg border px-2 py-2 text-center transition-all duration-150 ${
                                   selected
-                                    ? "border-white/25 bg-white/10 text-text-primary"
-                                    : "border-white/8 bg-white/3 text-text-secondary hover:bg-white/6"
+                                    ? "border-white/30 bg-white/15 text-text-primary"
+                                    : "border-white/10 bg-white/5 text-text-primary hover:bg-white/10 hover:border-white/20"
                                 }`}
                               >
                                 <p className="text-[12px] font-semibold font-mono">/{option.id}</p>
-                                <p className="text-[10px] text-text-muted mt-0.5">{option.name}</p>
+                                <p className={`text-[10px] mt-0.5 ${ selected ? "text-white/80" : "text-text-secondary" }`}>{option.name}</p>
                               </button>
                             );
                           })}
