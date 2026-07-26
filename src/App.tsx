@@ -85,7 +85,7 @@ function App() {
       <DateConfigProvider locale="en-US">
         <CurrencyProvider>
           <NotificationProvider>
-            <div className="min-h-screen bg-pc-black text-text-primary selection:bg-pc-gold/25 selection:text-white overflow-x-hidden">
+            <div className="min-h-screen bg-pc-black text-text-primary selection:bg-pc-gold/25 selection:text-white overflow-clip">
               <Navbar />
               <main>
                 <Routes>

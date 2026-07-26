@@ -492,21 +492,41 @@ const fetchJson = async <T>(url: string): Promise<T> => {
 
 export interface FetchBenchmarkQuotesOptions {
   lookbackDays?: number;
+  forceRefresh?: boolean;
 }
+
+const GENERAL_CACHE_TTL_MS = 10 * 60 * 1000;
+
+const benchmarkQuotesCache = new Map<string, { data: BenchmarkQuotesResponse; timestamp: number }>();
 
 export const fetchBenchmarkQuotes = async (
   options?: FetchBenchmarkQuotesOptions,
 ): Promise<BenchmarkQuotesResponse> => {
   const lookbackDays = options?.lookbackDays ?? 60;
+  const cacheKey = `quotes:${lookbackDays}`;
+
+  if (!options?.forceRefresh) {
+    const cached = benchmarkQuotesCache.get(cacheKey);
+    if (cached && Date.now() - cached.timestamp < GENERAL_CACHE_TTL_MS) {
+      return cached.data;
+    }
+  }
+
   const params = new URLSearchParams({ lookback_days: String(lookbackDays) });
   const url = `${BENCHMARK_QUOTES_API_URL}?${params.toString()}`;
-  return normalizeBenchmarkQuotesResponse(await fetchJson<unknown>(url));
+  const response = normalizeBenchmarkQuotesResponse(await fetchJson<unknown>(url));
+  
+  benchmarkQuotesCache.set(cacheKey, { data: response, timestamp: Date.now() });
+  return response;
 };
 
 export interface FetchBenchmarkForecastOptions {
   method?: "spread" | "ratio";
   lookbackDays?: number;
+  forceRefresh?: boolean;
 }
+
+const benchmarkForecastCache = new Map<string, { data: BenchmarkDerivedForecastResponse; timestamp: number }>();
 
 export const fetchBenchmarkDerivedForecast = async (
   target: BenchmarkTarget,
@@ -514,6 +534,15 @@ export const fetchBenchmarkDerivedForecast = async (
 ): Promise<BenchmarkDerivedForecastResponse> => {
   const method = options?.method ?? "spread";
   const lookbackDays = options?.lookbackDays ?? 60;
+  const cacheKey = `${target}:${method}:${lookbackDays}`;
+
+  if (!options?.forceRefresh) {
+    const cached = benchmarkForecastCache.get(cacheKey);
+    if (cached && Date.now() - cached.timestamp < GENERAL_CACHE_TTL_MS) {
+      return cached.data;
+    }
+  }
+
   const params = new URLSearchParams({
     target,
     method,
@@ -523,7 +552,9 @@ export const fetchBenchmarkDerivedForecast = async (
   const url = `${BENCHMARK_DERIVED_FORECAST_API_URL}?${params.toString()}`;
 
   try {
-    return normalizeBenchmarkDerivedForecastResponse(await fetchJson<unknown>(url));
+    const response = normalizeBenchmarkDerivedForecastResponse(await fetchJson<unknown>(url));
+    benchmarkForecastCache.set(cacheKey, { data: response, timestamp: Date.now() });
+    return response;
   } catch (error) {
     if (error instanceof Error && /status:\s*503/.test(error.message)) {
       throw new Error("Forecast not ready yet. Please retry shortly.");
@@ -927,9 +958,21 @@ const fetchHistoricalPage = (
     (payload) => normalizeHistoricalResponse(payload, limit),
   );
 
+const historicalPricesCache = new Map<string, { data: HistoricalPricesResponse; timestamp: number }>();
+
 export const fetchHistoricalPrices = async (
   pageLimit = DEFAULT_HISTORICAL_PAGE_LIMIT,
+  forceRefresh = false,
 ): Promise<HistoricalPricesResponse> => {
+  const cacheKey = `historical:${pageLimit}`;
+
+  if (!forceRefresh) {
+    const cached = historicalPricesCache.get(cacheKey);
+    if (cached && Date.now() - cached.timestamp < GENERAL_CACHE_TTL_MS) {
+      return cached.data;
+    }
+  }
+
   const firstPage = await fetchHistoricalPage(0, pageLimit);
   const totalAvailable = firstPage.total_available ?? firstPage.total_records;
   const effectivePageLimit = firstPage.limit || pageLimit;
@@ -945,7 +988,9 @@ export const fetchHistoricalPrices = async (
     offset += page.data.length;
   }
 
-  return buildHistoricalResult(allRows, firstPage);
+  const result = buildHistoricalResult(allRows, firstPage);
+  historicalPricesCache.set(cacheKey, { data: result, timestamp: Date.now() });
+  return result;
 };
 
 /**
@@ -958,7 +1003,18 @@ export const fetchHistoricalPrices = async (
 export const fetchHistoricalPricesProgressive = async (
   onProgress: (partial: HistoricalPricesResponse, progress: number) => void,
   pageLimit = DEFAULT_HISTORICAL_PAGE_LIMIT,
+  forceRefresh = false,
 ): Promise<HistoricalPricesResponse> => {
+  const cacheKey = `historical:${pageLimit}`;
+
+  if (!forceRefresh) {
+    const cached = historicalPricesCache.get(cacheKey);
+    if (cached && Date.now() - cached.timestamp < GENERAL_CACHE_TTL_MS) {
+      onProgress(cached.data, 100);
+      return cached.data;
+    }
+  }
+
   const firstPage = await fetchHistoricalPage(0, pageLimit);
   const totalAvailable = firstPage.total_available ?? firstPage.total_records;
   const effectivePageLimit = firstPage.limit || pageLimit;
@@ -984,6 +1040,7 @@ export const fetchHistoricalPricesProgressive = async (
   }
 
   const finalResult = buildHistoricalResult(allRows, firstPage);
+  historicalPricesCache.set(cacheKey, { data: finalResult, timestamp: Date.now() });
   onProgress(finalResult, 100);
   return finalResult;
 };
@@ -1048,11 +1105,24 @@ export const fetchSentimentOverview = async (
  * Fetches sentiment overview data for a date range, with optional progress tracking.
  * For large date ranges (e.g., 2014-2025), the backend returns all available sentiment data.
  */
+const sentimentOverviewCache = new Map<string, { data: SentimentOverviewResponse; timestamp: number }>();
+
 export const fetchSentimentProgressively = async (
   startDate = DEFAULT_SENTIMENT_START_DATE,
   endDate = DEFAULT_SENTIMENT_END_DATE,
   onProgress?: (partial: SentimentOverviewResponse, progress: number) => void,
+  forceRefresh = false,
 ): Promise<SentimentOverviewResponse> => {
+  const cacheKey = `sentiment:${startDate}:${endDate}`;
+
+  if (!forceRefresh) {
+    const cached = sentimentOverviewCache.get(cacheKey);
+    if (cached && Date.now() - cached.timestamp < GENERAL_CACHE_TTL_MS) {
+      if (onProgress) onProgress(cached.data, 100);
+      return cached.data;
+    }
+  }
+
   const options: FetchSentimentOverviewOptions = {
     startDate,
     endDate,
@@ -1064,6 +1134,7 @@ export const fetchSentimentProgressively = async (
   }
 
   const result = await fetchSentimentOverview(options);
+  sentimentOverviewCache.set(cacheKey, { data: result, timestamp: Date.now() });
 
   if (onProgress) {
     onProgress(result, 100);
@@ -1344,5 +1415,19 @@ const normalizeExplainResponse = (payload: unknown): ExplainResponse => {
   };
 };
 
-export const fetchExplain = async (): Promise<ExplainResponse> =>
-  fetchJson<unknown>(EXPLAIN_API_URL).then((payload) => normalizeExplainResponse(payload));
+const explainCache = new Map<string, { data: ExplainResponse; timestamp: number }>();
+
+export const fetchExplain = async (forceRefresh = false): Promise<ExplainResponse> => {
+  const cacheKey = "explain";
+
+  if (!forceRefresh) {
+    const cached = explainCache.get(cacheKey);
+    if (cached && Date.now() - cached.timestamp < GENERAL_CACHE_TTL_MS) {
+      return cached.data;
+    }
+  }
+
+  const response = normalizeExplainResponse(await fetchJson<unknown>(EXPLAIN_API_URL));
+  explainCache.set(cacheKey, { data: response, timestamp: Date.now() });
+  return response;
+};

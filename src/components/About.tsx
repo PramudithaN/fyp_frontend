@@ -61,7 +61,7 @@ const docSections = [
 
 const About = () => {
   return (
-    <div className="min-h-screen pt-24 pb-28 px-4 sm:px-6 md:px-8 lg:px-10 relative overflow-hidden bg-pc-black">
+    <div className="min-h-screen pt-24 pb-28 px-4 sm:px-6 md:px-8 lg:px-10 relative overflow-clip bg-pc-black">
       <GlowEffect
         color="blue"
         size="lg"

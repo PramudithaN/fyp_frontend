@@ -380,7 +380,7 @@ const InteractiveGlobeHero = () => {
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#161b22] border border-[#30363D] text-[11px] font-mono text-oil-gold uppercase tracking-wider mb-3">
               <Activity size={13} className="text-oil-gold" />
-              <span>PetroCast Terminal // Regional Hotspot Map</span>
+              <span>PetroCast Terminal | Regional Hotspot Map</span>
             </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight font-display">
               Institutional Crude Price Forecasting
