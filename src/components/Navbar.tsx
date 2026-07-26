@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { AreaChart, ChevronDown, Globe, Home, Info, Menu, Newspaper, X, Wrench } from "lucide-react";
+import { AreaChart, ChevronDown, Globe, Home, Info, Menu, Newspaper, X, Settings2 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import AnimatedButton from "./ui/AnimatedButton";
 import { ApiExportModal } from "./ui/ApiExportModal";
@@ -46,9 +46,7 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  useEffect(() => {
-    setMobileOpen(false);
-  }, [location.pathname]);
+  useEffect(() => { setMobileOpen(false); }, [location.pathname]);
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
@@ -56,166 +54,164 @@ const Navbar = () => {
         setControlsOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handleOutsideClick);
     return () => document.removeEventListener("mousedown", handleOutsideClick);
   }, []);
 
-  useEffect(() => {
-    setControlsOpen(false);
-  }, [location.pathname]);
+  useEffect(() => { setControlsOpen(false); }, [location.pathname]);
 
   const navItems = [
-    { title: "Home", path: "/", icon: <Home size={18} /> },
-    { title: "Dashboard", path: "/dashboard", icon: <AreaChart size={18} /> },
-    { title: "News", path: "/news", icon: <Newspaper size={18} /> },
-    { title: "About", path: "/about", icon: <Info size={18} /> },
+    { title: "Home",      path: "/",          icon: <Home size={15} /> },
+    { title: "Dashboard", path: "/dashboard", icon: <AreaChart size={15} /> },
+    { title: "News",      path: "/news",      icon: <Newspaper size={15} /> },
+    { title: "About",     path: "/about",     icon: <Info size={15} /> },
   ];
 
   const fallbackBenchmarkPrices: Record<CrudeBenchmark, number> = {
     Brent: 78.45,
-    WTI: 74.3,
+    WTI: 74.30,
     OPEC: 77.05,
     Dubai: 76.35,
   };
 
   useEffect(() => {
     let mounted = true;
-
     const loadBenchmarkQuotes = async () => {
       try {
         const response = await fetchBenchmarkQuotes({ lookbackDays: 60 });
         if (!mounted) return;
-
         const quoteMap: Partial<Record<CrudeBenchmark, BenchmarkQuote>> = {};
-
         (Object.keys(BENCHMARKS) as CrudeBenchmark[]).forEach((key) => {
           const target = BENCHMARK_TO_TARGET[key];
           const found = response.quotes.find((quote) => quote.benchmark === target);
-          if (found) {
-            quoteMap[key] = found;
-          }
+          if (found) quoteMap[key] = found;
         });
-
         setBenchmarkQuotes(quoteMap);
-      } catch {
-        // Keep fallback prices if quotes endpoint is temporarily unavailable.
-      }
+      } catch { /* Keep fallback prices if endpoint temporarily unavailable. */ }
     };
-
     void loadBenchmarkQuotes();
-
-    return () => {
-      mounted = false;
-    };
+    return () => { mounted = false; };
   }, []);
 
   const currencyRegionCode: Record<CurrencyCode, string> = {
-    USD: "US",
-    EUR: "EU",
-    GBP: "GB",
-    AED: "AE",
-    JPY: "JP",
-    CNY: "CN",
-    SAR: "SA",
+    USD: "USD", EUR: "EUR", GBP: "GBP",
+    AED: "AED", JPY: "JPY", CNY: "CNY", SAR: "SAR",
   };
 
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          scrolled ? "glass-strong shadow-lg shadow-black/20" : "bg-transparent"
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          scrolled
+            ? "bg-pc-surface/95 backdrop-blur-xl border-b border-white/7 shadow-sm shadow-black/30"
+            : "bg-transparent"
         }`}
       >
-        <div className="max-w-[1400px] ml-auto px-6 sm:px-10 h-[62px] flex items-center justify-between w-auto gap-6">
-          <Link to="/" className="flex items-center gap-2 group shrink-0">
+        <div className="max-w-[1400px] mx-auto px-5 sm:px-8 h-[60px] flex items-center justify-between gap-6">
+
+          {/* ── Brand ── */}
+          <Link to="/" className="flex items-center gap-2.5 group shrink-0">
             <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="relative h-10 rounded-lg flex items-center gap-1.5 px-0.5"
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
+              className="flex items-center gap-2"
             >
-              <span className="w-7 h-7 shrink-0 rounded-lg bg-oil-gold flex items-center justify-center text-oil-black font-black text-[11px] font-display">P</span>
-              <span className="leading-none">
-                <span className="block text-[16px] leading-[1] font-display font-bold text-gradient-gold tracking-[0.01em]">PetroCast</span>
-                <span className="block mt-[1px] text-[8px] leading-[1] tracking-[0.22em] font-semibold text-[#d6a52f] uppercase whitespace-nowrap">Global Intelligence</span>
-              </span>
+              <div className="w-7 h-7 rounded-[8px] bg-pc-gold flex items-center justify-center shadow-sm shadow-pc-gold/30">
+                <span className="font-display font-black text-[11px] text-black tracking-tight">P</span>
+              </div>
+              <div className="leading-none">
+                <span className="block font-display font-bold text-[15px] leading-none text-gradient-gold tracking-[0.01em]">PetroCast</span>
+                <span className="block mt-[3px] text-[9px] leading-none tracking-[0.22em] font-medium text-text-muted uppercase">Global Intelligence</span>
+              </div>
             </motion.div>
           </Link>
 
+          {/* ── Desktop Navigation ── */}
           <div className="hidden md:flex flex-1 justify-center">
-          <div className="flex items-center gap-1 rounded-2xl border border-white/10 bg-white/5 px-1.5 py-1 shadow-[0_1px_2px_rgba(0,0,0,0.3)]">
-            {navItems.map((item) => {
-              const isActive = location.pathname === item.path;
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`relative px-3 py-1.5 rounded-xl text-[13px] font-semibold transition-all duration-200 flex items-center gap-1.5 ${
-                    isActive ? "text-oil-gold" : "text-gray-400 hover:text-white"
-                  }`}
-                >
-                  {isActive && (
-                    <motion.span
-                      layoutId="nav-pill"
-                      className="absolute inset-0 bg-oil-gold/10 rounded-xl border border-oil-gold/20"
-                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                    />
-                  )}
-                  <span className="relative z-10 flex items-center gap-1.5">
-                    {item.icon}
-                    {item.title}
-                  </span>
-                </Link>
-              );
-            })}
-          </div>
+            <div className="flex items-center gap-0.5 rounded-[14px] border border-white/8 bg-white/4 px-1 py-1">
+              {navItems.map((item) => {
+                const isActive = location.pathname === item.path;
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`relative px-3.5 py-1.5 rounded-[10px] text-[13px] font-medium transition-all duration-200 flex items-center gap-1.5 ${
+                      isActive ? "text-pc-gold" : "text-text-secondary hover:text-text-primary"
+                    }`}
+                  >
+                    {isActive && (
+                      <motion.span
+                        layoutId="nav-pill"
+                        className="absolute inset-0 bg-pc-gold/10 rounded-[10px] border border-pc-gold/18"
+                        transition={{ type: "spring", bounce: 0.15, duration: 0.5 }}
+                      />
+                    )}
+                    <span className="relative z-10 flex items-center gap-1.5">
+                      {item.icon}
+                      {item.title}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
 
+          {/* ── Desktop Controls ── */}
           <div className="hidden lg:flex items-center gap-2 shrink-0">
+
+            {/* Market Controls Dropdown */}
             <div className="relative" ref={controlsRef}>
               <button
                 type="button"
                 onClick={() => setControlsOpen((prev) => !prev)}
-                className="h-10 px-3 rounded-xl border border-white/10 bg-white/5 flex items-center gap-2 text-[12px] font-semibold text-gray-300 whitespace-nowrap hover:bg-white/10 transition-colors"
+                className="h-9 px-3 rounded-[10px] border border-white/9 bg-white/4 flex items-center gap-2 text-[12px] font-medium text-text-secondary hover:bg-white/7 hover:text-text-primary transition-all duration-150"
                 aria-expanded={controlsOpen}
                 aria-label="Toggle market controls"
               >
-                <Globe size={14} className="text-[#d6a52f]" />
-                <span className="whitespace-nowrap">{benchmark} Crude</span>
-                <span className="text-white/20">•</span>
-                <span className="text-[11px] uppercase text-gray-400">{currencyRegionCode[currency]} {currency}</span>
-                <span className="text-white/20">•</span>
-                <span className="text-[11px] text-gray-400">/{unit.toLowerCase()}</span>
-                <ChevronDown size={14} className={`text-gray-500 transition-transform ${controlsOpen ? "rotate-180" : ""}`} />
+                <Globe size={13} className="text-pc-gold" />
+                <span className="font-mono text-[11px]">{benchmark}</span>
+                <span className="text-white/20 text-[10px]">·</span>
+                <span className="font-mono text-[11px]">{currencyRegionCode[currency]}</span>
+                <span className="text-white/20 text-[10px]">·</span>
+                <span className="font-mono text-[11px]">{unit.toLowerCase()}</span>
+                <ChevronDown
+                  size={12}
+                  className={`text-text-muted ml-0.5 transition-transform duration-200 ${
+                    controlsOpen ? "rotate-180" : ""
+                  }`}
+                />
               </button>
 
               <AnimatePresence>
                 {controlsOpen && (
                   <motion.div
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 8 }}
-                    transition={{ duration: 0.2 }}
-                    className="absolute right-0 mt-2 w-[360px] rounded-2xl border border-white/10 bg-oil-dark/95 backdrop-blur-xl p-4 shadow-2xl shadow-black/50"
+                    initial={{ opacity: 0, y: 6, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 6, scale: 0.98 }}
+                    transition={{ duration: 0.18 }}
+                    className="absolute right-0 mt-2 w-[380px] rounded-2xl border border-white/9 bg-pc-elevated/98 backdrop-blur-2xl p-5 shadow-2xl shadow-black/60"
                   >
-                    <div className="flex items-center justify-between pb-3 border-b border-white/10">
-                      <div className="flex items-center gap-2 text-gray-100">
-                        <Wrench size={14} className="text-oil-gold" />
-                        <span className="text-xs font-bold tracking-[0.18em] uppercase">Global Market Controls</span>
+                    {/* Header */}
+                    <div className="flex items-center justify-between pb-4 border-b border-white/7">
+                      <div className="flex items-center gap-2">
+                        <Settings2 size={13} className="text-pc-gold" />
+                        <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-text-muted">Market Controls</span>
                       </div>
                       <button
                         type="button"
                         onClick={() => setControlsOpen(false)}
-                        className="text-gray-500 hover:text-gray-300 transition-colors"
+                        className="text-text-muted hover:text-text-secondary transition-colors p-0.5 rounded-md hover:bg-white/6"
                         aria-label="Close market controls"
                       >
-                        <X size={14} />
+                        <X size={13} />
                       </button>
                     </div>
 
-                    <div className="pt-3 space-y-4">
+                    <div className="pt-4 space-y-5">
+
+                      {/* Crude Benchmark */}
                       <div>
-                        <p className="text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-2">Crude Oil Benchmark (USD/bbl)</p>
+                        <p className="label-xs mb-3">Crude Benchmark</p>
                         <div className="grid grid-cols-2 gap-2">
                           {(Object.keys(BENCHMARKS) as CrudeBenchmark[]).map((key) => {
                             const option = BENCHMARKS[key];
@@ -228,30 +224,31 @@ const Navbar = () => {
                                 key={option.id}
                                 type="button"
                                 onClick={() => setBenchmark(key)}
-                                className={`rounded-xl border px-3 py-2 text-left transition-colors ${
+                                className={`rounded-xl border px-3.5 py-2.5 text-left transition-all duration-150 ${
                                   selected
-                                    ? "border-oil-gold/50 bg-oil-gold/15 text-oil-gold"
-                                    : "border-white/10 bg-white/4 text-gray-300 hover:bg-white/8"
+                                    ? "border-pc-gold/35 bg-pc-gold/12 shadow-sm shadow-pc-gold/10"
+                                    : "border-white/8 bg-white/3 hover:bg-white/6 hover:border-white/12"
                                 }`}
                               >
-                                <p className="text-sm font-semibold leading-tight">{option.name}</p>
-                                <div className="mt-1 flex items-center gap-2">
-                                  <p className="text-[11px] opacity-70 leading-tight">${displayPrice.toFixed(2)} /bbl</p>
+                                <div className="flex items-center justify-between mb-1">
+                                  <p className={`text-[13px] font-semibold ${ selected ? "text-pc-gold" : "text-text-primary" }`}>
+                                    {option.name}
+                                  </p>
                                   {isEstimated && (
-                                    <span className="rounded-full border border-amber-400/40 bg-amber-500/10 px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-amber-200">
-                                      Estimated
-                                    </span>
+                                    <span className="chip-neutral text-[9px] py-0.5 px-1.5">Est</span>
                                   )}
                                 </div>
+                                <p className="font-mono text-[11px] text-text-muted">${displayPrice.toFixed(2)}/bbl</p>
                               </button>
                             );
                           })}
                         </div>
                       </div>
 
+                      {/* Display Currency */}
                       <div>
-                        <p className="text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-2">Display Currency</p>
-                        <div className="grid grid-cols-4 gap-2">
+                        <p className="label-xs mb-3">Display Currency</p>
+                        <div className="grid grid-cols-4 gap-1.5">
                           {(Object.keys(CURRENCIES) as CurrencyCode[]).map((key) => {
                             const option = CURRENCIES[key];
                             const selected = currency === key;
@@ -260,23 +257,24 @@ const Navbar = () => {
                                 key={option.code}
                                 type="button"
                                 onClick={() => setCurrency(key)}
-                                className={`rounded-xl border px-2 py-2 text-center transition-colors ${
+                                className={`rounded-lg border px-2 py-2 text-center transition-all duration-150 ${
                                   selected
-                                    ? "border-oil-gold/50 bg-oil-gold/15 text-oil-gold"
-                                    : "border-white/10 bg-white/4 text-gray-300 hover:bg-white/8"
+                                    ? "border-pc-gold/35 bg-pc-gold/12 text-pc-gold"
+                                    : "border-white/8 bg-white/3 text-text-secondary hover:bg-white/6"
                                 }`}
                               >
-                                <p className="text-[10px] uppercase font-semibold leading-tight">{option.code}</p>
-                                <p className="text-[11px] opacity-70 leading-tight mt-1">{option.symbol.trim() || option.code}</p>
+                                <p className="text-[11px] font-semibold font-mono">{option.code}</p>
+                                <p className="text-[11px] text-text-muted mt-0.5">{option.symbol.trim() || option.code}</p>
                               </button>
                             );
                           })}
                         </div>
                       </div>
 
+                      {/* Volume Unit */}
                       <div>
-                        <p className="text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-2">Volume Unit</p>
-                        <div className="grid grid-cols-3 gap-2">
+                        <p className="label-xs mb-3">Volume Unit</p>
+                        <div className="grid grid-cols-3 gap-1.5">
                           {(Object.keys(UNITS) as VolumeUnit[]).map((key) => {
                             const option = UNITS[key];
                             const selected = unit === key;
@@ -285,14 +283,14 @@ const Navbar = () => {
                                 key={option.id}
                                 type="button"
                                 onClick={() => setUnit(key)}
-                                className={`rounded-xl border px-2 py-2 text-center transition-colors ${
+                                className={`rounded-lg border px-2 py-2 text-center transition-all duration-150 ${
                                   selected
-                                    ? "border-white/35 bg-white/10 text-white"
-                                    : "border-white/10 bg-white/4 text-gray-300 hover:bg-white/8"
+                                    ? "border-white/25 bg-white/10 text-text-primary"
+                                    : "border-white/8 bg-white/3 text-text-secondary hover:bg-white/6"
                                 }`}
                               >
-                                <p className="text-sm font-semibold leading-tight">/{option.id}</p>
-                                <p className="text-[11px] opacity-70 leading-tight mt-1">{option.name}</p>
+                                <p className="text-[12px] font-semibold font-mono">/{option.id}</p>
+                                <p className="text-[10px] text-text-muted mt-0.5">{option.name}</p>
                               </button>
                             );
                           })}
@@ -304,37 +302,41 @@ const Navbar = () => {
               </AnimatePresence>
             </div>
 
+            {/* Data API Button */}
             <button
               type="button"
               onClick={() => setApiModalOpen(true)}
-              className="h-10 px-4 rounded-xl border border-white/10 bg-white/5 flex items-center gap-2 text-[13px] font-semibold text-gray-300 hover:bg-white/10 transition-colors whitespace-nowrap min-w-fit"
+              className="h-9 px-3.5 rounded-[10px] border border-white/9 bg-white/4 flex items-center gap-1.5 text-[12px] font-medium text-text-secondary hover:bg-white/7 hover:text-text-primary transition-all duration-150 whitespace-nowrap"
             >
-              <Globe size={14} className="text-[#d6a52f]" />
-              <span className="whitespace-nowrap">Data API</span>
+              <Globe size={13} className="text-pc-gold" />
+              <span>Data API</span>
             </button>
 
+            {/* Live Forecast CTA */}
             <Link to="/dashboard">
               <AnimatedButton
                 variant="primary"
                 hoverScale={1.02}
-                className="h-10 px-5 py-0 text-[13px] rounded-xl whitespace-nowrap"
+                className="h-9 px-4 py-0 text-[13px] rounded-[10px] font-semibold"
               >
-                <AreaChart size={16} />
+                <AreaChart size={14} />
                 Live Forecast
               </AnimatedButton>
             </Link>
           </div>
 
+          {/* ── Mobile Menu Toggle ── */}
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden text-gray-300 hover:text-white p-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 transition-colors"
+            className="md:hidden text-text-secondary hover:text-text-primary p-2 rounded-[10px] border border-white/9 bg-white/4 hover:bg-white/7 transition-all duration-150"
           >
-            {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
           </motion.button>
         </div>
       </nav>
 
+      {/* ── Mobile Drawer ── */}
       <AnimatePresence>
         {mobileOpen && (
           <>
@@ -343,42 +345,50 @@ const Navbar = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMobileOpen(false)}
-              className="fixed inset-0 bg-black/55 backdrop-blur-sm z-40 md:hidden"
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
             />
             <motion.div
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="fixed top-0 right-0 bottom-0 w-72 bg-oil-dark/95 backdrop-blur-xl border-l border-white/10 shadow-2xl shadow-black/60 z-50 md:hidden flex flex-col"
+              transition={{ type: "spring", damping: 28, stiffness: 320 }}
+              className="fixed top-0 right-0 bottom-0 w-72 bg-pc-elevated/98 backdrop-blur-2xl border-l border-white/8 shadow-2xl shadow-black/60 z-50 md:hidden flex flex-col"
             >
-              <div className="p-6 border-b border-white/10">
+              {/* Drawer header */}
+              <div className="p-5 border-b border-white/7">
                 <div className="flex items-center justify-between">
-                  <span className="text-lg font-bold font-display text-gradient-gold">PetroCast</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-[6px] bg-pc-gold flex items-center justify-center">
+                      <span className="font-display font-black text-[10px] text-black">P</span>
+                    </div>
+                    <span className="font-display font-bold text-[15px] text-gradient-gold">PetroCast</span>
+                  </div>
                   <button
                     onClick={() => setMobileOpen(false)}
-                    className="p-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-colors"
+                    className="p-1.5 rounded-lg border border-white/9 bg-white/4 hover:bg-white/8 text-text-secondary hover:text-text-primary transition-all"
                   >
-                    <X size={20} />
+                    <X size={16} />
                   </button>
                 </div>
               </div>
-              <div className="flex flex-col gap-2 p-4 flex-1">
+
+              {/* Drawer nav */}
+              <div className="flex flex-col gap-1 p-4 flex-1">
                 {navItems.map((item, idx) => {
                   const isActive = location.pathname === item.path;
                   return (
                     <motion.div
                       key={item.path}
-                      initial={{ opacity: 0, x: 20 }}
+                      initial={{ opacity: 0, x: 16 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: idx * 0.1 }}
+                      transition={{ delay: idx * 0.07 }}
                     >
                       <Link
                         to={item.path}
-                        className={`flex items-center gap-3 px-4 py-3.5 rounded-xl text-base font-medium transition-all ${
+                        className={`flex items-center gap-2.5 px-3.5 py-3 rounded-xl text-[14px] font-medium transition-all ${
                           isActive
-                            ? "border border-oil-gold/30 bg-oil-gold/15 text-oil-gold"
-                            : "border border-transparent text-gray-300 hover:text-white hover:bg-white/8 hover:border-white/10"
+                            ? "bg-pc-gold/12 border border-pc-gold/22 text-pc-gold"
+                            : "border border-transparent text-text-secondary hover:text-text-primary hover:bg-white/5 hover:border-white/9"
                         }`}
                       >
                         {item.icon}
@@ -388,10 +398,12 @@ const Navbar = () => {
                   );
                 })}
               </div>
-              <div className="p-4 border-t border-white/10">
+
+              {/* Drawer CTA */}
+              <div className="p-4 border-t border-white/7">
                 <Link to="/dashboard" onClick={() => setMobileOpen(false)}>
-                  <button className="w-full px-5 py-3 bg-oil-gold text-oil-black font-semibold text-sm rounded-xl flex items-center justify-center gap-2 cursor-pointer hover:bg-oil-light-gold transition-colors">
-                    <AreaChart size={16} />
+                  <button className="w-full px-4 py-2.5 bg-pc-gold text-black font-semibold text-sm rounded-xl flex items-center justify-center gap-2 hover:bg-pc-gold-light transition-colors">
+                    <AreaChart size={15} />
                     Live Forecast
                   </button>
                 </Link>

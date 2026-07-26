@@ -1,110 +1,111 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap");
 @import "tailwindcss";
 
+
+/* ═══════════════════════════════════════════════════════════════
+   PETROCAST DESIGN SYSTEM — Professional Dark Theme
+   Inspired by: Apple, GitHub, Bloomberg, Linear, Vercel
+   ═══════════════════════════════════════════════════════════════ */
+
 @theme {
-  --color-oil-black: #0e0c0a;
-  --color-oil-dark: #191713;
-  --color-oil-card: #211f1b;
-  --color-oil-surface: #2b2824;
-  --color-oil-gold: #f59e0b;
-  --color-oil-amber: #d97706;
-  --color-oil-light-gold: #fcd34d;
-  --color-oil-slate: #3d3732;
-  --color-oil-green: #f59e0b;
-  --color-oil-red: #9ca3af;
-  --color-oil-blue: #f59e0b;
-  --color-oil-cyan: #f59e0b;
+  /* ── Background Layers ── */
+  --color-pc-black:    #09090E;   /* Page background */
+  --color-pc-surface:  #111118;   /* Card / panel background */
+  --color-pc-elevated: #18181F;   /* Elevated card / modal */
+  --color-pc-overlay:  #1E1E28;   /* Dropdown / popover */
 
-  --font-sans: "Inter", system-ui, sans-serif;
+  /* ── Legacy aliases (keep oil-* so existing JSX classes still work) ── */
+  --color-oil-black:   #09090E;
+  --color-oil-dark:    #111118;
+  --color-oil-card:    #18181F;
+  --color-oil-surface: #1E1E28;
+  --color-oil-slate:   #2A2A36;
+
+  /* ── Brand / Accent ── */
+  --color-pc-gold:        #F59E0B;   /* Primary brand accent */
+  --color-pc-gold-light:  #FCD34D;   /* Hover / hover highlight */
+  --color-pc-gold-dim:    #92600A;   /* Muted brand */
+  --color-oil-gold:       #F59E0B;
+  --color-oil-amber:      #D97706;
+  --color-oil-light-gold: #FCD34D;
+
+  /* ── Semantic: Positive / Negative (FIXED — no longer mapped to gold) ── */
+  --color-pc-green:      #22C55E;   /* Up / positive / bullish */
+  --color-pc-green-dim:  #166534;
+  --color-pc-red:        #EF4444;   /* Down / negative / bearish */
+  --color-pc-red-dim:    #991B1B;
+  --color-oil-green:     #22C55E;   /* Re-mapped (was #F59E0B — wrong!) */
+  --color-oil-red:       #EF4444;   /* Re-mapped (was #9ca3af — wrong!) */
+
+  /* ── Data Visualization ── */
+  --color-pc-sky:      #38BDF8;    /* Actual price / historical data line */
+  --color-pc-violet:   #A78BFA;    /* Explainability / AI features */
+  --color-pc-emerald:  #34D399;    /* Analytics / comparison good */
+  --color-oil-blue:    #38BDF8;    /* Re-mapped from #3B82F6 */
+  --color-oil-cyan:    #38BDF8;    /* Re-mapped — was also #F59E0B (wrong!) */
+
+  /* ── Text Scale ── */
+  --color-text-primary:   #F1F5F9;
+  --color-text-secondary: #94A3B8;
+  --color-text-muted:     #475569;
+  --color-text-faint:     #334155;
+
+  /* ── Typography ── */
+  --font-sans:    "Inter", system-ui, -apple-system, sans-serif;
   --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-mono:    "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
 
-  --animate-fadeIn: fadeIn 0.6s ease-out forwards;
-  --animate-shimmer: shimmer 2s infinite linear;
-  --animate-float: float 6s ease-in-out infinite;
-  --animate-pulse-glow: pulse-glow 2s ease-in-out infinite;
-  --animate-slide-up: slide-up 0.5s ease-out forwards;
-  --animate-slide-down: slide-down 0.3s ease-out forwards;
+  /* ── Animations ── */
+  --animate-fadeIn:     fadeIn 0.5s ease-out forwards;
+  --animate-slide-up:   slide-up 0.4s ease-out forwards;
+  --animate-slide-down: slide-down 0.25s ease-out forwards;
+  --animate-shimmer:    shimmer 2.2s infinite linear;
+  --animate-float:      float 7s ease-in-out infinite;
+  --animate-pulse-glow: pulse-glow 2.5s ease-in-out infinite;
+  --animate-spin-slow:  spin 3s linear infinite;
 
   @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes shimmer {
-    0% {
-      background-position: -200% 0;
-    }
-    100% {
-      background-position: 200% 0;
-    }
-  }
-
-  @keyframes float {
-    0%,
-    100% {
-      transform: translateY(0px);
-    }
-    50% {
-      transform: translateY(-20px);
-    }
-  }
-
-  @keyframes pulse-glow {
-    0%,
-    100% {
-      box-shadow: 0 0 20px rgba(245, 158, 11, 0.15);
-    }
-    50% {
-      box-shadow: 0 0 40px rgba(245, 158, 11, 0.3);
-    }
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 
   @keyframes slide-up {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 
   @keyframes slide-down {
-    from {
-      opacity: 0;
-      transform: translateY(-10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes shimmer {
+    0%   { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-18px); }
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.12); }
+    50%       { box-shadow: 0 0 40px rgba(245, 158, 11, 0.28); }
   }
 }
 
-/* Force dark mode */
-:root {
-  color-scheme: dark;
-}
+/* ═══════════════════════════════════════════════════════════════
+   BASE RESET & GLOBAL DEFAULTS
+   ═══════════════════════════════════════════════════════════════ */
 
-html {
-  scroll-behavior: smooth;
-}
+:root { color-scheme: dark; }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+html { scroll-behavior: smooth; }
 
-html,
-body,
-#root {
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body, #root {
   width: 100%;
   min-height: 100vh;
   margin: 0;
@@ -112,121 +113,306 @@ body,
 }
 
 body {
-  background-color: #0e0c0a;
-  color: #e5e7eb;
-  font-family:
-    "Inter",
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    Oxygen,
-    Ubuntu,
-    Cantarell,
-    "Open Sans",
-    "Helvetica Neue",
-    sans-serif;
+  background-color: #09090E;
+  color: #F1F5F9;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "cv11", "ss01";
 }
 
-/* Show a pointer on common interactive controls. */
-button,
-a[href],
-[role="button"],
-summary,
-label[for],
-select,
-input[type="button"],
-input[type="submit"],
-input[type="reset"] {
+/* Interactive element cursors */
+button, a[href], [role="button"], summary, label[for],
+select, input[type="button"], input[type="submit"], input[type="reset"] {
   cursor: pointer;
 }
-
-button:disabled,
-input:disabled,
-select:disabled,
-textarea:disabled {
+button:disabled, input:disabled, select:disabled, textarea:disabled {
   cursor: not-allowed;
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: #0e0c0a;
-}
-::-webkit-scrollbar-thumb {
-  background: #3d3732;
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #f59e0b;
-}
+/* ═══════════════════════════════════════════════════════════════
+   SCROLLBAR
+   ═══════════════════════════════════════════════════════════════ */
 
-/* Utility Classes */
+::-webkit-scrollbar       { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #09090E; }
+::-webkit-scrollbar-thumb {
+  background: #2A2A36;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: #F59E0B; }
+
+/* ═══════════════════════════════════════════════════════════════
+   UTILITY CLASSES
+   ═══════════════════════════════════════════════════════════════ */
+
 @layer utilities {
+
+  /* ── Glass Surface Variants ── */
   .glass {
-    background: rgba(25, 23, 19, 0.75);
+    background: rgba(17, 17, 24, 0.8);
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
   }
 
   .glass-strong {
-    background: rgba(25, 23, 19, 0.92);
-    backdrop-filter: blur(30px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(24, 24, 31, 0.96);
+    backdrop-filter: blur(32px);
+    -webkit-backdrop-filter: blur(32px);
+    border: 1px solid rgba(255, 255, 255, 0.09);
   }
 
-  .gradient-border {
-    position: relative;
-    background: rgba(25, 23, 19, 0.65);
-    border: 1px solid rgba(245, 158, 11, 0.25);
-    background-clip: padding-box;
+  /* ── Card System ── */
+
+  /* Standard data card */
+  .pc-card {
+    background: #111118;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 16px;
   }
 
-  .gradient-border::before {
-    content: none;
+  /* Elevated card for modals / dropdowns */
+  .pc-card-elevated {
+    background: #18181F;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 16px;
   }
 
+  /* Section container (large rounded panel) */
+  .pc-section {
+    background: #111118;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 20px;
+  }
+
+  /* Legacy glass-card alias */
+  .glass-card {
+    background: rgba(17, 17, 24, 0.75);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+  }
+
+  /* ── Typography Utilities ── */
+
+  /* Section / card label (e.g. "CURRENT PRICE") */
+  .label-xs {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #475569;
+    font-family: "Inter", sans-serif;
+  }
+
+  /* Metric value (numbers, prices, percentages) */
+  .value-mono {
+    font-family: "JetBrains Mono", monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Large display value */
+  .value-display {
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 700;
+    font-size: 2rem;
+    line-height: 1.1;
+    color: #F1F5F9;
+  }
+
+  /* ── Direction Chips ── */
+  .chip-up {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(34, 197, 94, 0.12);
+    color: #22C55E;
+    border: 1px solid rgba(34, 197, 94, 0.2);
+    font-family: "JetBrains Mono", monospace;
+  }
+
+  .chip-down {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(239, 68, 68, 0.12);
+    color: #EF4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    font-family: "JetBrains Mono", monospace;
+  }
+
+  /* ── Status / Badge Chips ── */
+  .chip-gold {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    background: rgba(245, 158, 11, 0.12);
+    color: #F59E0B;
+    border: 1px solid rgba(245, 158, 11, 0.22);
+  }
+
+  .chip-neutral {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.05);
+    color: #94A3B8;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+  }
+
+  /* ── Gradient Text ── */
   .text-gradient-gold {
-    color: #f59e0b;
+    background: linear-gradient(135deg, #F59E0B 0%, #FCD34D 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   .text-gradient-white {
-    color: #ffffff;
+    background: linear-gradient(135deg, #ffffff 0%, #94A3B8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
+  /* ── Background Patterns ── */
   .bg-grid-pattern {
-    background-image: none;
-    background-size: 60px 60px;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 48px 48px;
   }
 
+  /* ── Glow Effects ── */
   .glow-amber {
     box-shadow:
-      0 0 30px rgba(245, 158, 11, 0.15),
-      0 0 60px rgba(245, 158, 11, 0.05);
+      0 0 30px rgba(245, 158, 11, 0.12),
+      0 0 60px rgba(245, 158, 11, 0.04);
   }
 
   .glow-amber-strong {
     box-shadow:
-      0 0 40px rgba(245, 158, 11, 0.25),
-      0 0 80px rgba(245, 158, 11, 0.1);
+      0 0 40px rgba(245, 158, 11, 0.22),
+      0 0 80px rgba(245, 158, 11, 0.08);
   }
 
+  /* ── Gradient Border ── */
+  .gradient-border {
+    position: relative;
+    background: rgba(17, 17, 24, 0.8);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+  }
+
+  /* ── Skeleton Loader ── */
   .skeleton-loader {
     position: relative;
     overflow: hidden;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    box-shadow:
-      inset 0 1px 0 rgba(204, 145, 145, 0.08),
-      0 8px 24px rgba(0, 0, 0, 0.25);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
   }
 
   .skeleton-loader::after {
-    content: none;
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.04) 50%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2.2s infinite linear;
   }
+
+  /* ── Divider ── */
+  .pc-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  /* ── Input Base ── */
+  .pc-input {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 10px;
+    color: #F1F5F9;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+
+  .pc-input:focus {
+    border-color: rgba(245, 158, 11, 0.5);
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.08);
+  }
+
+  /* ── Chart Legend Dot ── */
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .legend-line {
+    width: 20px;
+    height: 2px;
+    border-radius: 1px;
+    flex-shrink: 0;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ANT DESIGN OVERRIDES
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Table rows */
+.ant-table-tbody > tr:hover > td {
+  background: rgba(255, 255, 255, 0.03) !important;
+}
+
+/* Pagination */
+.ant-pagination .ant-pagination-item-active {
+  border-color: #F59E0B !important;
+  background: rgba(245, 158, 11, 0.12) !important;
+}
+.ant-pagination .ant-pagination-item-active a {
+  color: #F59E0B !important;
+}
+.ant-pagination .ant-pagination-item:hover {
+  border-color: rgba(245, 158, 11, 0.4) !important;
+}
+.ant-pagination .ant-pagination-item:hover a {
+  color: #F59E0B !important;
+}
+
+/* Date inputs */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.5) sepia(1) saturate(5) hue-rotate(15deg);
+  opacity: 0.6;
+  cursor: pointer;
+}
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
 }

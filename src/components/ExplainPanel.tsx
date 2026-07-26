@@ -13,10 +13,10 @@ import { ExplainResponse } from "../types/api";
 
 /* ─── Model display metadata ─── */
 const MODEL_META: Record<string, { label: string; color: string }> = {
-  arima: { label: "ARIMA", color: "#f59e0b" },
-  gru_mid: { label: "Mid-GRU", color: "#f59e0b" },
-  gru_sent: { label: "Sentiment-GRU", color: "#f59e0b" },
-  xgb_hf: { label: "XGBoost-HF", color: "#f59e0b" },
+  arima: { label: "ARIMA", color: "#F59E0B" },
+  gru_mid: { label: "Mid-GRU", color: "#F59E0B" },
+  gru_sent: { label: "Sentiment-GRU", color: "#F59E0B" },
+  xgb_hf: { label: "XGBoost-HF", color: "#F59E0B" },
 };
 
 /* ─── Confidence level styling ─── */
@@ -25,19 +25,19 @@ const CONFIDENCE_STYLE: Record<
   { text: string; badge: string; dot: string }
 > = {
   high: {
-    text: "text-oil-gold",
-    badge: "bg-oil-gold/10 border border-oil-gold/30",
-    dot: "#f59e0b",
+    text: "text-pc-green",
+    badge: "bg-pc-green/10 border border-pc-green/20",
+    dot: "#22C55E",
   },
   medium: {
-    text: "text-amber-400",
-    badge: "bg-amber-500/10 border border-amber-500/30",
-    dot: "#f59e0b",
+    text: "text-pc-gold",
+    badge: "bg-pc-gold/10 border border-pc-gold/20",
+    dot: "#F59E0B",
   },
   low: {
-    text: "text-oil-gold",
-    badge: "bg-oil-gold/10 border border-oil-gold/30",
-    dot: "#9ca3af",
+    text: "text-pc-red",
+    badge: "bg-pc-red/10 border border-pc-red/20",
+    dot: "#EF4444",
   },
 };
 
@@ -51,7 +51,7 @@ const SectionHeader = ({
 }) => (
   <div className="flex items-center gap-2 mb-4">
     <div className="w-2 h-2 rounded-full" style={{ backgroundColor: dot }} />
-    <h3 className="text-xs font-bold text-white font-display uppercase tracking-[0.18em]">
+    <h3 className="label-xs text-text-primary">
       {children}
     </h3>
   </div>
@@ -63,9 +63,9 @@ const ModelTooltip = ({ active, payload }: any) => {
   const v = payload[0].value as number;
   const name = payload[0].payload?.name ?? "";
   return (
-    <div className="glass-strong px-3 py-2 rounded-xl shadow-xl text-xs">
-      <p className="text-gray-400 mb-0.5">{name}</p>
-      <p className="font-bold font-mono text-white">${v.toFixed(2)}</p>
+    <div className="bg-pc-elevated/95 backdrop-blur-xl border border-white/9 px-3 py-2 rounded-xl shadow-xl text-xs">
+      <p className="text-text-muted mb-0.5">{name}</p>
+      <p className="font-bold font-mono text-text-primary">${v.toFixed(2)}</p>
     </div>
   );
 };
@@ -145,30 +145,26 @@ export default function ExplainPanel({ data, onClose }: Readonly<ExplainPanelPro
         animate={{ y: 0 }}
         exit={{ y: "100%" }}
         transition={{ type: "spring", damping: 32, stiffness: 320 }}
-        className="fixed inset-x-0 bottom-0 z-50 flex flex-col rounded-t-3xl overflow-hidden"
-        style={{
-          maxHeight: "92vh",
-          background: "#191713",
-          borderTop: "1px solid rgba(255,255,255,0.08)",
-        }}
+        className="fixed inset-x-0 bottom-0 z-50 flex flex-col rounded-t-3xl overflow-hidden bg-pc-elevated/98 backdrop-blur-3xl border-t border-white/9 shadow-2xl shadow-black/50"
+        style={{ maxHeight: "92vh" }}
         onClick={stopPropagation}
       >
         {/* Drag handle */}
         <div className="flex justify-center pt-3 pb-1 shrink-0">
-          <div className="w-10 h-1 rounded-full bg-white/20" />
+          <div className="w-10 h-1.5 rounded-full bg-white/10" />
         </div>
 
         {/* Panel header */}
-        <div className="flex items-center justify-between px-5 sm:px-8 pt-2 pb-4 border-b border-white/5 shrink-0">
+        <div className="flex items-center justify-between px-5 sm:px-8 pt-2 pb-4 border-b border-white/7 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-oil-gold/10 border border-oil-gold/30">
-              <Brain size={20} className="text-oil-gold" />
+            <div className="p-2 rounded-xl bg-pc-gold/10 border border-pc-gold/30">
+              <Brain size={20} className="text-pc-gold" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-white font-display">
+              <h2 className="text-base font-bold text-text-primary font-display">
                 Model Explainability
               </h2>
-              <p className="text-[11px] text-gray-500">
+              <p className="text-[11px] text-text-muted">
                 Ensemble forecast decomposition &amp; feature attribution
               </p>
             </div>
@@ -177,16 +173,16 @@ export default function ExplainPanel({ data, onClose }: Readonly<ExplainPanelPro
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={onClose}
-            className="p-2 rounded-xl glass hover:bg-white/10 transition-colors cursor-pointer"
+            className="p-2 rounded-xl bg-white/4 border border-white/8 hover:bg-white/10 transition-colors cursor-pointer"
             aria-label="Close explainability panel"
           >
-            <X size={18} className="text-gray-400" />
+            <X size={18} className="text-text-secondary hover:text-text-primary" />
           </motion.button>
         </div>
 
         {/* Scrollable body */}
         <div className="flex-1 overflow-y-auto overscroll-contain">
-          <div className="px-4 sm:px-8 py-6 space-y-6 max-w-350 mx-auto">
+          <div className="px-4 sm:px-8 py-6 space-y-6 max-w-[1200px] mx-auto">
 
             {/* ── KPI Row ── */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
@@ -195,15 +191,15 @@ export default function ExplainPanel({ data, onClose }: Readonly<ExplainPanelPro
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.05 }}
-                className="glass p-4 rounded-2xl"
+                className="pc-card p-5 rounded-2xl"
               >
-                <div className="text-[10px] text-oil-gold/80 font-semibold uppercase tracking-widest mb-2">
+                <div className="label-xs mb-2">
                   Forecast Price (T+1)
                 </div>
-                <div className="text-2xl font-bold text-oil-gold font-display">
+                <div className="text-2xl font-bold font-mono text-pc-gold">
                   ${data.prediction.toFixed(2)}
                 </div>
-                <div className="mt-1.5 text-[11px] text-gray-500">
+                <div className="mt-1.5 text-[11px] text-text-muted">
                   {forecastMetaLabel || "Brent Crude / barrel"}
                 </div>
               </motion.div>
@@ -213,15 +209,15 @@ export default function ExplainPanel({ data, onClose }: Readonly<ExplainPanelPro
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="glass p-4 rounded-2xl"
+                className="pc-card p-5 rounded-2xl"
               >
-                <div className="text-[10px] text-gray-500 font-semibold uppercase tracking-widest mb-2">
+                <div className="label-xs mb-2">
                   Confidence Interval
                 </div>
-                <div className="text-lg font-bold text-white font-display leading-tight">
+                <div className="text-lg font-bold text-text-primary font-mono leading-tight">
                   ${data.confidence_interval_lower.toFixed(2)}
                 </div>
-                <div className="text-[11px] text-gray-500 mt-0.5">
+                <div className="text-[11px] font-mono text-text-muted mt-0.5">
                   to ${data.confidence_interval_upper.toFixed(2)}
                 </div>
                 {/* Range bar showing where prediction lands */}
@@ -230,7 +226,7 @@ export default function ExplainPanel({ data, onClose }: Readonly<ExplainPanelPro
                     initial={{ width: 0 }}
                     animate={{ width: "100%" }}
                     transition={{ duration: 1.1, delay: 0.35, ease: "easeOut" }}
-                    className="h-full rounded-full bg-oil-gold"
+                    className="h-full rounded-full bg-pc-gold"
                   />
                 </div>
                 <motion.div
@@ -243,7 +239,7 @@ export default function ExplainPanel({ data, onClose }: Readonly<ExplainPanelPro
                     className="absolute -top-3 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-white border-2 shadow"
                     style={{
                       left: `${Math.max(4, Math.min(96, predPct))}%`,
-                      borderColor: "#191713",
+                      borderColor: "#111118",
                     }}
                   />
                 </motion.div>
@@ -254,9 +250,9 @@ export default function ExplainPanel({ data, onClose }: Readonly<ExplainPanelPro
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15 }}
-                className="glass p-4 rounded-2xl"
+                className="pc-card p-5 rounded-2xl"
               >
-                <div className="text-[10px] text-gray-500 font-semibold uppercase tracking-widest mb-3">
+                <div className="label-xs mb-3">
                   Confidence Level
                 </div>
                 <div
@@ -270,7 +266,7 @@ export default function ExplainPanel({ data, onClose }: Readonly<ExplainPanelPro
                   />
                   {data.confidence_level}
                 </div>
-                <div className="mt-2.5 text-[11px] text-gray-500">
+                <div className="mt-2.5 text-[11px] text-text-muted">
                   Forecast reliability
                 </div>
               </motion.div>
@@ -280,15 +276,15 @@ export default function ExplainPanel({ data, onClose }: Readonly<ExplainPanelPro
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="glass p-4 rounded-2xl"
+                className="pc-card p-5 rounded-2xl"
               >
-                <div className="text-[10px] text-gray-500 font-semibold uppercase tracking-widest mb-2">
+                <div className="label-xs mb-2">
                   Model Agreement
                 </div>
-                <div className="text-2xl font-bold text-oil-gold font-display">
+                <div className="text-2xl font-bold font-mono text-pc-gold">
                   {data.agreement_score.toFixed(4)}
                 </div>
-                <div className="mt-1.5 text-[11px] text-gray-500">
+                <div className="mt-1.5 text-[11px] text-text-muted">
                   {data.dominant_model
                     ? `Dominant: ${data.dominant_model}`
                     : "Lower = higher consensus"}
@@ -301,9 +297,9 @@ export default function ExplainPanel({ data, onClose }: Readonly<ExplainPanelPro
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.22 }}
-                className="glass p-4 rounded-2xl border border-oil-gold/20"
+                className="pc-card p-4 rounded-2xl border border-pc-gold/20"
               >
-                <p className="text-sm text-oil-light-gold leading-relaxed font-medium">
+                <p className="text-sm text-pc-gold leading-relaxed font-medium">
                   {data.headline}
                 </p>
               </motion.div>
@@ -317,9 +313,9 @@ export default function ExplainPanel({ data, onClose }: Readonly<ExplainPanelPro
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.25 }}
-                className="glass p-5 rounded-2xl"
+                className="pc-card p-6 rounded-2xl"
               >
-                <SectionHeader dot="#f59e0b">
+                <SectionHeader dot="#F59E0B">
                   Sub-model Contributions
                 </SectionHeader>
 
@@ -328,8 +324,7 @@ export default function ExplainPanel({ data, onClose }: Readonly<ExplainPanelPro
                   {modelChartData.map((model, i) => (
                     <div key={model.name} className="flex items-center gap-3">
                       <span
-                        className="text-xs font-medium w-32 shrink-0"
-                        style={{ color: model.color }}
+                        className="text-[13px] font-medium w-32 shrink-0 text-text-secondary"
                       >
                         {model.name}
                       </span>
@@ -348,7 +343,7 @@ export default function ExplainPanel({ data, onClose }: Readonly<ExplainPanelPro
                           style={{ backgroundColor: model.color }}
                         />
                       </div>
-                      <span className="text-xs font-mono font-semibold text-white w-14 text-right shrink-0">
+                      <span className="text-xs font-mono font-semibold text-text-primary w-14 text-right shrink-0">
                         ${model.value.toFixed(2)}
                       </span>
                     </div>
@@ -356,7 +351,7 @@ export default function ExplainPanel({ data, onClose }: Readonly<ExplainPanelPro
                 </div>
 
                 {/* Recharts horizontal bar chart */}
-                <div className="h-45">
+                <div className="h-48 mt-8">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                       data={modelChartData}
@@ -370,7 +365,7 @@ export default function ExplainPanel({ data, onClose }: Readonly<ExplainPanelPro
                       />
                       <XAxis
                         type="number"
-                        tick={{ fill: "#6b7280", fontSize: 10 }}
+                        tick={{ fill: "#94A3B8", fontSize: 11 }}
                         tickLine={false}
                         axisLine={false}
                         tickFormatter={(v: number) => `$${v.toFixed(0)}`}
@@ -378,7 +373,7 @@ export default function ExplainPanel({ data, onClose }: Readonly<ExplainPanelPro
                       <YAxis
                         type="category"
                         dataKey="name"
-                        tick={{ fill: "#6b7280", fontSize: 10 }}
+                        tick={{ fill: "#94A3B8", fontSize: 11 }}
                         tickLine={false}
                         axisLine={false}
                         width={88}
@@ -387,7 +382,7 @@ export default function ExplainPanel({ data, onClose }: Readonly<ExplainPanelPro
                         content={<ModelTooltip />}
                         cursor={{ fill: "rgba(255,255,255,0.03)" }}
                       />
-                      <Bar dataKey="value" radius={[0, 4, 4, 0]} fill="#f59e0b" />
+                      <Bar dataKey="value" radius={[0, 4, 4, 0]} fill="#F59E0B" />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -398,16 +393,16 @@ export default function ExplainPanel({ data, onClose }: Readonly<ExplainPanelPro
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="glass p-5 rounded-2xl"
+                className="pc-card p-6 rounded-2xl"
               >
-                <SectionHeader dot="#f59e0b">
+                <SectionHeader dot="#F59E0B">
                   Top Feature Drivers (SHAP)
                 </SectionHeader>
 
                 <div className="space-y-4">
                   {data.top_features.map((feature, i) => {
                     const isPos = feature.shap_value >= 0;
-                    const barColor = isPos ? "#f59e0b" : "#9ca3af";
+                    const barColor = isPos ? "#22C55E" : "#EF4444";
                     const pct =
                       (Math.abs(feature.shap_value) / maxShapAbs) * 100;
                     let shapDisplayValue = `${feature.shap_value.toFixed(6)}`;
@@ -429,15 +424,15 @@ export default function ExplainPanel({ data, onClose }: Readonly<ExplainPanelPro
                         className="space-y-1.5"
                       >
                         <div className="flex items-center justify-between gap-2">
-                          <span className="text-xs font-mono text-gray-200 truncate">
+                          <span className="text-xs font-mono text-text-primary truncate">
                             {feature.feature_name}
                           </span>
                           <div className="flex items-center gap-3 shrink-0">
-                            <span className="text-[10px] text-gray-600 font-mono hidden sm:inline">
+                            <span className="text-[10px] text-text-muted font-mono hidden sm:inline">
                               val: {feature.feature_value.toFixed(4)}
                             </span>
                             <span
-                              className={`text-xs font-mono font-semibold ${isPos ? "text-oil-gold" : "text-oil-gold"}`}
+                              className={`text-xs font-mono font-semibold ${isPos ? "text-pc-green" : "text-pc-red"}`}
                             >
                               {shapDisplayValue}
                             </span>
@@ -446,10 +441,10 @@ export default function ExplainPanel({ data, onClose }: Readonly<ExplainPanelPro
                         {(feature.direction || feature.category) && (
                           <div className="flex items-center gap-2 text-[10px] uppercase tracking-wider">
                             {feature.direction && (
-                              <span className="text-gray-500">{feature.direction}</span>
+                              <span className="text-text-muted">{feature.direction}</span>
                             )}
                             {feature.category && (
-                              <span className="text-gray-600">{feature.category}</span>
+                              <span className="text-text-secondary">{feature.category}</span>
                             )}
                           </div>
                         )}
@@ -478,14 +473,14 @@ export default function ExplainPanel({ data, onClose }: Readonly<ExplainPanelPro
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="glass p-5 rounded-2xl"
+              className="pc-card p-6 rounded-2xl"
             >
-              <SectionHeader dot="#f59e0b">Sentiment Headlines</SectionHeader>
+              <SectionHeader dot="#F59E0B">Sentiment Headlines</SectionHeader>
 
               {data.sentiment_headlines.length === 0 ? (
-                <div className="flex items-center gap-3 py-3 text-sm text-gray-500">
-                  <div className="w-8 h-8 rounded-xl bg-white/3 border border-white/10 flex items-center justify-center shrink-0">
-                    <MessageSquare size={14} className="text-gray-600" />
+                <div className="flex items-center gap-3 py-3 text-sm text-text-muted">
+                  <div className="w-8 h-8 rounded-xl bg-white/3 border border-white/8 flex items-center justify-center shrink-0">
+                    <MessageSquare size={14} className="text-text-secondary" />
                   </div>
                   <span>No sentiment headlines available for this period.</span>
                 </div>
@@ -497,9 +492,9 @@ export default function ExplainPanel({ data, onClose }: Readonly<ExplainPanelPro
                       initial={{ opacity: 0, x: -8 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.45 + i * 0.05 }}
-                      className="flex items-start gap-2 text-sm text-gray-300 leading-relaxed"
+                      className="flex items-start gap-3 text-sm text-text-secondary leading-relaxed"
                     >
-                      <div className="w-1 h-1 rounded-full bg-oil-gold/10 mt-2 shrink-0" />
+                      <div className="w-1.5 h-1.5 rounded-full bg-pc-gold/50 mt-2 shrink-0" />
                       {headline}
                     </motion.li>
                   ))}
@@ -512,15 +507,15 @@ export default function ExplainPanel({ data, onClose }: Readonly<ExplainPanelPro
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.45 }}
-              className="glass p-5 rounded-2xl"
+              className="pc-card p-6 rounded-2xl"
             >
-              <SectionHeader dot="#f59e0b">Forecast Analysis</SectionHeader>
+              <SectionHeader dot="#F59E0B">Forecast Analysis</SectionHeader>
               {forecastAnalysis ? (
-                <p className="text-sm text-gray-300 leading-relaxed">
+                <p className="text-sm text-text-secondary leading-relaxed">
                   {forecastAnalysis}
                 </p>
               ) : (
-                <p className="text-sm text-gray-500 leading-relaxed">
+                <p className="text-sm text-text-muted leading-relaxed">
                   No narrative text was returned by the explain endpoint for this date.
                 </p>
               )}
@@ -531,24 +526,24 @@ export default function ExplainPanel({ data, onClose }: Readonly<ExplainPanelPro
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.48 }}
-                className="glass p-5 rounded-2xl"
+                className="pc-card p-6 rounded-2xl"
               >
-                <SectionHeader dot="#f59e0b">Explainability Notes</SectionHeader>
+                <SectionHeader dot="#F59E0B">Explainability Notes</SectionHeader>
                 <div className="space-y-3 text-sm leading-relaxed">
                   {data.total_sentiment_impact_usd !== undefined && (
-                    <p className="text-gray-300">
-                      Net sentiment impact: <span className="font-mono text-white">{data.total_sentiment_impact_usd >= 0 ? "+" : ""}${data.total_sentiment_impact_usd.toFixed(4)}</span>
+                    <p className="text-text-secondary">
+                      Net sentiment impact: <span className="font-mono text-text-primary">{data.total_sentiment_impact_usd >= 0 ? "+" : ""}${data.total_sentiment_impact_usd.toFixed(4)}</span>
                       {data.sentiment_dominant !== undefined && (
-                        <span className="text-gray-500"> {data.sentiment_dominant ? "(sentiment-dominant)" : "(not sentiment-dominant)"}</span>
+                        <span className="text-text-muted"> {data.sentiment_dominant ? "(sentiment-dominant)" : "(not sentiment-dominant)"}</span>
                       )}
                     </p>
                   )}
                   {data.sentiment_story && (
-                    <p className="text-gray-300">{data.sentiment_story}</p>
+                    <p className="text-text-secondary">{data.sentiment_story}</p>
                   )}
                   {data.attention_insight?.top_sentiment_feature && (
-                    <p className="text-gray-400">
-                      Top sentiment feature: <span className="text-gray-200 font-mono">{data.attention_insight.top_sentiment_feature}</span>
+                    <p className="text-text-secondary">
+                      Top sentiment feature: <span className="text-text-primary font-mono">{data.attention_insight.top_sentiment_feature}</span>
                       {typeof data.attention_insight.top_timestep_lag === "number" && (
                         <span> • lag t-{data.attention_insight.top_timestep_lag}</span>
                       )}
@@ -558,7 +553,7 @@ export default function ExplainPanel({ data, onClose }: Readonly<ExplainPanelPro
                     </p>
                   )}
                   {data.risk_note && (
-                    <p className="text-amber-200/90">Risk note: {data.risk_note}</p>
+                    <p className="text-pc-gold/90">Risk note: {data.risk_note}</p>
                   )}
                 </div>
               </motion.div>
@@ -569,7 +564,7 @@ export default function ExplainPanel({ data, onClose }: Readonly<ExplainPanelPro
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
-              className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[11px] text-gray-600 pb-1"
+              className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[11px] text-text-muted pb-1"
             >
               <span className="flex items-center gap-1.5">
                 <Clock size={11} />
@@ -610,33 +605,33 @@ export function ExplainPanelSkeleton({ onClose }: Readonly<{ onClose: () => void
         animate={{ y: 0 }}
         exit={{ y: "100%" }}
         transition={{ type: "spring", damping: 32, stiffness: 320 }}
-        className="fixed inset-x-0 bottom-0 z-50 flex flex-col rounded-t-3xl overflow-hidden"
-        style={{ maxHeight: "92vh", background: "#191713", borderTop: "1px solid rgba(255,255,255,0.08)" }}
+        className="fixed inset-x-0 bottom-0 z-50 flex flex-col rounded-t-3xl overflow-hidden bg-pc-elevated/98 backdrop-blur-3xl border-t border-white/9 shadow-2xl shadow-black/50"
+        style={{ maxHeight: "92vh" }}
         onClick={stopPropagation}
       >
         {/* Drag handle */}
         <div className="flex justify-center pt-3 pb-1 shrink-0">
-          <div className="w-10 h-1 rounded-full bg-white/20" />
+          <div className="w-10 h-1.5 rounded-full bg-white/10" />
         </div>
 
         {/* Header */}
-        <div className="flex items-center justify-between px-5 sm:px-8 pt-2 pb-4 border-b border-white/5 shrink-0">
+        <div className="flex items-center justify-between px-5 sm:px-8 pt-2 pb-4 border-b border-white/7 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-oil-gold/10 border border-oil-gold/30">
-              <Brain size={20} className="text-oil-gold" />
+            <div className="p-2 rounded-xl bg-pc-gold/10 border border-pc-gold/30">
+              <Brain size={20} className="text-pc-gold" />
             </div>
             <div>
-              <p className="text-base font-bold text-white font-display">
+              <p className="text-base font-bold text-text-primary font-display">
                 Model Explainability
               </p>
-              <p className="text-[11px] text-gray-500">Fetching explanation data…</p>
+              <p className="text-[11px] text-text-muted">Fetching explanation data…</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-xl glass hover:bg-white/10 transition-colors cursor-pointer"
+            className="p-2 rounded-xl bg-white/4 border border-white/8 hover:bg-white/10 transition-colors cursor-pointer"
           >
-            <X size={18} className="text-gray-400" />
+            <X size={18} className="text-text-secondary hover:text-text-primary" />
           </button>
         </div>
 
@@ -644,7 +639,7 @@ export function ExplainPanelSkeleton({ onClose }: Readonly<{ onClose: () => void
         <div className="flex-1 overflow-y-auto px-5 sm:px-8 py-6 space-y-5">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             {[1, 2, 3, 4].map((n) => (
-              <ExplainPanelBone key={n} className="h-24" />
+              <ExplainPanelBone key={n} className="h-28" />
             ))}
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">

@@ -44,6 +44,7 @@ import {
   Gauge,
   Radio,
   AlertTriangle,
+  AlertCircle,
   Clock,
   Download,
   Brain,
@@ -97,7 +98,7 @@ const formatCurrency = (
 ): string => `${symbol}${formatFixed(value, digits, fallback)}`;
 
 const SkeletonDashboard = () => (
-  <div className="px-4 sm:px-6 md:px-8 lg:px-10 pt-24 pb-8 space-y-8 max-w-400 mx-auto min-h-screen">
+  <div className="px-4 sm:px-6 md:px-8 lg:px-10 pt-24 pb-8 space-y-8 max-w-[1600px] mx-auto min-h-screen">
     <div className="flex flex-col md:flex-row justify-between gap-6 pb-6 border-b border-white/5">
       <div className="space-y-3">
         <Skeleton className="h-4 w-32" />
@@ -191,7 +192,7 @@ const CustomTooltip = ({
   const isBridge = actualVal !== null && forecastVal !== null;
 
   return (
-    <div className="glass-strong p-4 rounded-xl shadow-2xl min-w-44">
+    <div className="bg-pc-elevated/98 backdrop-blur-xl border border-white/9 p-4 rounded-xl shadow-2xl min-w-44">
       <p className="text-xs text-gray-400 mb-2">{label}</p>
       {actualVal !== null && (
         <div className="flex items-center gap-2 mb-1">
@@ -249,7 +250,7 @@ const AnalyticsTooltip = ({
   if (!point) return null;
 
   return (
-    <div className="glass-strong p-4 rounded-xl shadow-2xl min-w-55">
+    <div className="bg-pc-elevated/98 backdrop-blur-xl border border-white/9 p-4 rounded-xl shadow-2xl min-w-55">
       <p className="text-xs text-gray-400 mb-3">{label}</p>
       <div className="space-y-2 text-xs">
         <div className="flex items-center justify-between gap-4">
@@ -301,7 +302,7 @@ const HistoricalPriceTooltip = ({
   if (!point) return null;
 
   return (
-    <div className="glass-strong p-4 rounded-xl shadow-2xl min-w-45">
+    <div className="bg-pc-elevated/98 backdrop-blur-xl border border-white/9 p-4 rounded-xl shadow-2xl min-w-45">
       <p className="text-xs text-gray-400 mb-2">{label}</p>
       <p className="text-lg font-bold text-oil-cyan mb-1">{formatCurrencyValue(point.price)}</p>
       <p className="text-xs text-gray-500">
@@ -317,7 +318,7 @@ const HistoricalChangeTooltip = ({ active, payload, label }: any) => {
   const value = payload[0]?.value;
 
   return (
-    <div className="glass-strong p-4 rounded-xl shadow-2xl min-w-45">
+    <div className="bg-pc-elevated/98 backdrop-blur-xl border border-white/9 p-4 rounded-xl shadow-2xl min-w-45">
       <p className="text-xs text-gray-400 mb-2">{label}</p>
       <p className="text-lg font-bold text-oil-gold mb-1">
         Change : {Number(value ?? 0).toFixed(2)}%
@@ -332,7 +333,7 @@ const HistoricalSentimentTooltip = ({ active, payload, label }: any) => {
   if (!point) return null;
 
   return (
-    <div className="glass-strong p-4 rounded-xl shadow-2xl min-w-52">
+    <div className="bg-pc-elevated/98 backdrop-blur-xl border border-white/9 p-4 rounded-xl shadow-2xl min-w-52">
       <p className="text-xs text-gray-400 mb-2">{label}</p>
       <div className="space-y-1.5 text-xs">
         <div className="flex items-center justify-between gap-3">
@@ -891,8 +892,8 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
           animate={{ opacity: 1, scale: 1 }}
           className="glass p-10 rounded-3xl max-w-lg w-full text-center"
         >
-          <div className="w-16 h-16 rounded-2xl bg-red-500/10 flex items-center justify-center mx-auto mb-6">
-            <AlertTriangle size={32} className="text-red-400" />
+          <div className="w-16 h-16 rounded-2xl bg-pc-red/10 flex items-center justify-center mx-auto mb-6">
+            <AlertTriangle size={32} className="text-pc-red" />
           </div>
           <h2 className="text-xl font-bold text-white mb-3 font-display">
             Connection Error
@@ -1047,10 +1048,10 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
       key: "forecasted_return",
       render: (val: number) => (
         <span
-          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold ${
+          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold font-mono ${
             val >= 0
-              ? "bg-emerald-500/10 text-emerald-400"
-              : "bg-red-500/10 text-red-400"
+              ? "bg-pc-green/10 text-pc-green border border-pc-green/20"
+              : "bg-pc-red/10 text-pc-red border border-pc-red/20"
           }`}
         >
           {val >= 0 ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
@@ -1064,8 +1065,8 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
       key: "changeFromCurrent",
       render: (val: number) => (
         <div
-          className={`flex items-center gap-1.5 font-medium ${
-            val >= 0 ? "text-emerald-400" : "text-red-400"
+          className={`flex items-center gap-1.5 font-medium font-mono ${
+            val >= 0 ? "text-pc-green" : "text-pc-red"
           }`}
         >
           {val >= 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
@@ -1190,10 +1191,10 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
 
   return (
     <>
-    <div className="relative px-4 sm:px-6 md:px-8 lg:px-10 pt-24 pb-8 space-y-8 max-w-400 mx-auto min-h-screen bg-oil-black">
+    <div className="relative px-4 sm:px-6 md:px-8 lg:px-10 pt-24 pb-8 space-y-8 max-w-[1600px] mx-auto min-h-screen bg-pc-black">
       {benchmarkSwitchLoading && (
         <div className="absolute inset-0 z-30 flex items-center justify-center rounded-2xl bg-oil-black/45 backdrop-blur-[1px]">
-          <div className="glass-strong rounded-2xl px-6 py-4 border border-oil-gold/25">
+          <div className="bg-pc-elevated/95 backdrop-blur-xl border border-pc-gold/25 rounded-2xl px-6 py-4">
             <div className="flex items-center gap-3 text-sm text-gray-200">
               <RefreshCw size={16} className="animate-spin text-oil-gold" />
               <span>Updating benchmark data...</span>
@@ -1208,7 +1209,7 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
         className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-white/5"
       >
         <div>
-          <div className="flex items-center gap-2 text-oil-gold/80 text-xs mb-2 font-semibold tracking-widest uppercase">
+          <div className="flex items-center gap-2 text-pc-gold text-[10px] mb-2 font-semibold tracking-[0.18em] uppercase">
             <motion.div
               animate={{ scale: [1, 1.3, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
@@ -1234,19 +1235,17 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
             <Radio size={14} />
             Market Status:{" "}
             <span
-              className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider ${
+              className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider ${
                 isMarketRunning
-                  ? "bg-emerald-500/10 text-emerald-400"
-                  : "bg-red-500/10 text-red-400"
+                  ? "bg-pc-green/10 text-pc-green border border-pc-green/20"
+                  : "bg-pc-red/10 text-pc-red border border-pc-red/20"
               }`}
             >
               <motion.span
                 animate={{ opacity: [1, 0.3, 1] }}
                 transition={{ duration: 1.5, repeat: Infinity }}
                 className={`w-1.5 h-1.5 rounded-full ${
-                  isMarketRunning
-                    ? "bg-emerald-400"
-                    : "bg-red-400"
+                  isMarketRunning ? "bg-pc-green" : "bg-pc-red"
                 }`}
               />
               {isMarketRunning ? "Open" : "Closed"}
@@ -1263,7 +1262,7 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
             onClick={handleExplain}
-            className="group flex items-center gap-2 px-5 py-3 rounded-xl bg-violet-500/10 border border-violet-500/30 text-violet-300 font-medium text-sm hover:border-violet-400/50 hover:bg-violet-500/15 transition-all duration-300 cursor-pointer"
+            className="group flex items-center gap-2 px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-text-secondary font-medium text-sm hover:border-white/18 hover:bg-white/8 hover:text-text-primary transition-all duration-200 cursor-pointer"
           >
             <Brain size={16} className="transition-transform duration-300 group-hover:scale-110" />
             <span>Explain</span>
@@ -1273,7 +1272,7 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
             whileTap={{ scale: 0.97 }}
             onClick={handleRefresh}
             disabled={refreshing}
-            className={`group flex items-center gap-3 px-6 py-3 glass hover:border-oil-gold/30 rounded-xl text-white font-medium transition-all duration-300 disabled:opacity-50 ${refreshing ? "cursor-not-allowed" : "cursor-pointer"}`}
+            className={`group flex items-center gap-3 px-5 py-3 pc-card hover:border-white/15 rounded-xl text-text-primary font-medium text-sm transition-all duration-200 disabled:opacity-50 ${refreshing ? "cursor-not-allowed" : "cursor-pointer"}`}
           >
             <RefreshCw
               size={18}
@@ -1286,37 +1285,22 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
         </div>
       </motion.div>
 
-      <div className="flex items-center gap-3">
-        <button
-          onClick={() => setActiveTab("forecast")}
-          className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 cursor-pointer ${
-            activeTab === "forecast"
-              ? "bg-oil-gold/20 text-oil-gold border border-oil-gold/40"
-              : "bg-white/5 text-gray-400 border border-white/10 hover:text-white"
-          }`}
-        >
-          Forecast
-        </button>
-        <button
-          onClick={() => setActiveTab("historical")}
-          className={`px-4 py-2 rounded-lg text-sm font-semibold uppercase transition-all duration-300 cursor-pointer ${
-            activeTab === "historical"
-              ? "bg-oil-blue/20 text-oil-cyan border border-oil-cyan/40"
-              : "bg-white/5 text-gray-400 border border-white/10 hover:text-white"
-          }`}
-        >
-          Historical Data
-        </button>
-        <button
-          onClick={() => setActiveTab("analytics")}
-          className={`px-4 py-2 rounded-lg text-sm font-semibold uppercase transition-all duration-300 cursor-pointer ${
-            activeTab === "analytics"
-              ? "bg-emerald-500/15 text-emerald-300 border border-emerald-400/40"
-              : "bg-white/5 text-gray-400 border border-white/10 hover:text-white"
-          }`}
-        >
-          Analytics
-        </button>
+      <div className="flex items-center">
+        <div className="flex items-center gap-0.5 rounded-xl border border-white/8 bg-white/4 p-1">
+          {(["forecast", "historical", "analytics"] as const).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer capitalize ${
+                activeTab === tab
+                  ? "bg-pc-gold text-black font-semibold shadow-sm"
+                  : "text-text-secondary hover:text-text-primary hover:bg-white/5"
+              }`}
+            >
+              {tab === "historical" ? "Historical" : tab === "analytics" ? "Analytics" : "Forecast"}
+            </button>
+          ))}
+        </div>
       </div>
 
       {activeTab === "forecast" && (
@@ -1329,10 +1313,10 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="glass p-6 rounded-2xl group hover:border-oil-gold/20 transition-all duration-500"
+                className="pc-card p-6 rounded-2xl group hover:border-white/12 transition-all duration-500"
               >
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-xs text-gray-500 font-semibold uppercase tracking-wider">
+                  <span className="label-xs">
                     Current Price
                   </span>
                   <div className="p-2 rounded-xl bg-oil-gold/10">
@@ -1358,29 +1342,21 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="glass p-6 rounded-2xl group hover:border-oil-gold/20 transition-all duration-500"
+                className="pc-card p-6 rounded-2xl group hover:border-white/12 transition-all duration-500"
               >
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-xs text-gray-500 font-semibold uppercase tracking-wider">
+                  <span className="label-xs">
                     Next Day Change
                   </span>
-                  <div
-                    className={`p-2 rounded-xl ${
-                      isPositive ? "bg-emerald-500/10" : "bg-red-500/10"
-                    }`}
-                  >
+                  <div className={`p-2 rounded-xl ${isPositive ? "bg-pc-green/10" : "bg-pc-red/10"}`}>
                     {isPositive ? (
-                      <TrendingUp size={16} className="text-emerald-400" />
+                      <TrendingUp size={16} className="text-pc-green" />
                     ) : (
-                      <TrendingDown size={16} className="text-red-400" />
+                      <TrendingDown size={16} className="text-pc-red" />
                     )}
                   </div>
                 </div>
-                <div
-                  className={`text-3xl font-bold font-display ${
-                    isPositive ? "text-emerald-400" : "text-red-400"
-                  }`}
-                >
+                <div className={`text-3xl font-bold font-display font-mono ${isPositive ? "text-pc-green" : "text-pc-red"}`}>
                   {isPositive ? "+" : ""}
                   <CountUp
                     end={displayPriceChange}
@@ -1390,14 +1366,11 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
                     preserveValue
                   />
                 </div>
-                <div className="mt-2 text-xs">
-                  <span
-                    className={`${isPositive ? "text-emerald-400/80" : "text-red-400/80"}`}
-                  >
-                    {isPositive ? "+" : ""}
-                    {priceChangePercent.toFixed(2)}%
+                <div className="mt-2 text-xs font-mono">
+                  <span className={isPositive ? "text-pc-green" : "text-pc-red"}>
+                    {isPositive ? "+" : ""}{priceChangePercent.toFixed(2)}%
                   </span>
-                  <span className="text-gray-600 ml-1">from current</span>
+                  <span className="text-text-muted ml-1">from current</span>
                 </div>
               </motion.div>
 
@@ -1406,10 +1379,10 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="glass p-6 rounded-2xl group hover:border-oil-gold/20 transition-all duration-500"
+                className="pc-card p-6 rounded-2xl group hover:border-white/12 transition-all duration-500"
               >
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-xs text-gray-500 font-semibold uppercase tracking-wider">
+                  <span className="label-xs">
                     Forecast Horizon
                   </span>
                   <div className="p-2 rounded-xl bg-blue-500/10">
@@ -1434,10 +1407,10 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
-                className="glass p-6 rounded-2xl group hover:border-oil-gold/20 transition-all duration-500"
+                className="pc-card p-6 rounded-2xl group hover:border-white/12 transition-all duration-500"
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-gray-500 font-semibold uppercase tracking-wider">
+                  <span className="label-xs">
                     Forecast Bias
                   </span>
                 </div>
@@ -1451,7 +1424,7 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.5, duration: 0.5 }}
-            className="glass p-6 md:p-8 rounded-3xl"
+            className="pc-card p-6 md:p-8 rounded-3xl"
           >
             {analyticsLoading && (
               <div className="mb-4 text-xs text-gray-500">
@@ -1504,9 +1477,15 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
                   <XAxis
                     dataKey="date"
                     stroke="#444"
-                    tick={{ fill: "#666", fontSize: 12 }}
+                    tick={{ fill: "#666", fontSize: 11 }}
                     tickLine={false}
                     axisLine={false}
+                    minTickGap={30}
+                    tickFormatter={(val) => {
+                      if (!val) return "";
+                      const d = new Date(val);
+                      return isNaN(d.getTime()) ? val : new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(d);
+                    }}
                   />
                   <YAxis
                     stroke="#444"
@@ -1587,8 +1566,16 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
                 )}
             </div>
             {!isBrentTarget && forecastDisclaimer && (
-              <div className="mt-4 rounded-xl border border-amber-400/20 bg-amber-500/5 px-4 py-3 text-xs text-amber-200">
-                {forecastDisclaimer}
+              <div className="mt-6 flex items-start gap-3 rounded-2xl border border-pc-gold/25 bg-pc-gold/10 p-4">
+                <div className="mt-0.5 rounded-full bg-pc-gold/20 p-1 shrink-0">
+                  <AlertCircle size={16} className="text-pc-gold" />
+                </div>
+                <div>
+                  <p className="text-[13px] font-semibold text-pc-gold mb-1">Derived Forecast</p>
+                  <p className="text-sm text-pc-gold/80 leading-relaxed">
+                    {forecastDisclaimer}
+                  </p>
+                </div>
               </div>
             )}
           </motion.div>
@@ -1632,9 +1619,9 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="glass rounded-3xl overflow-hidden"
+            className="pc-card rounded-3xl overflow-hidden"
           >
-            <div className="p-6 md:p-8 border-b border-white/5 flex items-center gap-3">
+            <div className="p-5 md:p-7 border-b border-white/6 flex items-center gap-3">
               <div className="w-1 h-6 rounded-full bg-linear-to-b from-oil-blue to-oil-cyan" />
               <h3 className="text-lg font-bold text-white font-display">
                 Detailed Forecasts
@@ -1656,7 +1643,7 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            className="glass p-4 md:p-5 rounded-2xl border border-white/10"
+            className="pc-card p-5 rounded-2xl"
           >
             {/* Header row with download button */}
             <div className="flex items-center justify-between mb-3">
@@ -1769,8 +1756,8 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
 
           {!historicalLoading && historicalError && (
             <div className="glass p-10 rounded-3xl text-center">
-              <div className="w-14 h-14 rounded-2xl bg-red-500/10 flex items-center justify-center mx-auto mb-5">
-                <AlertTriangle size={28} className="text-red-400" />
+              <div className="w-14 h-14 rounded-2xl bg-pc-red/10 flex items-center justify-center mx-auto mb-5">
+                <AlertTriangle size={28} className="text-pc-red" />
               </div>
               <h3 className="text-lg font-bold text-white mb-3">Historical Data Error</h3>
               <p className="text-sm text-gray-400 mb-6">{historicalError}</p>
@@ -1789,7 +1776,7 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
               <motion.div
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="glass p-6 md:p-8 rounded-3xl"
+                className="pc-card p-6 md:p-8 rounded-3xl"
               >
                 <div className="flex items-center justify-between mb-8">
                   <h3 className="text-lg font-bold text-white font-display flex items-center gap-3">
@@ -1814,7 +1801,12 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
                         tick={{ fill: "#6b7280", fontSize: 11 }}
                         tickLine={false}
                         axisLine={false}
-                        minTickGap={24}
+                        minTickGap={30}
+                        tickFormatter={(val) => {
+                          if (!val) return "";
+                          const d = new Date(val);
+                          return isNaN(d.getTime()) ? val : new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(d);
+                        }}
                       />
                       <YAxis
                         stroke="#4b5563"
@@ -1855,7 +1847,7 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="glass p-6 md:p-8 rounded-3xl"
+                className="pc-card p-6 md:p-8 rounded-3xl"
               >
                 <div className="flex items-center justify-between mb-8">
                   <h3 className="text-lg font-bold text-white font-display flex items-center gap-3">
@@ -1880,7 +1872,12 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
                         tick={{ fill: "#6b7280", fontSize: 11 }}
                         tickLine={false}
                         axisLine={false}
-                        minTickGap={24}
+                        minTickGap={30}
+                        tickFormatter={(val) => {
+                          if (!val) return "";
+                          const d = new Date(val);
+                          return isNaN(d.getTime()) ? val : new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(d);
+                        }}
                       />
                       <YAxis
                         stroke="#4b5563"
@@ -1947,7 +1944,7 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
                 <motion.div
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="glass p-6 md:p-8 rounded-3xl"
+                  className="pc-card p-6 md:p-8 rounded-3xl"
                 >
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
                     <div>
@@ -2011,7 +2008,12 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
                           tick={{ fill: "#6b7280", fontSize: 11 }}
                           tickLine={false}
                           axisLine={false}
-                          minTickGap={24}
+                          minTickGap={30}
+                          tickFormatter={(val) => {
+                            if (!val) return "";
+                            const d = new Date(val);
+                            return isNaN(d.getTime()) ? val : new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(d);
+                          }}
                         />
                         <YAxis
                           stroke="#4b5563"
@@ -2067,11 +2069,11 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            className="glass p-6 md:p-8 rounded-3xl"
+            className="pc-card p-6 md:p-8 rounded-3xl"
           >
             <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
               <div>
-                <div className="text-xs text-emerald-300/80 font-semibold uppercase tracking-[0.24em] mb-2">
+                <div className="label-xs mb-2">
                   Prediction Accuracy
                 </div>
                 <h3 className="text-xl font-bold text-white font-display">
@@ -2112,7 +2114,7 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
                 <button
                   type="submit"
                   disabled={analyticsLoading}
-                  className="h-fit self-end px-5 py-3 rounded-xl bg-emerald-400/15 border border-emerald-400/30 text-sm font-semibold text-emerald-300 hover:border-emerald-300/60 hover:bg-emerald-400/20 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                  className="h-fit self-end px-5 py-3 rounded-xl bg-pc-gold/12 border border-pc-gold/30 text-sm font-semibold text-pc-gold hover:border-pc-gold/50 hover:bg-pc-gold/18 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 >
                   {analyticsLoading ? "Loading..." : "Update Analytics"}
                 </button>
@@ -2138,8 +2140,8 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
 
           {!analyticsLoading && analyticsError && (
             <div className="glass p-10 rounded-3xl text-center">
-              <div className="w-14 h-14 rounded-2xl bg-red-500/10 flex items-center justify-center mx-auto mb-5">
-                <AlertTriangle size={28} className="text-red-400" />
+              <div className="w-14 h-14 rounded-2xl bg-pc-red/10 flex items-center justify-center mx-auto mb-5">
+                <AlertTriangle size={28} className="text-pc-red" />
               </div>
               <h3 className="text-lg font-bold text-white mb-3">Analytics Error</h3>
               <p className="text-sm text-gray-400 mb-6">{analyticsError}</p>
@@ -2163,7 +2165,7 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
                   animate={{ opacity: 1, y: 0 }}
                   className="glass p-6 rounded-2xl"
                 >
-                  <div className="text-xs text-gray-500 font-semibold uppercase tracking-wider mb-3">
+                  <div className="label-xs mb-3">
                     Compared Days
                   </div>
                   <div className="text-3xl font-bold text-white font-display">
@@ -2180,7 +2182,7 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
                   transition={{ delay: 0.05 }}
                   className="glass p-6 rounded-2xl"
                 >
-                  <div className="text-xs text-gray-500 font-semibold uppercase tracking-wider mb-3">
+                  <div className="label-xs mb-3">
                     MAE
                   </div>
                   <div className="text-3xl font-bold text-oil-gold font-display">
@@ -2197,7 +2199,7 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
                   transition={{ delay: 0.1 }}
                   className="glass p-6 rounded-2xl"
                 >
-                  <div className="text-xs text-gray-500 font-semibold uppercase tracking-wider mb-3">
+                  <div className="label-xs mb-3">
                     RMSE
                   </div>
                   <div className="text-3xl font-bold text-emerald-300 font-display">
@@ -2214,7 +2216,7 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
                   transition={{ delay: 0.15 }}
                   className="glass p-6 rounded-2xl"
                 >
-                  <div className="text-xs text-gray-500 font-semibold uppercase tracking-wider mb-3">
+                  <div className="label-xs mb-3">
                     MAPE
                   </div>
                   <div className="text-3xl font-bold text-oil-cyan font-display">
@@ -2230,7 +2232,7 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
                 <motion.div
                   initial={{ opacity: 0, scale: 0.98 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="glass p-6 md:p-8 rounded-3xl"
+                  className="pc-card p-6 md:p-8 rounded-3xl"
                 >
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
                     <div>
@@ -2278,7 +2280,12 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
                           tick={{ fill: "#6b7280", fontSize: 11 }}
                           tickLine={false}
                           axisLine={false}
-                          minTickGap={24}
+                          minTickGap={30}
+                          tickFormatter={(val) => {
+                            if (!val) return "";
+                            const d = new Date(val);
+                            return isNaN(d.getTime()) ? val : new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(d);
+                          }}
                         />
                         <YAxis
                           stroke="#4b5563"
@@ -2373,8 +2380,8 @@ function Dashboard() { // NOSONAR: This container intentionally orchestrates mul
             onClick={(e) => e.stopPropagation()}
             className="glass p-8 rounded-3xl max-w-md w-full m-4 text-center"
           >
-            <div className="w-12 h-12 rounded-2xl bg-red-500/10 flex items-center justify-center mx-auto mb-4">
-              <AlertTriangle size={24} className="text-red-400" />
+            <div className="w-12 h-12 rounded-2xl bg-pc-red/10 flex items-center justify-center mx-auto mb-4">
+              <AlertTriangle size={24} className="text-pc-red" />
             </div>
             <h3 className="text-base font-bold text-white mb-2">Explain Failed</h3>
             <p className="text-sm text-gray-400 mb-6">{explainError}</p>

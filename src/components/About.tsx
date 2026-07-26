@@ -61,7 +61,7 @@ const docSections = [
 
 const About = () => {
   return (
-    <div className="min-h-screen pt-24 pb-28 px-4 sm:px-6 md:px-8 lg:px-10 relative overflow-hidden bg-oil-black">
+    <div className="min-h-screen pt-24 pb-28 px-4 sm:px-6 md:px-8 lg:px-10 relative overflow-hidden bg-pc-black">
       <GlowEffect
         color="blue"
         size="lg"
@@ -81,52 +81,48 @@ const About = () => {
           <span className="text-xs text-oil-gold font-semibold">About PetroCast</span>
         </div>
 
-        <section className="rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.07] via-white/[0.03] to-transparent p-8 sm:p-10 lg:p-12 mb-12 lg:mb-14">
+        <section className="pc-section p-8 sm:p-10 lg:p-12 mb-12 lg:mb-14">
           <div className="flex flex-wrap items-center gap-2.5 mb-8">
-            <span className="px-3 py-1.5 rounded-full border border-oil-gold/30 bg-oil-gold/10 text-[11px] font-semibold tracking-[0.18em] uppercase text-oil-gold">
+            <span className="chip-gold text-[10px] tracking-[0.16em]">
               Product Documentation
             </span>
-            <span className="px-3 py-1.5 rounded-full border border-white/15 bg-white/5 text-[11px] font-mono text-gray-400">
-              v10.0
-            </span>
-            <span className="px-3 py-1.5 rounded-full border border-white/15 bg-white/5 text-[11px] font-mono text-gray-400">
-              Updated July 2026
-            </span>
+            <span className="chip-neutral font-mono text-[10px]">v10.0</span>
+            <span className="chip-neutral font-mono text-[10px]">Updated July 2026</span>
           </div>
 
           <div className="max-w-4xl mb-10">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-display font-bold text-white leading-[1.05] mb-6">
+            <h1 className="font-display font-bold text-4xl sm:text-5xl md:text-6xl text-text-primary leading-[1.05] tracking-tight mb-6">
               PetroCast Forecasting
               <br />
-              Documentation Hub
+              <span className="text-gradient-gold">Documentation Hub</span>
             </h1>
-            <p className="text-lg sm:text-xl text-gray-300 leading-8 max-w-3xl">
+            <p className="text-lg sm:text-xl text-text-secondary leading-8 max-w-3xl">
               A structured guide to how PetroCast converts market data and sentiment signals into
-              multi-horizon Brent crude forecasts. This page is designed for engineering, analytics,
-              and product stakeholders who need clarity without reading dense technical reports.
+              multi-horizon crude price forecasts. Designed for engineering, analytics,
+              and product stakeholders who require implementation clarity.
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="rounded-2xl border border-white/12 bg-oil-black/40 p-5">
-              <p className="text-[10px] uppercase tracking-[0.18em] text-gray-500 font-semibold">Purpose</p>
-              <p className="text-lg text-white font-semibold mt-2.5">Decision Support</p>
-              <p className="text-sm text-gray-400 mt-1.5 leading-relaxed">
-                Support market interpretation with probabilistic forecast guidance.
+            <div className="rounded-xl border border-white/8 bg-pc-black/40 p-5">
+              <p className="label-xs mb-2.5">Purpose</p>
+              <p className="font-display font-semibold text-base text-text-primary mb-1.5">Decision Support</p>
+              <p className="text-sm text-text-secondary leading-relaxed">
+                Probabilistic forecast guidance for market interpretation.
               </p>
             </div>
-            <div className="rounded-2xl border border-white/12 bg-oil-black/40 p-5">
-              <p className="text-[10px] uppercase tracking-[0.18em] text-gray-500 font-semibold">Coverage</p>
-              <p className="text-lg text-white font-semibold mt-2.5">H5, H7, H14 Horizons</p>
-              <p className="text-sm text-gray-400 mt-1.5 leading-relaxed">
+            <div className="rounded-xl border border-white/8 bg-pc-black/40 p-5">
+              <p className="label-xs mb-2.5">Coverage</p>
+              <p className="font-display font-semibold text-base text-text-primary mb-1.5">H5, H7, H14 Horizons</p>
+              <p className="text-sm text-text-secondary leading-relaxed">
                 Multi-step forecasts with confidence fan and contribution analysis.
               </p>
             </div>
-            <div className="rounded-2xl border border-white/12 bg-oil-black/40 p-5">
-              <p className="text-[10px] uppercase tracking-[0.18em] text-gray-500 font-semibold">Audience</p>
-              <p className="text-lg text-white font-semibold mt-2.5">Engineers and Analysts</p>
-              <p className="text-sm text-gray-400 mt-1.5 leading-relaxed">
-                Built for teams who need implementation context and output trust signals.
+            <div className="rounded-xl border border-white/8 bg-pc-black/40 p-5">
+              <p className="label-xs mb-2.5">Audience</p>
+              <p className="font-display font-semibold text-base text-text-primary mb-1.5">Engineers &amp; Analysts</p>
+              <p className="text-sm text-text-secondary leading-relaxed">
+                Implementation context and output trust signals for technical teams.
               </p>
             </div>
           </div>
@@ -134,28 +130,28 @@ const About = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 xl:gap-10">
           <aside className="hidden lg:block lg:col-span-3">
-            <div className="sticky top-24 rounded-2xl border border-white/10 bg-[#12100d]/90 backdrop-blur-xl p-5">
-              <h3 className="text-[11px] uppercase tracking-[0.18em] text-gray-400 font-bold mb-4">On This Page</h3>
-              <nav className="space-y-1.5">
+            <div className="sticky top-24 pc-card-elevated rounded-2xl p-5">
+              <h3 className="label-xs mb-4">On This Page</h3>
+              <nav className="space-y-0.5">
                 {docSections.map((section) => (
                   <a
                     key={section.id}
                     href={`#${section.id}`}
-                    className="group block rounded-lg px-3 py-2.5 border border-transparent hover:border-white/10 hover:bg-white/5 transition-all"
+                    className="group block rounded-lg px-3 py-2.5 border border-transparent hover:border-white/9 hover:bg-white/5 transition-all duration-150"
                   >
-                    <div className="flex items-center gap-2 text-xs text-gray-200 font-semibold">
-                      <span className="text-oil-gold">{section.icon}</span>
+                    <div className="flex items-center gap-2 text-xs text-text-primary font-medium">
+                      <span className="text-pc-gold">{section.icon}</span>
                       {section.title}
                     </div>
-                    <p className="text-[10px] text-gray-500 mt-1 leading-relaxed">{section.description}</p>
+                    <p className="text-[10px] text-text-muted mt-0.5 leading-relaxed">{section.description}</p>
                   </a>
                 ))}
               </nav>
 
-              <div className="mt-6 pt-5 border-t border-white/10">
+              <div className="mt-5 pt-4 border-t border-white/6">
                 <Link
                   to="/dashboard"
-                  className="w-full inline-flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg bg-oil-gold/15 border border-oil-gold/30 text-xs font-semibold text-oil-gold hover:bg-oil-gold/25 transition-colors"
+                  className="w-full inline-flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg bg-pc-gold/12 border border-pc-gold/28 text-[12px] font-semibold text-pc-gold hover:bg-pc-gold/20 transition-colors"
                 >
                   <ExternalLink size={12} />
                   View Live Dashboard
@@ -164,69 +160,70 @@ const About = () => {
             </div>
           </aside>
 
-          <main className="lg:col-span-9 space-y-10">
-            <section id="overview" className="scroll-mt-28 rounded-2xl border border-white/10 bg-[#14120f]/90 backdrop-blur-xl p-7 sm:p-9 lg:p-10">
+          <main className="lg:col-span-9 space-y-8">
+            <section id="overview" className="scroll-mt-28 pc-card rounded-2xl p-7 sm:p-9 lg:p-10">
               <div className="max-w-4xl space-y-7">
                 <div>
-                  <p className="text-[11px] uppercase tracking-[0.18em] text-oil-gold font-semibold">Overview</p>
-                  <h2 className="text-3xl sm:text-4xl font-display font-bold text-white mt-3">
+                  <p className="label-xs text-pc-gold mb-0">Overview</p>
+                  <h2 className="font-display font-bold text-2xl sm:text-3xl text-text-primary tracking-tight mt-3">
                     Understanding PetroCast at a Glance
                   </h2>
                 </div>
-                <p className="text-base sm:text-lg text-gray-300 leading-8">
+                <p className="text-base text-text-secondary leading-8">
                   PetroCast is a hybrid forecasting platform that combines classical statistics,
-                  deep learning, and sentiment-derived signals to estimate near-term Brent crude
-                  price movement.
+                  deep learning, and sentiment-derived signals to estimate near-term crude price movement.
                 </p>
-                <p className="text-base sm:text-lg text-gray-300 leading-8">
+                <p className="text-base text-text-secondary leading-8">
                   The documentation below follows a practical order: what the system is, how data
                   moves through it, how the models combine, and how to interpret outputs with risk
                   awareness.
                 </p>
               </div>
 
-              <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
-                  <p className="text-xs uppercase tracking-[0.15em] text-gray-500">Model Family</p>
-                  <p className="text-lg text-white font-semibold mt-2">Hybrid Ensemble</p>
-                  <p className="text-sm text-gray-400 mt-1.5 leading-relaxed">
+              <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="rounded-xl border border-white/8 bg-white/3 p-5">
+                  <p className="label-xs mb-2">Model Family</p>
+                  <p className="font-display font-semibold text-base text-text-primary mb-1.5">Hybrid Ensemble</p>
+                  <p className="text-sm text-text-secondary leading-relaxed">
                     ARIMA + Mid-GRU + Sentiment-GRU + XGBoost with ridge stacking.
                   </p>
                 </div>
-                <div className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
-                  <p className="text-xs uppercase tracking-[0.15em] text-gray-500">Delivery</p>
-                  <p className="text-lg text-white font-semibold mt-2">Forecast + Explainability</p>
-                  <p className="text-sm text-gray-400 mt-1.5 leading-relaxed">
+                <div className="rounded-xl border border-white/8 bg-white/3 p-5">
+                  <p className="label-xs mb-2">Delivery</p>
+                  <p className="font-display font-semibold text-base text-text-primary mb-1.5">Forecast + Explainability</p>
+                  <p className="text-sm text-text-secondary leading-relaxed">
                     Multi-horizon outputs, fan quantiles, confidence intervals, and feature drivers.
                   </p>
                 </div>
               </div>
 
-              <div className="mt-9 pt-8 border-t border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div className="mt-8 pt-7 border-t border-white/6 grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <Link
                   to="/dashboard"
-                  className="group inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg border border-oil-gold/30 bg-oil-gold/10 text-sm font-semibold text-oil-gold hover:bg-oil-gold/20 transition-colors"
+                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border border-pc-gold/28 bg-pc-gold/10 text-sm font-semibold text-pc-gold hover:bg-pc-gold/18 transition-colors"
                 >
                   Open Dashboard
-                  <ExternalLink size={14} />
+                  <ExternalLink size={13} />
                 </Link>
                 <Link
                   to="/news"
-                  className="group inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg border border-white/15 bg-white/5 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
+                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-sm font-semibold text-text-primary hover:bg-white/9 transition-colors"
                 >
                   Read Market News
-                  <ExternalLink size={14} />
+                  <ExternalLink size={13} />
                 </Link>
               </div>
             </section>
 
             <section id="quick-facts" className="scroll-mt-28">
-              <div className="rounded-2xl border border-white/10 bg-[#14120f]/90 backdrop-blur-xl p-7 sm:p-9">
+              <div className="pc-card rounded-2xl p-7 sm:p-9">
                 <div className="flex items-start gap-3 mb-6">
-                  <FileText size={18} className="text-oil-gold mt-1" />
+                  <div className="p-1.5 rounded-lg bg-pc-gold/10 border border-pc-gold/20">
+                    <FileText size={15} className="text-pc-gold" />
+                  </div>
                   <div>
-                    <p className="text-[11px] uppercase tracking-[0.18em] text-oil-gold font-semibold">Quick Facts</p>
-                    <h2 className="text-2xl sm:text-3xl font-display font-bold text-white mt-2">Reference Snapshot</h2>
+                    <p className="label-xs text-pc-gold mb-1">Quick Facts</p>
+                    <h2 className="font-display font-bold text-xl sm:text-2xl text-text-primary tracking-tight">Reference Snapshot</h2>
                   </div>
                 </div>
                 <MetricsSection />
@@ -234,12 +231,14 @@ const About = () => {
             </section>
 
             <section id="pipeline" className="scroll-mt-28">
-              <div className="rounded-2xl border border-white/10 bg-[#14120f]/90 backdrop-blur-xl p-7 sm:p-9">
+              <div className="pc-card rounded-2xl p-7 sm:p-9">
                 <div className="flex items-start gap-3 mb-6">
-                  <Workflow size={18} className="text-oil-gold mt-1" />
+                  <div className="p-1.5 rounded-lg bg-pc-gold/10 border border-pc-gold/20">
+                    <Workflow size={15} className="text-pc-gold" />
+                  </div>
                   <div>
-                    <p className="text-[11px] uppercase tracking-[0.18em] text-oil-gold font-semibold">Pipeline</p>
-                    <h2 className="text-2xl sm:text-3xl font-display font-bold text-white mt-2">Data to Forecast Flow</h2>
+                    <p className="label-xs text-pc-gold mb-1">Pipeline</p>
+                    <h2 className="font-display font-bold text-xl sm:text-2xl text-text-primary tracking-tight">Data to Forecast Flow</h2>
                   </div>
                 </div>
                 <PipelineSection />
@@ -247,12 +246,14 @@ const About = () => {
             </section>
 
             <section id="model-details" className="scroll-mt-28">
-              <div className="rounded-2xl border border-white/10 bg-[#14120f]/90 backdrop-blur-xl p-7 sm:p-9">
+              <div className="pc-card rounded-2xl p-7 sm:p-9">
                 <div className="flex items-start gap-3 mb-6">
-                  <FlaskConical size={18} className="text-oil-gold mt-1" />
+                  <div className="p-1.5 rounded-lg bg-pc-gold/10 border border-pc-gold/20">
+                    <FlaskConical size={15} className="text-pc-gold" />
+                  </div>
                   <div>
-                    <p className="text-[11px] uppercase tracking-[0.18em] text-oil-gold font-semibold">Model Details</p>
-                    <h2 className="text-2xl sm:text-3xl font-display font-bold text-white mt-2">Architecture and Evaluation</h2>
+                    <p className="label-xs text-pc-gold mb-1">Model Details</p>
+                    <h2 className="font-display font-bold text-xl sm:text-2xl text-text-primary tracking-tight">Architecture and Evaluation</h2>
                   </div>
                 </div>
                 <ModelDetailsSection />
@@ -260,12 +261,14 @@ const About = () => {
             </section>
 
             <section id="capabilities" className="scroll-mt-28">
-              <div className="rounded-2xl border border-white/10 bg-[#14120f]/90 backdrop-blur-xl p-7 sm:p-9">
+              <div className="pc-card rounded-2xl p-7 sm:p-9">
                 <div className="flex items-start gap-3 mb-6">
-                  <Layers size={18} className="text-oil-gold mt-1" />
+                  <div className="p-1.5 rounded-lg bg-pc-gold/10 border border-pc-gold/20">
+                    <Layers size={15} className="text-pc-gold" />
+                  </div>
                   <div>
-                    <p className="text-[11px] uppercase tracking-[0.18em] text-oil-gold font-semibold">Capabilities</p>
-                    <h2 className="text-2xl sm:text-3xl font-display font-bold text-white mt-2">What PetroCast Delivers</h2>
+                    <p className="label-xs text-pc-gold mb-1">Capabilities</p>
+                    <h2 className="font-display font-bold text-xl sm:text-2xl text-text-primary tracking-tight">What PetroCast Delivers</h2>
                   </div>
                 </div>
                 <CapabilitiesSection />
@@ -273,42 +276,45 @@ const About = () => {
             </section>
 
             <section id="stack" className="scroll-mt-28">
-              <div className="rounded-2xl border border-white/10 bg-[#14120f]/90 backdrop-blur-xl p-7 sm:p-9">
+              <div className="pc-card rounded-2xl p-7 sm:p-9">
                 <div className="flex items-start gap-3 mb-6">
-                  <CalendarDays size={18} className="text-oil-gold mt-1" />
+                  <div className="p-1.5 rounded-lg bg-pc-gold/10 border border-pc-gold/20">
+                    <CalendarDays size={15} className="text-pc-gold" />
+                  </div>
                   <div>
-                    <p className="text-[11px] uppercase tracking-[0.18em] text-oil-gold font-semibold">Tech Stack</p>
-                    <h2 className="text-2xl sm:text-3xl font-display font-bold text-white mt-2">Implementation Matrix</h2>
+                    <p className="label-xs text-pc-gold mb-1">Tech Stack</p>
+                    <h2 className="font-display font-bold text-xl sm:text-2xl text-text-primary tracking-tight">Implementation Matrix</h2>
                   </div>
                 </div>
                 <TechStackSection />
               </div>
             </section>
 
-            <section className="rounded-2xl border border-white/10 bg-[#14120f]/90 backdrop-blur-xl p-7 sm:p-9">
-              <h3 className="text-2xl sm:text-3xl font-display font-bold text-white mb-6">Reading Guidance</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
-                  <p className="text-xs uppercase tracking-[0.15em] text-oil-gold font-semibold mb-2">Interpretation</p>
-                  <p className="text-base text-gray-300 leading-7">
+            <section className="pc-card rounded-2xl p-7 sm:p-9">
+              <p className="label-xs text-pc-gold mb-1">Reading Guidance</p>
+              <h3 className="font-display font-bold text-xl sm:text-2xl text-text-primary tracking-tight mb-6">How to Use Forecasts</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="rounded-xl border border-white/8 bg-white/3 p-5">
+                  <p className="label-xs text-pc-gold mb-2">Interpretation</p>
+                  <p className="text-sm text-text-secondary leading-7">
                     Use forecasts as decision-support signals, not fixed market outcomes.
                   </p>
                 </div>
-                <div className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
-                  <p className="text-xs uppercase tracking-[0.15em] text-oil-gold font-semibold mb-2">Directional Use</p>
-                  <p className="text-base text-gray-300 leading-7">
-                    For many workflows, directional consistency may be more useful than absolute point error.
+                <div className="rounded-xl border border-white/8 bg-white/3 p-5">
+                  <p className="label-xs text-pc-gold mb-2">Directional Use</p>
+                  <p className="text-sm text-text-secondary leading-7">
+                    Directional consistency may be more useful than absolute point error for many workflows.
                   </p>
                 </div>
-                <div className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
-                  <p className="text-xs uppercase tracking-[0.15em] text-oil-gold font-semibold mb-2">Update Cadence</p>
-                  <p className="text-base text-gray-300 leading-7">
+                <div className="rounded-xl border border-white/8 bg-white/3 p-5">
+                  <p className="label-xs text-pc-gold mb-2">Update Cadence</p>
+                  <p className="text-sm text-text-secondary leading-7">
                     Validate model freshness using dashboard metadata and endpoint headers.
                   </p>
                 </div>
-                <div className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
-                  <p className="text-xs uppercase tracking-[0.15em] text-oil-gold font-semibold mb-2">Uncertainty</p>
-                  <p className="text-base text-gray-300 leading-7">
+                <div className="rounded-xl border border-white/8 bg-white/3 p-5">
+                  <p className="label-xs text-pc-gold mb-2">Uncertainty</p>
+                  <p className="text-sm text-text-secondary leading-7">
                     Always evaluate confidence intervals and fan spread before operational decisions.
                   </p>
                 </div>
